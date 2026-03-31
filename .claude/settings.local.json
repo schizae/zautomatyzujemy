@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm audit:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl -s -L \"https://lh3.googleusercontent.com/aida/ADBb0ugRuTdi3d-cN4mCzk5IvEMRi4_sIdc2wNp4pbt-fokSwLoAUGbo0V259y_WSaAgaDpVpZohzTm0Kp1YLH_jbq43_n96Sr5wBBMP6T_0grUXPB_OWXux8DikXIHk1jfbh5gIsACBs4wpeFK_HDcbgVQJ8VHYN0RbH_BKre_yTxVyxX8EF8YP9XiLHvnHfWwrzs65eQF8ogR3Of9ntx0XYYm_4Sj7Capl6nf7WUYCFyKt8j_u3skLd1ciYjA\" -o \"C:/Projects/zautomatyzujemy/.stitch/homepage-bright.png\" --create-dirs)",
+      "Bash(curl -s -L \"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2MyNzBlMjIxOWY3NjQ1NjQ5MTFiYmRkMDMwMTNhNTRmEgsSBxCaoeKimxsYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYwNzA5Nzc5OTIyNzc3NzE5&filename=&opi=89354086\" -o \"C:/Projects/zautomatyzujemy/.stitch/homepage-bright.html\" --create-dirs)",
+      "Bash(npx shadcn@latest init -d -y)"
+    ]
+  }
+}
