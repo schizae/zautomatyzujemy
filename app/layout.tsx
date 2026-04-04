@@ -47,7 +47,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
       lang="pl"
       className={`dark ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
     >
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:bg-[#70e5ea] focus:px-4 focus:py-2 focus:text-[#003739] focus:font-bold focus:text-sm"
+        >
+          Przejdź do treści
+        </a>
+        {children}
+      </body>
     </html>
   )
 }

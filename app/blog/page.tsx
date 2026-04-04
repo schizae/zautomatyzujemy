@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { PostPreview } from '@/types'
@@ -60,13 +61,14 @@ export default async function BlogPage() {
             {posts.map(post => (
               <Link key={post.slug} href={`/blog/${post.slug}`}>
                 <article className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-shadow duration-300 h-full">
-                  <div className="aspect-video overflow-hidden relative bg-slate-100">
+                  <div className="relative aspect-video overflow-hidden bg-slate-100">
                     {post.cover_image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={post.cover_image}
                         alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">

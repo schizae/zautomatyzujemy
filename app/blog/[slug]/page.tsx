@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
@@ -88,12 +89,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       {/* Cover image */}
       {post.cover_image && (
-        <div className="max-w-3xl mx-auto px-6 -mt-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div className="relative max-w-3xl mx-auto px-6 -mt-8 aspect-video">
+          <Image
             src={post.cover_image}
             alt={post.title}
-            className="w-full rounded-2xl shadow-xl object-cover aspect-video"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="rounded-2xl shadow-xl object-cover"
           />
         </div>
       )}

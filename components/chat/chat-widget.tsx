@@ -11,7 +11,9 @@ import { saveChatLeadAction } from '@/lib/actions/chat.actions'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
 
-const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
+// Strict email regex — wymaga: tekst@domena.rozszerzenie (min 2 znaki rozszerzenia)
+// Odrzuca losowe ciągi z @, wymaga sensownej struktury
+const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
 const GREETING = `Witaj w Zautomatyzujemy.pl! W czym mogę Ci pomóc w kwestii automatyzacji i wdrożeń AI?`
 
@@ -301,7 +303,7 @@ export function ChatWidget() {
             </div>
 
             {/* ── Messages ────────────────────────────────────────────────── */}
-            <div className="p-6 h-[308px] overflow-y-auto space-y-4 bg-[#121412]/60">
+            <div className="p-6 h-[308px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
 
               {/* Powitanie typing */}
               <AnimatePresence>

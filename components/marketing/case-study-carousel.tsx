@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, MoveRight } from 'lucide-react'
 import type { CaseStudy } from '@/types'
@@ -67,13 +68,14 @@ export function CaseStudyCarousel({ items }: CaseStudyCarouselProps) {
                 >
                   <Link href={`/case-studies/${item.slug}`}>
                     <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 group hover:shadow-2xl hover:border-transparent transition-all duration-300 h-full cursor-pointer">
-                      <div className="h-48 overflow-hidden relative bg-slate-100">
+                      <div className="relative h-48 overflow-hidden bg-slate-100">
                         {item.cover_image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
+                          <Image
                             src={item.cover_image}
                             alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
