@@ -68,6 +68,57 @@ export interface ApiErrorResponse {
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse
 
+// ─── Admin CMS ───────────────────────────────────────────────────────────────
+
+export interface PageContent {
+  key: string
+  value: string
+  label: string
+  section: string
+  updated_at: string
+}
+
+export interface Service {
+  id: string
+  title: string
+  description: string
+  icon: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface FaqItem {
+  id: string
+  question: string
+  answer: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type ActionResult<T = undefined> =
+  | { success: true; data?: T }
+  | { success: false; error: string }
+
+// ─── Case Studies ─────────────────────────────────────────────────────────────
+
+export interface CaseStudy {
+  id: string
+  slug: string
+  title: string
+  description: string
+  content: string
+  cover_image: string | null
+  tag: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
 // ─── n8n Webhook payloads ─────────────────────────────────────────────────────
 
 /** Payload wysyłany przez n8n do /api/blog/publish */

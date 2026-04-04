@@ -1,13 +1,23 @@
 import type { Metadata } from 'next'
-import { Inter, Geist } from 'next/font/google'
+import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-headline',
+  display: 'swap',
+})
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-label',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -33,10 +43,11 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="pl" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-      </body>
+    <html
+      lang="pl"
+      className={`dark ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
+    >
+      <body className="font-body antialiased">{children}</body>
     </html>
   )
 }

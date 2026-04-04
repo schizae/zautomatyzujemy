@@ -26,6 +26,8 @@ Przed napisaniem JAKIEGOKOLWIEK kodu lub pliku:
 @.claude/rules/nextjs-standards.md
 @.claude/rules/typescript-standards.md
 @.claude/rules/frontend-designer.md
+@.claude/rules/ai-sdk-rag.md
+@.claude/rules/n8n-webhooks.md
 
 ---
 
@@ -36,6 +38,9 @@ Przed napisaniem JAKIEGOKOLWIEK kodu lub pliku:
 - **Style:** Tailwind CSS
 - **Komponenty UI:** shadcn/ui
 - **State/fetch:** React Query (TanStack Query)
+- **AI/Chat:** Vercel AI SDK v6 (`ai` + `@ai-sdk/openai`)
+- **Animacje:** Framer Motion
+- **Automatyzacja:** n8n (webhooks inbound/outbound)
 - **Linter:** ESLint + Prettier
 
 ---

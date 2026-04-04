@@ -17,7 +17,14 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)', 'sans-serif'],
+        body: ['var(--font-sans)', 'sans-serif'],
+        headline: ['var(--font-headline)', 'sans-serif'],
+        label: ['var(--font-label)', 'sans-serif'],
+      },
       colors: {
+        // shadcn/ui CSS variable tokens
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -51,6 +58,21 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Stitch design system tokens
+        'surface-container-lowest': '#0d0f0d',
+        'surface-container-low': '#1a1c1a',
+        'surface-container': '#1e201e',
+        'surface-container-high': '#282a28',
+        'surface-container-highest': '#333533',
+        'on-surface': '#e2e3df',
+        'on-surface-variant': '#bcc9c9',
+        'on-primary': '#003739',
+        'primary-container': '#50c9ce',
+        'on-primary-container': '#005154',
+        'outline-variant': '#3d4949',
+        'outline-color': '#869393',
+        'tertiary': '#ffc7b3',
+        'tertiary-container': '#ffa07b',
       },
       borderRadius: {
         lg: 'var(--radius)',

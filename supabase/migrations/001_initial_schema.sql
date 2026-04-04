@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS documents (
   id          UUID    DEFAULT gen_random_uuid() PRIMARY KEY,
   content     TEXT    NOT NULL,               -- chunk tekstu
-  embedding   vector(1536),                   -- OpenAI text-embedding-3-small
+  embedding   vector(768),                    -- Google text-embedding-004 (768 dim)
   metadata    JSONB   DEFAULT '{}',           -- np. {"source": "cennik.pdf", "page": 2}
   source      TEXT,                           -- nazwa pliku źródłowego
   created_at  TIMESTAMPTZ DEFAULT NOW()
@@ -80,7 +80,7 @@ CREATE POLICY "Service role — pełny dostęp do leads"
 -- ─── Funkcja: match_documents (Similarity Search dla RAG) ───────────────────
 
 CREATE OR REPLACE FUNCTION match_documents(
-  query_embedding vector(1536),
+  query_embedding vector(768),
   match_threshold FLOAT   DEFAULT 0.7,
   match_count     INT     DEFAULT 5
 )

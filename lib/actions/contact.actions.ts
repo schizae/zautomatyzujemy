@@ -1,0 +1,61 @@
+'use server'
+
+import { z } from 'zod'
+import { createServiceClient } from '@/lib/supabase/server'
+import type { ActionResult } from '@/types'
+
+const ContactSchema = z.object({
+  name: z.string().min(2, 'Imię i nazwisko musi mieć min. 2 znaki.').max(100),
+  email: z.string().email('Podaj poprawny adres e-mail.'),
+  message: z.string().min(10, 'Wiadomość musi mieć min. 10 znaków.').max(2000),
+})
+
+export async function submitContactAction(
+  _prev: ActionResult<string>,
+  formData: FormData
+): Promise<ActionResult<string>> {
+  const parsed = ContactSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    message: formData.get('message'),
+  })
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
+  }
+
+  const { name, email, message } = parsed.data
+  const supabase = createServiceClient()
+
+  const { error } = await supabase.from('leads').insert({
+    name,
+    email,
+    conversation_summary: message,
+    source: 'contact_form',
+    n8n_sent: false,
+  })
+
+  if (error) {
+    return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
+  }
+
+  // Fire-and-forget do n8n (nie blokuje odpowiedzi)
+  const webhookUrl = process.env.N8N_LEAD_WEBHOOK_URL
+  if (webhookUrl) {
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(process.env.N8N_WEBHOOK_SECRET && {
+          'Authorization': `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
+        }),
+      },
+      body: JSON.stringify({ name, email, message, source: 'contact_form', timestamp: new Date().toISOString() }),
+      signal: AbortSignal.timeout(5000),
+    }).catch((err: unknown) => {
+      console.error('[n8n webhook] contact form failed:', err)
+    })
+  }
+
+  return { success: true, data: 'sent' }
+}
