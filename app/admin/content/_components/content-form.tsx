@@ -21,12 +21,12 @@ export function ContentForm({ items, section, title }: ContentFormProps) {
   )
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h2 className="mb-4 font-display text-base font-bold text-slate-900">{title}</h2>
+    <div className="rounded-2xl border border-outline-variant bg-surface-container p-6">
+      <h2 className="mb-4 font-headline text-base font-bold text-on-surface">{title}</h2>
       <form action={formAction} className="space-y-4">
         {items.map(item => (
           <div key={item.key} className="space-y-1.5">
-            <label htmlFor={item.key} className="block text-sm font-semibold text-slate-700">
+            <label htmlFor={item.key} className="block text-sm font-semibold text-on-surface-variant">
               {item.label}
             </label>
             {item.value.length > 100 ? (
@@ -36,7 +36,7 @@ export function ContentForm({ items, section, title }: ContentFormProps) {
                 value={values[item.key] ?? ''}
                 onChange={e => setValues(v => ({ ...v, [item.key]: e.target.value }))}
                 rows={3}
-                className="w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-2.5 py-1.5 text-sm text-on-surface outline-none transition-colors placeholder:text-outline-color focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
               />
             ) : (
               <input
@@ -45,14 +45,14 @@ export function ContentForm({ items, section, title }: ContentFormProps) {
                 type="text"
                 value={values[item.key] ?? ''}
                 onChange={e => setValues(v => ({ ...v, [item.key]: e.target.value }))}
-                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="h-8 w-full rounded-lg border border-outline-variant bg-surface-container-low px-2.5 py-1 text-sm text-on-surface outline-none transition-colors placeholder:text-outline-color focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
               />
             )}
           </div>
         ))}
 
         {!state.success && (
-          <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+          <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
             {state.error}
           </p>
         )}

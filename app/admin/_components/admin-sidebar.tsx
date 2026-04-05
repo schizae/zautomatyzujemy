@@ -16,13 +16,13 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+    <aside className="flex h-screen w-64 flex-col border-r border-outline-variant bg-surface-container-low">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 border-b border-slate-200 px-6 py-5">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-800 to-blue-700">
-          <Zap className="size-4 text-white" />
+      <div className="flex items-center gap-2.5 border-b border-outline-variant px-6 py-5">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-primary">
+          <Zap className="size-4 text-on-primary" />
         </div>
-        <span className="font-display text-sm font-bold text-slate-900">Admin Panel</span>
+        <span className="font-headline text-sm font-bold text-on-surface">Admin Panel</span>
       </div>
 
       {/* Nav */}
@@ -34,8 +34,8 @@ export function AdminSidebar() {
             className={cn(
               'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
               pathname.startsWith(href)
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? 'bg-primary/10 text-primary'
+                : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
             )}
           >
             <Icon className="size-4" />
@@ -45,11 +45,11 @@ export function AdminSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="border-t border-slate-200 p-4">
+      <div className="border-t border-outline-variant p-4">
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-red-900/20 hover:text-red-400"
           >
             <LogOut className="size-4" />
             Wyloguj się

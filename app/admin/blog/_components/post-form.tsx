@@ -67,8 +67,8 @@ export function PostForm({ post }: PostFormProps) {
   return (
     <div className="space-y-8">
       {/* AI Generator */}
-      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-6">
-        <h2 className="mb-3 font-display text-sm font-bold text-blue-800">
+      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+        <h2 className="mb-3 font-headline text-sm font-bold text-primary">
           Generuj artykuł przez AI
         </h2>
         <div className="flex gap-3">
@@ -76,7 +76,7 @@ export function PostForm({ post }: PostFormProps) {
             value={topic}
             onChange={e => setTopic(e.target.value)}
             placeholder="Temat artykułu, np. Automatyzacja faktur z AI"
-            className="flex-1 bg-white"
+            className="flex-1 bg-surface-container"
             onKeyDown={e => e.key === 'Enter' && handleGenerate()}
           />
           <Button
@@ -94,9 +94,9 @@ export function PostForm({ post }: PostFormProps) {
           </Button>
         </div>
         {generateError && (
-          <p className="mt-2 text-sm text-red-600">{generateError}</p>
+          <p className="mt-2 text-sm text-red-400">{generateError}</p>
         )}
-        <p className="mt-2 text-xs text-blue-600">
+        <p className="mt-2 text-xs text-primary/70">
           AI wypełni pola poniżej — możesz je potem edytować przed zapisem.
         </p>
       </div>
@@ -112,7 +112,7 @@ export function PostForm({ post }: PostFormProps) {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700">Tytuł *</label>
+            <label className="block text-sm font-bold text-on-surface-variant">Tytuł *</label>
             <Input
               value={title}
               onChange={e => handleTitleChange(e.target.value)}
@@ -121,7 +121,7 @@ export function PostForm({ post }: PostFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700">Slug (URL) *</label>
+            <label className="block text-sm font-bold text-on-surface-variant">Slug (URL) *</label>
             <Input
               value={slug}
               onChange={e => setSlug(e.target.value)}
@@ -132,7 +132,7 @@ export function PostForm({ post }: PostFormProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Opis (excerpt / SEO)</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Opis (excerpt / SEO)</label>
           <Input
             value={excerpt}
             onChange={e => setExcerpt(e.target.value)}
@@ -141,7 +141,7 @@ export function PostForm({ post }: PostFormProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Treść (Markdown) *</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Treść (Markdown) *</label>
           <Textarea
             value={content}
             onChange={e => setContent(e.target.value)}
@@ -154,7 +154,7 @@ export function PostForm({ post }: PostFormProps) {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700">Tagi (oddziel przecinkami)</label>
+            <label className="block text-sm font-bold text-on-surface-variant">Tagi (oddziel przecinkami)</label>
             <Input
               value={tags}
               onChange={e => setTags(e.target.value)}
@@ -162,7 +162,7 @@ export function PostForm({ post }: PostFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700">Autor</label>
+            <label className="block text-sm font-bold text-on-surface-variant">Autor</label>
             <Input
               name="author"
               defaultValue={post?.author ?? 'Zautomatyzujemy'}
@@ -172,7 +172,7 @@ export function PostForm({ post }: PostFormProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">URL obrazu okładkowego</label>
+          <label className="block text-sm font-bold text-on-surface-variant">URL obrazu okładkowego</label>
           <Input
             name="cover_image"
             defaultValue={post?.cover_image ?? ''}
@@ -188,15 +188,15 @@ export function PostForm({ post }: PostFormProps) {
             name="is_published"
             value="true"
             defaultChecked={post?.is_published}
-            className="size-4 rounded"
+            className="size-4 rounded accent-primary"
           />
-          <label htmlFor="is_published" className="text-sm font-medium text-slate-700">
+          <label htmlFor="is_published" className="text-sm font-medium text-on-surface-variant">
             Opublikuj od razu
           </label>
         </div>
 
         {!state.success && (
-          <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+          <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
             {state.error}
           </p>
         )}

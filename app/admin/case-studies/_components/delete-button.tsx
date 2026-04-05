@@ -26,7 +26,7 @@ export function DeleteButton({ itemId, itemTitle }: DeleteButtonProps) {
       size="icon"
       onClick={handleDelete}
       disabled={isPending}
-      className="text-red-400 hover:bg-red-50 hover:text-red-600"
+      className="text-red-400 hover:bg-red-900/20 hover:text-red-400"
     >
       {isPending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
     </Button>

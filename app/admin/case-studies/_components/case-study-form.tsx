@@ -43,7 +43,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
     }
   }
 
-  const fieldClass = "w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+  const fieldClass = "w-full rounded-lg border border-outline-variant bg-surface-container-low px-2.5 py-1.5 text-sm text-on-surface outline-none transition-colors placeholder:text-outline-color focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
 
   return (
     <form action={formAction} className="space-y-6">
@@ -59,7 +59,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Tytuł / Wynik *</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Tytuł / Wynik *</label>
           <input
             type="text"
             value={title}
@@ -70,7 +70,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Slug (URL) *</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Slug (URL) *</label>
           <input
             type="text"
             value={slug}
@@ -83,7 +83,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-slate-700">Krótki opis (widoczny na karcie) *</label>
+        <label className="block text-sm font-bold text-on-surface-variant">Krótki opis (widoczny na karcie) *</label>
         <textarea
           value={description}
           onChange={e => setDescription(e.target.value)}
@@ -95,7 +95,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-slate-700">Pełna treść (Markdown, opcjonalnie)</label>
+        <label className="block text-sm font-bold text-on-surface-variant">Pełna treść (Markdown, opcjonalnie)</label>
         <textarea
           value={content}
           onChange={e => setContent(e.target.value)}
@@ -107,7 +107,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Kategoria / Tag</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Kategoria / Tag</label>
           <input
             type="text"
             value={tag}
@@ -117,7 +117,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">Kolejność</label>
+          <label className="block text-sm font-bold text-on-surface-variant">Kolejność</label>
           <input
             type="number"
             value={sortOrder}
@@ -127,7 +127,7 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-700">URL obrazu okładkowego</label>
+          <label className="block text-sm font-bold text-on-surface-variant">URL obrazu okładkowego</label>
           <input
             type="url"
             value={coverImage}
@@ -144,15 +144,15 @@ export function CaseStudyForm({ item }: CaseStudyFormProps) {
           id="is_active"
           checked={isActive}
           onChange={e => setIsActive(e.target.checked)}
-          className="size-4 rounded"
+          className="size-4 rounded accent-primary"
         />
-        <label htmlFor="is_active" className="text-sm font-medium text-slate-700">
+        <label htmlFor="is_active" className="text-sm font-medium text-on-surface-variant">
           Aktywny (widoczny na stronie)
         </label>
       </div>
 
       {!state.success && (
-        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+        <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
           {state.error}
         </p>
       )}

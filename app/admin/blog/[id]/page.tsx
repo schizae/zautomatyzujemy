@@ -23,13 +23,13 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
       <div className="mb-6">
         <Link
           href="/admin/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface"
         >
           <ChevronLeft className="size-4" />
           Wróć do listy
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-bold text-slate-900">Edytuj artykuł</h1>
-        <p className="text-sm text-slate-500">{post.title}</p>
+        <h1 className="mt-2 font-headline text-2xl font-bold text-on-surface">Edytuj artykuł</h1>
+        <p className="text-sm text-on-surface-variant">{post.title}</p>
       </div>
       <PostForm post={post} />
     </div>

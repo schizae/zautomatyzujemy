@@ -28,8 +28,8 @@ export default async function AdminContentPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-display text-2xl font-bold text-slate-900">Treść strony</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="font-headline text-2xl font-bold text-on-surface">Treść strony</h1>
+        <p className="mt-1 text-sm text-on-surface-variant">
           Edytuj teksty wyświetlane na stronie głównej.
         </p>
       </div>

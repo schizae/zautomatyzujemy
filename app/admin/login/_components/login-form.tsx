@@ -15,19 +15,19 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-slate-700">Hasło administratora</label>
+        <label className="block text-sm font-bold text-on-surface-variant">Hasło administratora</label>
         <Input
           type="password"
           name="password"
           placeholder="••••••••"
           required
           autoFocus
-          className="bg-slate-50"
+          className="bg-surface-container-low"
         />
       </div>
 
       {!state.success && (
-        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+        <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
           {state.error}
         </p>
       )}

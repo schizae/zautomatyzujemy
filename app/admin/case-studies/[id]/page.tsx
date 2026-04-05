@@ -21,13 +21,13 @@ export default async function EditCaseStudyPage({ params }: EditPageProps) {
       <div className="mb-6">
         <Link
           href="/admin/case-studies"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface"
         >
           <ChevronLeft className="size-4" />
           Wróć do listy
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-bold text-slate-900">Edytuj realizację</h1>
-        <p className="text-sm text-slate-500">{item.title}</p>
+        <h1 className="mt-2 font-headline text-2xl font-bold text-on-surface">Edytuj realizację</h1>
+        <p className="text-sm text-on-surface-variant">{item.title}</p>
       </div>
       <CaseStudyForm item={item} />
     </div>

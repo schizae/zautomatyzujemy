@@ -10,12 +10,12 @@ export default function NewPostPage() {
       <div className="mb-6">
         <Link
           href="/admin/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface"
         >
           <ChevronLeft className="size-4" />
           Wróć do listy
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-bold text-slate-900">Nowy artykuł</h1>
+        <h1 className="mt-2 font-headline text-2xl font-bold text-on-surface">Nowy artykuł</h1>
       </div>
       <PostForm />
     </div>

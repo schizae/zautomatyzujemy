@@ -27,32 +27,32 @@ function FaqRow({ item }: { item: FaqItem }) {
   }
 
   return (
-    <div className="border-b border-slate-100 last:border-0">
+    <div className="border-b border-outline-variant last:border-0">
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-slate-50"
+        className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-surface-container-high"
       >
-        <span className="text-sm font-medium text-slate-800 line-clamp-1">{item.question}</span>
-        {expanded ? <ChevronUp className="size-4 shrink-0 text-slate-400" /> : <ChevronDown className="size-4 shrink-0 text-slate-400" />}
+        <span className="text-sm font-medium text-on-surface line-clamp-1">{item.question}</span>
+        {expanded ? <ChevronUp className="size-4 shrink-0 text-outline-color" /> : <ChevronDown className="size-4 shrink-0 text-outline-color" />}
       </button>
 
       {expanded && (
         <form action={formAction} className="space-y-3 px-4 pb-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-600">Pytanie *</label>
+            <label className="text-xs font-semibold text-on-surface-variant">Pytanie *</label>
             <Input name="question" defaultValue={item.question} className="text-sm" required />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-600">Odpowiedź *</label>
+            <label className="text-xs font-semibold text-on-surface-variant">Odpowiedź *</label>
             <Textarea name="answer" defaultValue={item.answer} rows={3} className="text-sm" required />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-600">Kolejność</label>
+            <label className="text-xs font-semibold text-on-surface-variant">Kolejność</label>
             <Input name="sort_order" type="number" defaultValue={item.sort_order} className="text-sm w-24" />
           </div>
           <input type="hidden" name="is_active" value={item.is_active ? 'true' : 'false'} />
-          {!state.success && <p className="text-xs text-red-600">{state.error}</p>}
+          {!state.success && <p className="text-xs text-red-400">{state.error}</p>}
           <div className="flex gap-2">
             <Button type="submit" size="sm" disabled={isPending} className="gap-1.5">
               {isPending ? <Loader2 className="size-3 animate-spin" /> : <Save className="size-3" />}
@@ -64,7 +64,7 @@ function FaqRow({ item }: { item: FaqItem }) {
               variant="ghost"
               disabled={isDeleting}
               onClick={handleDelete}
-              className="gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600"
+              className="gap-1.5 text-red-400 hover:bg-red-900/20 hover:text-red-400"
             >
               {isDeleting ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
               Usuń
@@ -86,7 +86,7 @@ function NewFaqForm() {
       <button
         type="button"
         onClick={() => setShow(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-500 hover:border-blue-300 hover:text-blue-600"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-outline-variant py-3 text-sm font-medium text-on-surface-variant hover:border-primary/40 hover:text-primary"
       >
         <Plus className="size-4" />
         Dodaj pytanie FAQ
@@ -95,19 +95,19 @@ function NewFaqForm() {
   }
 
   return (
-    <form action={formAction} className="space-y-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
-      <p className="text-xs font-bold text-blue-700">Nowe pytanie FAQ</p>
+    <form action={formAction} className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+      <p className="text-xs font-bold text-primary">Nowe pytanie FAQ</p>
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-slate-600">Pytanie *</label>
-        <Input name="question" placeholder="Jak długo trwa wdrożenie?" className="bg-white text-sm" required />
+        <label className="text-xs font-semibold text-on-surface-variant">Pytanie *</label>
+        <Input name="question" placeholder="Jak długo trwa wdrożenie?" className="bg-surface-container text-sm" required />
       </div>
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-slate-600">Odpowiedź *</label>
-        <Textarea name="answer" placeholder="Odpowiedź..." rows={3} className="bg-white text-sm" required />
+        <label className="text-xs font-semibold text-on-surface-variant">Odpowiedź *</label>
+        <Textarea name="answer" placeholder="Odpowiedź..." rows={3} className="bg-surface-container text-sm" required />
       </div>
       <input type="hidden" name="sort_order" value="99" />
       <input type="hidden" name="is_active" value="true" />
-      {!state.success && <p className="text-xs text-red-600">{state.error}</p>}
+      {!state.success && <p className="text-xs text-red-400">{state.error}</p>}
       <div className="flex gap-2">
         <Button type="submit" size="sm" disabled={isPending} className="gap-1.5">
           {isPending ? <Loader2 className="size-3 animate-spin" /> : <Plus className="size-3" />}
@@ -123,10 +123,10 @@ function NewFaqForm() {
 
 export function FaqEditor({ items }: FaqEditorProps) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-6 py-4">
-        <h2 className="font-display text-base font-bold text-slate-900">FAQ</h2>
-        <p className="text-xs text-slate-500">{items.length} pytań</p>
+    <div className="rounded-2xl border border-outline-variant bg-surface-container">
+      <div className="border-b border-outline-variant px-6 py-4">
+        <h2 className="font-headline text-base font-bold text-on-surface">FAQ</h2>
+        <p className="text-xs text-on-surface-variant">{items.length} pytań</p>
       </div>
       <div>
         {items.map(item => <FaqRow key={item.id} item={item} />)}

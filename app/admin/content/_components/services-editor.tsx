@@ -27,35 +27,35 @@ function ServiceRow({ service }: { service: Service }) {
   }
 
   return (
-    <div className="border-b border-slate-100 last:border-0">
+    <div className="border-b border-outline-variant last:border-0">
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-slate-50"
+        className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-surface-container-high"
       >
-        <span className="text-sm font-medium text-slate-800">{service.title}</span>
-        {expanded ? <ChevronUp className="size-4 text-slate-400" /> : <ChevronDown className="size-4 text-slate-400" />}
+        <span className="text-sm font-medium text-on-surface">{service.title}</span>
+        {expanded ? <ChevronUp className="size-4 text-outline-color" /> : <ChevronDown className="size-4 text-outline-color" />}
       </button>
 
       {expanded && (
         <form action={formAction} className="space-y-3 px-4 pb-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-600">Tytuł</label>
+              <label className="text-xs font-semibold text-on-surface-variant">Tytuł</label>
               <Input name="title" defaultValue={service.title} className="text-sm" required />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-600">Ikona (Lucide)</label>
+              <label className="text-xs font-semibold text-on-surface-variant">Ikona (Lucide)</label>
               <Input name="icon" defaultValue={service.icon} className="text-sm" required />
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-600">Opis</label>
+            <label className="text-xs font-semibold text-on-surface-variant">Opis</label>
             <Textarea name="description" defaultValue={service.description} rows={2} className="text-sm" required />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-600">Kolejność</label>
+              <label className="text-xs font-semibold text-on-surface-variant">Kolejność</label>
               <Input name="sort_order" type="number" defaultValue={service.sort_order} className="text-sm" />
             </div>
             <div className="flex items-end gap-2">
@@ -63,7 +63,7 @@ function ServiceRow({ service }: { service: Service }) {
             </div>
           </div>
           {!state.success && (
-            <p className="text-xs text-red-600">{state.error}</p>
+            <p className="text-xs text-red-400">{state.error}</p>
           )}
           <div className="flex gap-2">
             <Button type="submit" size="sm" disabled={isPending} className="gap-1.5">
@@ -76,7 +76,7 @@ function ServiceRow({ service }: { service: Service }) {
               variant="ghost"
               disabled={isDeleting}
               onClick={handleDelete}
-              className="gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600"
+              className="gap-1.5 text-red-400 hover:bg-red-900/20 hover:text-red-400"
             >
               {isDeleting ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
               Usuń
@@ -98,7 +98,7 @@ function NewServiceForm() {
       <button
         type="button"
         onClick={() => setShow(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-500 hover:border-blue-300 hover:text-blue-600"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-outline-variant py-3 text-sm font-medium text-on-surface-variant hover:border-primary/40 hover:text-primary"
       >
         <Plus className="size-4" />
         Dodaj usługę
@@ -107,25 +107,25 @@ function NewServiceForm() {
   }
 
   return (
-    <form action={formAction} className="space-y-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
-      <p className="text-xs font-bold text-blue-700">Nowa usługa</p>
+    <form action={formAction} className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+      <p className="text-xs font-bold text-primary">Nowa usługa</p>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-600">Tytuł *</label>
-          <Input name="title" placeholder="Chatbot AI" className="bg-white text-sm" required />
+          <label className="text-xs font-semibold text-on-surface-variant">Tytuł *</label>
+          <Input name="title" placeholder="Chatbot AI" className="bg-surface-container text-sm" required />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-600">Ikona Lucide *</label>
-          <Input name="icon" placeholder="Bot" className="bg-white text-sm" required />
+          <label className="text-xs font-semibold text-on-surface-variant">Ikona Lucide *</label>
+          <Input name="icon" placeholder="Bot" className="bg-surface-container text-sm" required />
         </div>
       </div>
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-slate-600">Opis *</label>
-        <Textarea name="description" placeholder="Opis usługi..." rows={2} className="bg-white text-sm" required />
+        <label className="text-xs font-semibold text-on-surface-variant">Opis *</label>
+        <Textarea name="description" placeholder="Opis usługi..." rows={2} className="bg-surface-container text-sm" required />
       </div>
       <input type="hidden" name="sort_order" value="99" />
       <input type="hidden" name="is_active" value="true" />
-      {!state.success && <p className="text-xs text-red-600">{state.error}</p>}
+      {!state.success && <p className="text-xs text-red-400">{state.error}</p>}
       <div className="flex gap-2">
         <Button type="submit" size="sm" disabled={isPending} className="gap-1.5">
           {isPending ? <Loader2 className="size-3 animate-spin" /> : <Plus className="size-3" />}
@@ -141,10 +141,10 @@ function NewServiceForm() {
 
 export function ServicesEditor({ services }: ServicesEditorProps) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-6 py-4">
-        <h2 className="font-display text-base font-bold text-slate-900">Usługi</h2>
-        <p className="text-xs text-slate-500">{services.length} usług</p>
+    <div className="rounded-2xl border border-outline-variant bg-surface-container">
+      <div className="border-b border-outline-variant px-6 py-4">
+        <h2 className="font-headline text-base font-bold text-on-surface">Usługi</h2>
+        <p className="text-xs text-on-surface-variant">{services.length} usług</p>
       </div>
       <div>
         {services.map(s => <ServiceRow key={s.id} service={s} />)}
