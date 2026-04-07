@@ -65,6 +65,14 @@ html {
   }
 }
 
+/* Override shadcn/tailwind.css default primary — must be outside @layer */
+:root,
+.dark {
+  --primary: 183 74% 68%;
+  --primary-foreground: 183 100% 11%;
+  --ring: 183 74% 68%;
+}
+
 @layer utilities {
   .glass-card {
     background: rgba(30, 32, 30, 0.4);

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
+import { Providers } from '@/app/_components/providers'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -54,7 +55,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           Przejdź do treści
         </a>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

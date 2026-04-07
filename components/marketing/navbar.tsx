@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Menu, X, Settings, CircleUser } from 'lucide-react'
+import { useAuth } from '@/lib/contexts/auth-context'
+import { cn } from '@/lib/utils'
 
 const navLinks = [
   { label: 'Rozwiązania', href: '#uslugi' },
@@ -15,6 +17,7 @@ const navLinks = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { isLoggedIn, isLoading, user } = useAuth()
 
   return (
     <nav className="bg-[#121412]/70 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-white/5">
@@ -49,22 +52,53 @@ export function Navbar() {
 
         {/* Desktop right: icons + CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Settings
-            size={22}
-            className="text-[#bcc9c9] hover:text-white transition-colors cursor-pointer"
-            aria-hidden="true"
-          />
-          <CircleUser
-            size={22}
-            className="text-[#bcc9c9] hover:text-white transition-colors cursor-pointer"
-            aria-hidden="true"
-          />
+          {/* Zębatka — tylko gdy zalogowany */}
+          {!isLoading && isLoggedIn && (
+            <Link
+              href="/account/settings"
+              title="Ustawienia konta"
+              className="flex items-center justify-center"
+            >
+              <Settings
+                size={22}
+                className="text-[#bcc9c9] hover:text-white transition-colors"
+              />
+            </Link>
+          )}
+
+          {/* CircleUser — glow gdy zalogowany */}
           <Link
-            href="#kontakt"
-            className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+            href={isLoggedIn ? '/account/settings' : '/account/login'}
+            title={isLoggedIn ? `Zalogowany: ${user?.firstName} ${user?.lastName}` : 'Zaloguj się'}
+            className="relative flex items-center justify-center"
           >
-            Get Started
+            <CircleUser
+              size={22}
+              className={cn(
+                'transition-all duration-300',
+                isLoggedIn
+                  ? 'text-[#70e5ea] drop-shadow-[0_0_8px_rgba(112,229,234,0.85)]'
+                  : 'text-[#bcc9c9] hover:text-white'
+              )}
+              aria-label={isLoggedIn ? 'Konto użytkownika' : 'Zaloguj się'}
+            />
           </Link>
+
+          {isLoggedIn ? (
+            <Link
+              href="/account/settings"
+              className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+            >
+              Moje konto
+            </Link>
+          ) : (
+            <Link
+              href="/account/register"
+              className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+            >
+              Get Started
+            </Link>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -90,13 +124,49 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {/* User link */}
           <Link
-            href="#kontakt"
+            href={isLoggedIn ? '/account/settings' : '/account/login'}
             onClick={() => setIsOpen(false)}
-            className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+            className={cn(
+              'flex items-center gap-2 py-2 text-sm font-headline font-bold transition-colors',
+              isLoggedIn ? 'text-[#70e5ea]' : 'text-[#bcc9c9] hover:text-white'
+            )}
           >
-            Get Started
+            <CircleUser size={18} />
+            {isLoggedIn ? `${user?.firstName} ${user?.lastName}` : 'Zaloguj się'}
           </Link>
+
+          {/* Ustawienia — mobile, tylko gdy zalogowany */}
+          {isLoggedIn && (
+            <Link
+              href="/account/settings"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 py-2 text-sm font-headline font-bold text-[#bcc9c9] hover:text-white transition-colors"
+            >
+              <Settings size={18} />
+              Ustawienia
+            </Link>
+          )}
+
+          {isLoggedIn ? (
+            <Link
+              href="/account/settings"
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+            >
+              Moje konto
+            </Link>
+          ) : (
+            <Link
+              href="/account/register"
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+            >
+              Get Started
+            </Link>
+          )}
         </div>
       )}
     </nav>
