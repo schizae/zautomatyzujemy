@@ -80,7 +80,7 @@
           "parameters": [
             {
               "name": "key",
-              "value": "={{ $env.GOOGLE_API_KEY }}"
+              "value": "={{ $vars.GOOGLE_API_KEY }}"
             }
           ]
         },
@@ -116,7 +116,7 @@
           "parameters": [
             {
               "name": "key",
-              "value": "={{ $env.GOOGLE_API_KEY }}"
+              "value": "={{ $vars.GOOGLE_API_KEY }}"
             }
           ]
         },
@@ -135,7 +135,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Wyciągnij base64 z odpowiedzi Gemini Image API\n// i wgraj do Supabase Storage\n\nconst imageResponse = $input.first().json;\nconst article = $('Parsuj odpowiedź AI').first().json;\n\n// Szukamy części z obrazem w odpowiedzi\nconst parts = imageResponse.candidates?.[0]?.content?.parts || [];\nconst imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));\n\nif (!imagePart) {\n  // Brak obrazu — kontynuujemy bez okładki\n  console.warn('Gemini nie wygenerował obrazu — artykuł zostanie opublikowany bez okładki.');\n  return [{ json: { cover_image: null, article } }];\n}\n\nconst base64Data = imagePart.inlineData.data;\nconst mimeType = imagePart.inlineData.mimeType || 'image/png';\nconst ext = mimeType.split('/')[1] || 'png';\nconst filename = `blog-cover-${article.slug}-${Date.now()}.${ext}`;\n\n// Zdekoduj base64 do binary\nconst imageBuffer = Buffer.from(base64Data, 'base64');\n\n// Wgraj do Supabase Storage\nconst supabaseUrl = $env.SUPABASE_URL;\nconst serviceKey = $env.SUPABASE_SERVICE_KEY;\n\nif (!supabaseUrl || !serviceKey) {\n  throw new Error('Brak zmiennych SUPABASE_URL lub SUPABASE_SERVICE_KEY w n8n.');\n}\n\nconst uploadResponse = await fetch(\n  `${supabaseUrl}/storage/v1/object/blog-covers/${filename}`,\n  {\n    method: 'POST',\n    headers: {\n      'Authorization': `Bearer ${serviceKey}`,\n      'Content-Type': mimeType,\n      'x-upsert': 'true'\n    },\n    body: imageBuffer\n  }\n);\n\nif (!uploadResponse.ok) {\n  const err = await uploadResponse.text();\n  console.error('Błąd uploadu do Supabase Storage:', err);\n  return [{ json: { cover_image: null, article } }];\n}\n\n// Publiczny URL obrazu\nconst publicUrl = `${supabaseUrl}/storage/v1/object/public/blog-covers/${filename}`;\nconsole.log(`Obraz wgrany: ${publicUrl}`);\n\nreturn [{ json: { cover_image: publicUrl, article } }];"
+        "jsCode": "// Wyciągnij base64 z odpowiedzi Gemini Image API\n// i wgraj do Supabase Storage\n\nconst imageResponse = $input.first().json;\nconst article = $('Parsuj odpowiedź AI').first().json;\n\n// Szukamy części z obrazem w odpowiedzi\nconst parts = imageResponse.candidates?.[0]?.content?.parts || [];\nconst imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));\n\nif (!imagePart) {\n  // Brak obrazu — kontynuujemy bez okładki\n  console.warn('Gemini nie wygenerował obrazu — artykuł zostanie opublikowany bez okładki.');\n  return [{ json: { cover_image: null, article } }];\n}\n\nconst base64Data = imagePart.inlineData.data;\nconst mimeType = imagePart.inlineData.mimeType || 'image/png';\nconst ext = mimeType.split('/')[1] || 'png';\nconst filename = `blog-cover-${article.slug}-${Date.now()}.${ext}`;\n\n// Zdekoduj base64 do binary\nconst imageBuffer = Buffer.from(base64Data, 'base64');\n\n// Wgraj do Supabase Storage\nconst supabaseUrl = $vars.SUPABASE_URL;\nconst serviceKey = $vars.SUPABASE_SERVICE_KEY;\n\nif (!supabaseUrl || !serviceKey) {\n  throw new Error('Brak zmiennych SUPABASE_URL lub SUPABASE_SERVICE_KEY w n8n.');\n}\n\nconst uploadResponse = await fetch(\n  `${supabaseUrl}/storage/v1/object/blog-covers/${filename}`,\n  {\n    method: 'POST',\n    headers: {\n      'Authorization': `Bearer ${serviceKey}`,\n      'Content-Type': mimeType,\n      'x-upsert': 'true'\n    },\n    body: imageBuffer\n  }\n);\n\nif (!uploadResponse.ok) {\n  const err = await uploadResponse.text();\n  console.error('Błąd uploadu do Supabase Storage:', err);\n  return [{ json: { cover_image: null, article } }];\n}\n\n// Publiczny URL obrazu\nconst publicUrl = `${supabaseUrl}/storage/v1/object/public/blog-covers/${filename}`;\nconsole.log(`Obraz wgrany: ${publicUrl}`);\n\nreturn [{ json: { cover_image: publicUrl, article } }];"
       },
       "id": "upload-image",
       "name": "Wgraj obraz do Supabase Storage",
@@ -156,13 +156,13 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.NEXT_SITE_URL }}/api/blog/publish",
+        "url": "={{ $vars.NEXT_SITE_URL }}/api/blog/publish",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "x-webhook-secret",
-              "value": "={{ $env.N8N_WEBHOOK_SECRET }}"
+              "value": "={{ $vars.N8N_WEBHOOK_SECRET }}"
             },
             {
               "name": "Content-Type",
