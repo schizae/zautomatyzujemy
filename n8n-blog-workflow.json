@@ -53,7 +53,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parsowanie RSS XML i ekstrakcja artykułów\nconst items = [];\n\nfor (const item of $input.all()) {\n  try {\n    const xml = item.json.data || item.json.body || '';\n    const source = item.json.source || 'Unknown';\n    \n    // Prosta ekstrakcja tytułów i opisów z RSS\n    const titleMatches = [...xml.matchAll(/<item[^>]*>[\\s\\S]*?<title[^>]*><!\\[CDATA\\[([^\\]]+)\\]\\]><\\/title>[\\s\\S]*?<\\/item>/g)];\n    const simpleTitles = [...xml.matchAll(/<title>([^<]{10,200})<\\/title>/g)];\n    const descriptions = [...xml.matchAll(/<description><!\\[CDATA\\[([^\\]]{50,1000})\\]\\]><\\/description>/g)];\n    const links = [...xml.matchAll(/<link>([^<]+)<\\/link>/g)];\n    \n    const titles = titleMatches.length > 0 \n      ? titleMatches.map(m => m[1])\n      : simpleTitles.slice(1, 6).map(m => m[1]); // pomijamy pierwszy (tytuł kanału)\n    \n    for (let i = 0; i < Math.min(titles.length, 3); i++) {\n      items.push({\n        json: {\n          source,\n          title: titles[i] || '',\n          description: descriptions[i]?.[1] || '',\n          link: links[i + 1]?.[1] || ''\n        }\n      });\n    }\n  } catch (e) {\n    // ignorujemy błędy parsowania\n  }\n}\n\n// Zwracamy max 15 artykułów (po ~2-3 z każdego feedu)\nreturn items.slice(0, 15);"
+        "jsCode": "// Parsowanie RSS XML i ekstrakcja artykułów\nconst items = [];\n\nfor (const item of $input.all()) {\n  try {\n    const xml = item.json.data || item.json.body || '';\n    const source = item.json.source || 'Unknown';\n    \n    const titleMatches = [...xml.matchAll(/<item[^>]*>[\\s\\S]*?<title[^>]*><!\\[CDATA\\[([^\\]]+)\\]\\]><\\/title>[\\s\\S]*?<\\/item>/g)];\n    const simpleTitles = [...xml.matchAll(/<title>([^<]{10,200})<\\/title>/g)];\n    const descriptions = [...xml.matchAll(/<description><!\\[CDATA\\[([^\\]]{50,1000})\\]\\]><\\/description>/g)];\n    \n    const titles = titleMatches.length > 0\n      ? titleMatches.map(m => m[1])\n      : simpleTitles.slice(1, 6).map(m => m[1]);\n    \n    for (let i = 0; i < Math.min(titles.length, 3); i++) {\n      items.push({\n        json: {\n          source,\n          title: titles[i] || '',\n          description: descriptions[i]?.[1] || ''\n        }\n      });\n    }\n  } catch (e) {\n    // ignorujemy błędy parsowania\n  }\n}\n\nreturn items.slice(0, 15);"
       },
       "id": "parse-rss",
       "name": "Parsuj RSS",
@@ -75,8 +75,6 @@
       "parameters": {
         "method": "POST",
         "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpQueryAuth",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -87,14 +85,8 @@
           ]
         },
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "contents",
-              "value": "=[{\"parts\": [{\"text\": \"Jesteś redaktorem bloga firmy Zautomatyzujemy.pl — agencji automatyzacji AI i n8n dla firm MŚP.\\n\\nPoniżej masz listę najnowszych artykułów z branżowych portali o AI i automatyzacji:\\n\\n{{ $json.articles_digest }}\\n\\nTwoje zadanie:\\n1. Wybierz JEDEN najciekawszy temat tygodnia — taki, który będzie wartościowy dla właścicieli firm MŚP w Polsce.\\n2. Napisz kompletny artykuł blogowy po polsku na ten temat.\\n\\nOdpowiedz WYŁĄCZNIE w formacie JSON (bez markdown code blocks):\\n{\\n  \\\"title\\\": \\\"tytuł artykułu (max 100 znaków)\\\",\\n  \\\"slug\\\": \\\"slug-url-z-myslnikami\\\",\\n  \\\"excerpt\\\": \\\"opis SEO max 200 znaków\\\",\\n  \\\"content\\\": \\\"pełna treść w Markdown, min 700 słów, z nagłówkami ## i ###\\\",\\n  \\\"tags\\\": [\\\"tag1\\\", \\\"tag2\\\", \\\"tag3\\\"],\\n  \\\"image_query\\\": \\\"angielskie słowa kluczowe do wyszukania zdjęcia na Unsplash (np. artificial intelligence robot)\\\",\\n  \\\"rationale\\\": \\\"1 zdanie dlaczego wybrałeś ten temat\\\"\\n}\\n\\nWymagania artykułu:\\n- Pisz profesjonalnie, ale przystępnie dla właścicieli MŚP\\n- Wyjaśnij praktyczne zastosowania dla biznesu\\n- Unikaj zbyt technicznego żargonu\\n- Zakończ zachętą do automatyzacji procesów\"}]}]"
-            }
-          ]
-        },
+        "contentType": "json",
+        "body": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Jesteś redaktorem bloga firmy Zautomatyzujemy.pl — agencji automatyzacji AI i n8n dla firm MŚP.\\n\\nPoniżej masz listę najnowszych artykułów z branżowych portali o AI i automatyzacji:\\n\\n{{ $json.articles_digest }}\\n\\nTwoje zadanie:\\n1. Wybierz JEDEN najciekawszy temat tygodnia — taki, który będzie wartościowy dla właścicieli firm MŚP w Polsce.\\n2. Napisz kompletny artykuł blogowy po polsku na ten temat.\\n\\nOdpowiedz WYŁĄCZNIE w formacie JSON (bez markdown code blocks):\\n{\\n  \\\"title\\\": \\\"tytuł artykułu (max 100 znaków)\\\",\\n  \\\"slug\\\": \\\"slug-url-z-myslnikami\\\",\\n  \\\"excerpt\\\": \\\"opis SEO max 200 znaków\\\",\\n  \\\"content\\\": \\\"pełna treść w Markdown, min 700 słów, z nagłówkami ## i ###\\\",\\n  \\\"tags\\\": [\\\"tag1\\\", \\\"tag2\\\", \\\"tag3\\\"],\\n  \\\"image_prompt\\\": \\\"angielski prompt do wygenerowania okładki artykułu (np. futuristic robot working in office, photorealistic, 16:9)\\\",\\n  \\\"rationale\\\": \\\"1 zdanie dlaczego wybrałeś ten temat\\\"\\n}\\n\\nWymagania artykułu:\\n- Pisz profesjonalnie, ale przystępnie dla właścicieli MŚP\\n- Wyjaśnij praktyczne zastosowania dla biznesu\\n- Unikaj zbyt technicznego żargonu\\n- Zakończ zachętą do automatyzacji procesów\"\n    }]\n  }]\n}",
         "options": {
           "timeout": 60000
         }
@@ -107,7 +99,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Wyciągnij i sparsuj JSON z odpowiedzi Gemini\nconst response = $input.first().json;\nconst rawText = response.candidates?.[0]?.content?.parts?.[0]?.text || '';\n\n// Usuń ewentualne markdown code blocks\nconst cleanText = rawText.replace(/^```json\\n?/, '').replace(/\\n?```$/, '').trim();\n\nlet article;\ntry {\n  article = JSON.parse(cleanText);\n} catch (e) {\n  throw new Error('AI nie zwróciło poprawnego JSON: ' + rawText.substring(0, 200));\n}\n\n// Walidacja pól\nif (!article.title || !article.slug || !article.content) {\n  throw new Error('Brakuje wymaganych pól w odpowiedzi AI.');\n}\n\n// Normalizuj slug\narticle.slug = article.slug\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/^-|-$/g, '');\n\nreturn [{ json: article }];"
+        "jsCode": "// Wyciągnij i sparsuj JSON z odpowiedzi Gemini\nconst response = $input.first().json;\nconst rawText = response.candidates?.[0]?.content?.parts?.[0]?.text || '';\n\n// Usuń ewentualne markdown code blocks\nconst cleanText = rawText\n  .replace(/^```json\\n?/, '')\n  .replace(/\\n?```$/, '')\n  .trim();\n\nlet article;\ntry {\n  article = JSON.parse(cleanText);\n} catch (e) {\n  throw new Error('AI nie zwróciło poprawnego JSON: ' + rawText.substring(0, 300));\n}\n\nif (!article.title || !article.slug || !article.content) {\n  throw new Error('Brakuje wymaganych pól w odpowiedzi AI.');\n}\n\n// Normalizuj slug\narticle.slug = article.slug\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/^-|-$/g, '');\n\nreturn [{ json: article }];"
       },
       "id": "parse-ai-response",
       "name": "Parsuj odpowiedź AI",
@@ -117,26 +109,49 @@
     },
     {
       "parameters": {
-        "url": "=https://api.unsplash.com/search/photos?query={{ encodeURIComponent($json.image_query || $json.title) }}&per_page=1&orientation=landscape&client_id={{ $env.UNSPLASH_ACCESS_KEY }}",
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Generate a professional, high-quality blog cover image for an article titled: {{ $json.title }}\\n\\nImage requirements:\\n- Style: {{ $json.image_prompt || 'modern, professional, tech-themed, photorealistic' }}\\n- Aspect ratio: 16:9 landscape\\n- No text overlays\\n- Clean, minimalist composition suitable for a Polish business automation blog\"\n    }]\n  }],\n  \"generationConfig\": {\n    \"responseModalities\": [\"IMAGE\", \"TEXT\"]\n  }\n}",
         "options": {
-          "timeout": 10000
+          "timeout": 60000
         }
       },
-      "id": "unsplash-search",
-      "name": "Pobierz zdjęcie (Unsplash)",
+      "id": "generate-image",
+      "name": "Generuj okładkę (Gemini Imagen)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1780, 380]
     },
     {
       "parameters": {
-        "jsCode": "// Połącz artykuł z URL zdjęcia\nconst article = $('Parsuj odpowiedź AI').first().json;\nconst unsplashData = $input.first().json;\n\nconst photo = unsplashData.results?.[0];\nconst imageUrl = photo?.urls?.regular || photo?.urls?.small || null;\n\n// Przygotuj payload dla webhooka /api/blog/publish\nreturn [{\n  json: {\n    slug: article.slug,\n    title: article.title,\n    content: article.content,\n    excerpt: article.excerpt || null,\n    cover_image: imageUrl,\n    author: 'Zautomatyzujemy',\n    tags: article.tags || [],\n    published_at: new Date().toISOString()\n  }\n}];"
+        "jsCode": "// Wyciągnij base64 z odpowiedzi Gemini Image API\n// i wgraj do Supabase Storage\n\nconst imageResponse = $input.first().json;\nconst article = $('Parsuj odpowiedź AI').first().json;\n\n// Szukamy części z obrazem w odpowiedzi\nconst parts = imageResponse.candidates?.[0]?.content?.parts || [];\nconst imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));\n\nif (!imagePart) {\n  // Brak obrazu — kontynuujemy bez okładki\n  console.warn('Gemini nie wygenerował obrazu — artykuł zostanie opublikowany bez okładki.');\n  return [{ json: { cover_image: null, article } }];\n}\n\nconst base64Data = imagePart.inlineData.data;\nconst mimeType = imagePart.inlineData.mimeType || 'image/png';\nconst ext = mimeType.split('/')[1] || 'png';\nconst filename = `blog-cover-${article.slug}-${Date.now()}.${ext}`;\n\n// Zdekoduj base64 do binary\nconst imageBuffer = Buffer.from(base64Data, 'base64');\n\n// Wgraj do Supabase Storage\nconst supabaseUrl = $env.SUPABASE_URL;\nconst serviceKey = $env.SUPABASE_SERVICE_KEY;\n\nif (!supabaseUrl || !serviceKey) {\n  throw new Error('Brak zmiennych SUPABASE_URL lub SUPABASE_SERVICE_KEY w n8n.');\n}\n\nconst uploadResponse = await fetch(\n  `${supabaseUrl}/storage/v1/object/blog-covers/${filename}`,\n  {\n    method: 'POST',\n    headers: {\n      'Authorization': `Bearer ${serviceKey}`,\n      'Content-Type': mimeType,\n      'x-upsert': 'true'\n    },\n    body: imageBuffer\n  }\n);\n\nif (!uploadResponse.ok) {\n  const err = await uploadResponse.text();\n  console.error('Błąd uploadu do Supabase Storage:', err);\n  return [{ json: { cover_image: null, article } }];\n}\n\n// Publiczny URL obrazu\nconst publicUrl = `${supabaseUrl}/storage/v1/object/public/blog-covers/${filename}`;\nconsole.log(`Obraz wgrany: ${publicUrl}`);\n\nreturn [{ json: { cover_image: publicUrl, article } }];"
+      },
+      "id": "upload-image",
+      "name": "Wgraj obraz do Supabase Storage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Przygotuj finalny payload dla webhooka /api/blog/publish\nconst { cover_image, article } = $input.first().json;\n\nreturn [{\n  json: {\n    slug: article.slug,\n    title: article.title,\n    content: article.content,\n    excerpt: article.excerpt || null,\n    cover_image: cover_image || null,\n    author: 'Zautomatyzujemy',\n    tags: article.tags || [],\n    published_at: new Date().toISOString()\n  }\n}];"
       },
       "id": "prepare-payload",
       "name": "Przygotuj payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2000, 380]
+      "position": [2220, 380]
     },
     {
       "parameters": {
@@ -166,17 +181,17 @@
       "name": "Opublikuj na stronie",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2220, 380]
+      "position": [2440, 380]
     },
     {
       "parameters": {
-        "jsCode": "// Log sukcesu\nconst result = $input.first().json;\nconst article = $('Przygotuj payload').first().json;\n\nconsole.log(`✅ Opublikowano artykuł: \"${article.title}\"`);\nconsole.log(`URL: ${result.url || '/blog/' + article.slug}`);\n\nreturn [{ json: { success: true, title: article.title, url: result.url } }];"
+        "jsCode": "const result = $input.first().json;\nconst article = $('Przygotuj payload').first().json;\n\nconsole.log(`✅ Opublikowano: \"${article.title}\"`);\nconsole.log(`URL: ${result.url || '/blog/' + article.slug}`);\n\nreturn [{ json: { success: true, title: article.title, url: result.url } }];"
       },
       "id": "log-success",
       "name": "Log sukcesu",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2440, 380]
+      "position": [2660, 380]
     }
   ],
   "connections": {
@@ -202,9 +217,12 @@
       "main": [[{ "node": "Parsuj odpowiedź AI", "type": "main", "index": 0 }]]
     },
     "Parsuj odpowiedź AI": {
-      "main": [[{ "node": "Pobierz zdjęcie (Unsplash)", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Generuj okładkę (Gemini Imagen)", "type": "main", "index": 0 }]]
     },
-    "Pobierz zdjęcie (Unsplash)": {
+    "Generuj okładkę (Gemini Imagen)": {
+      "main": [[{ "node": "Wgraj obraz do Supabase Storage", "type": "main", "index": 0 }]]
+    },
+    "Wgraj obraz do Supabase Storage": {
       "main": [[{ "node": "Przygotuj payload", "type": "main", "index": 0 }]]
     },
     "Przygotuj payload": {
@@ -215,8 +233,7 @@
     }
   },
   "settings": {
-    "executionOrder": "v1",
-    "errorWorkflow": ""
+    "executionOrder": "v1"
   },
   "meta": {
     "instanceId": "zautomatyzujemy-blog-automation"
