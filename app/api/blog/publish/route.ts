@@ -16,7 +16,7 @@ const BlogPublishSchema = z.object({
   title: z.string().min(3).max(200),
   content: z.string().min(10),
   excerpt: z.string().max(500).optional(),
-  cover_image: z.string().url().optional(),
+  cover_image: z.string().url().nullable().optional(),
   author: z.string().max(100).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
   published_at: z.string().datetime().optional(),
