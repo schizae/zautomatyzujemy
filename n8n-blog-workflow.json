@@ -1,0 +1,224 @@
+{
+  "name": "Automatyczny Blog — Zautomatyzujemy.pl",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [5],
+              "triggerAtHour": 10,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Co piątek o 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Uruchom ręcznie",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 460]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lista RSS feedów branżowych\nconst feeds = [\n  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'TechCrunch AI' },\n  { url: 'https://venturebeat.com/category/ai/feed/', source: 'VentureBeat AI' },\n  { url: 'https://www.wired.com/feed/category/artificial-intelligence/latest/rss', source: 'Wired AI' },\n  { url: 'https://www.technologyreview.com/feed/', source: 'MIT Tech Review' },\n  { url: 'https://openai.com/news/rss/', source: 'OpenAI News' },\n  { url: 'https://www.anthropic.com/news/rss', source: 'Anthropic News' }\n];\n\nreturn feeds.map(f => ({ json: f }));"
+      },
+      "id": "rss-list",
+      "name": "Lista feedów RSS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 380]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "fetch-rss",
+      "name": "Pobierz RSS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsowanie RSS XML i ekstrakcja artykułów\nconst items = [];\n\nfor (const item of $input.all()) {\n  try {\n    const xml = item.json.data || item.json.body || '';\n    const source = item.json.source || 'Unknown';\n    \n    // Prosta ekstrakcja tytułów i opisów z RSS\n    const titleMatches = [...xml.matchAll(/<item[^>]*>[\\s\\S]*?<title[^>]*><!\\[CDATA\\[([^\\]]+)\\]\\]><\\/title>[\\s\\S]*?<\\/item>/g)];\n    const simpleTitles = [...xml.matchAll(/<title>([^<]{10,200})<\\/title>/g)];\n    const descriptions = [...xml.matchAll(/<description><!\\[CDATA\\[([^\\]]{50,1000})\\]\\]><\\/description>/g)];\n    const links = [...xml.matchAll(/<link>([^<]+)<\\/link>/g)];\n    \n    const titles = titleMatches.length > 0 \n      ? titleMatches.map(m => m[1])\n      : simpleTitles.slice(1, 6).map(m => m[1]); // pomijamy pierwszy (tytuł kanału)\n    \n    for (let i = 0; i < Math.min(titles.length, 3); i++) {\n      items.push({\n        json: {\n          source,\n          title: titles[i] || '',\n          description: descriptions[i]?.[1] || '',\n          link: links[i + 1]?.[1] || ''\n        }\n      });\n    }\n  } catch (e) {\n    // ignorujemy błędy parsowania\n  }\n}\n\n// Zwracamy max 15 artykułów (po ~2-3 z każdego feedu)\nreturn items.slice(0, 15);"
+      },
+      "id": "parse-rss",
+      "name": "Parsuj RSS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zbierz wszystkie artykuły w jeden string do analizy przez AI\nconst articles = $input.all().map((item, i) => {\n  const { source, title, description } = item.json;\n  return `${i + 1}. [${source}] ${title}\\n   ${description || '(brak opisu)'}`.trim();\n}).join('\\n\\n');\n\nreturn [{ json: { articles_digest: articles } }];"
+      },
+      "id": "collect-articles",
+      "name": "Zbierz artykuły",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents",
+              "value": "=[{\"parts\": [{\"text\": \"Jesteś redaktorem bloga firmy Zautomatyzujemy.pl — agencji automatyzacji AI i n8n dla firm MŚP.\\n\\nPoniżej masz listę najnowszych artykułów z branżowych portali o AI i automatyzacji:\\n\\n{{ $json.articles_digest }}\\n\\nTwoje zadanie:\\n1. Wybierz JEDEN najciekawszy temat tygodnia — taki, który będzie wartościowy dla właścicieli firm MŚP w Polsce.\\n2. Napisz kompletny artykuł blogowy po polsku na ten temat.\\n\\nOdpowiedz WYŁĄCZNIE w formacie JSON (bez markdown code blocks):\\n{\\n  \\\"title\\\": \\\"tytuł artykułu (max 100 znaków)\\\",\\n  \\\"slug\\\": \\\"slug-url-z-myslnikami\\\",\\n  \\\"excerpt\\\": \\\"opis SEO max 200 znaków\\\",\\n  \\\"content\\\": \\\"pełna treść w Markdown, min 700 słów, z nagłówkami ## i ###\\\",\\n  \\\"tags\\\": [\\\"tag1\\\", \\\"tag2\\\", \\\"tag3\\\"],\\n  \\\"image_query\\\": \\\"angielskie słowa kluczowe do wyszukania zdjęcia na Unsplash (np. artificial intelligence robot)\\\",\\n  \\\"rationale\\\": \\\"1 zdanie dlaczego wybrałeś ten temat\\\"\\n}\\n\\nWymagania artykułu:\\n- Pisz profesjonalnie, ale przystępnie dla właścicieli MŚP\\n- Wyjaśnij praktyczne zastosowania dla biznesu\\n- Unikaj zbyt technicznego żargonu\\n- Zakończ zachętą do automatyzacji procesów\"}]}]"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "ai-select-and-write",
+      "name": "AI — Wybierz temat i napisz artykuł",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Wyciągnij i sparsuj JSON z odpowiedzi Gemini\nconst response = $input.first().json;\nconst rawText = response.candidates?.[0]?.content?.parts?.[0]?.text || '';\n\n// Usuń ewentualne markdown code blocks\nconst cleanText = rawText.replace(/^```json\\n?/, '').replace(/\\n?```$/, '').trim();\n\nlet article;\ntry {\n  article = JSON.parse(cleanText);\n} catch (e) {\n  throw new Error('AI nie zwróciło poprawnego JSON: ' + rawText.substring(0, 200));\n}\n\n// Walidacja pól\nif (!article.title || !article.slug || !article.content) {\n  throw new Error('Brakuje wymaganych pól w odpowiedzi AI.');\n}\n\n// Normalizuj slug\narticle.slug = article.slug\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/^-|-$/g, '');\n\nreturn [{ json: article }];"
+      },
+      "id": "parse-ai-response",
+      "name": "Parsuj odpowiedź AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 380]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.unsplash.com/search/photos?query={{ encodeURIComponent($json.image_query || $json.title) }}&per_page=1&orientation=landscape&client_id={{ $env.UNSPLASH_ACCESS_KEY }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "unsplash-search",
+      "name": "Pobierz zdjęcie (Unsplash)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Połącz artykuł z URL zdjęcia\nconst article = $('Parsuj odpowiedź AI').first().json;\nconst unsplashData = $input.first().json;\n\nconst photo = unsplashData.results?.[0];\nconst imageUrl = photo?.urls?.regular || photo?.urls?.small || null;\n\n// Przygotuj payload dla webhooka /api/blog/publish\nreturn [{\n  json: {\n    slug: article.slug,\n    title: article.title,\n    content: article.content,\n    excerpt: article.excerpt || null,\n    cover_image: imageUrl,\n    author: 'Zautomatyzujemy',\n    tags: article.tags || [],\n    published_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "prepare-payload",
+      "name": "Przygotuj payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NEXT_SITE_URL }}/api/blog/publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{ $env.N8N_WEBHOOK_SECRET }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "publish-to-site",
+      "name": "Opublikuj na stronie",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log sukcesu\nconst result = $input.first().json;\nconst article = $('Przygotuj payload').first().json;\n\nconsole.log(`✅ Opublikowano artykuł: \"${article.title}\"`);\nconsole.log(`URL: ${result.url || '/blog/' + article.slug}`);\n\nreturn [{ json: { success: true, title: article.title, url: result.url } }];"
+      },
+      "id": "log-success",
+      "name": "Log sukcesu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 380]
+    }
+  ],
+  "connections": {
+    "Co piątek o 10:00": {
+      "main": [[{ "node": "Lista feedów RSS", "type": "main", "index": 0 }]]
+    },
+    "Uruchom ręcznie": {
+      "main": [[{ "node": "Lista feedów RSS", "type": "main", "index": 0 }]]
+    },
+    "Lista feedów RSS": {
+      "main": [[{ "node": "Pobierz RSS", "type": "main", "index": 0 }]]
+    },
+    "Pobierz RSS": {
+      "main": [[{ "node": "Parsuj RSS", "type": "main", "index": 0 }]]
+    },
+    "Parsuj RSS": {
+      "main": [[{ "node": "Zbierz artykuły", "type": "main", "index": 0 }]]
+    },
+    "Zbierz artykuły": {
+      "main": [[{ "node": "AI — Wybierz temat i napisz artykuł", "type": "main", "index": 0 }]]
+    },
+    "AI — Wybierz temat i napisz artykuł": {
+      "main": [[{ "node": "Parsuj odpowiedź AI", "type": "main", "index": 0 }]]
+    },
+    "Parsuj odpowiedź AI": {
+      "main": [[{ "node": "Pobierz zdjęcie (Unsplash)", "type": "main", "index": 0 }]]
+    },
+    "Pobierz zdjęcie (Unsplash)": {
+      "main": [[{ "node": "Przygotuj payload", "type": "main", "index": 0 }]]
+    },
+    "Przygotuj payload": {
+      "main": [[{ "node": "Opublikuj na stronie", "type": "main", "index": 0 }]]
+    },
+    "Opublikuj na stronie": {
+      "main": [[{ "node": "Log sukcesu", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": ""
+  },
+  "meta": {
+    "instanceId": "zautomatyzujemy-blog-automation"
+  }
+}
