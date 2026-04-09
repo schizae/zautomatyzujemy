@@ -30,7 +30,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Lista RSS feedów branżowych\nconst feeds = [\n  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'TechCrunch AI' },\n  { url: 'https://venturebeat.com/category/ai/feed/', source: 'VentureBeat AI' },\n  { url: 'https://www.wired.com/feed/category/artificial-intelligence/latest/rss', source: 'Wired AI' },\n  { url: 'https://www.technologyreview.com/feed/', source: 'MIT Tech Review' },\n  { url: 'https://openai.com/news/rss/', source: 'OpenAI News' },\n  { url: 'https://www.anthropic.com/news/rss', source: 'Anthropic News' }\n];\n\nreturn feeds.map(f => ({ json: f }));"
+        "jsCode": "// Lista RSS feedów branżowych (zweryfikowane 2026-04)\nconst feeds = [\n  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'TechCrunch AI' },\n  { url: 'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml', source: 'The Verge AI' },\n  { url: 'https://www.wired.com/feed/rss', source: 'Wired' },\n  { url: 'https://www.technologyreview.com/feed/', source: 'MIT Tech Review' },\n  { url: 'https://openai.com/news/rss.xml', source: 'OpenAI News' }\n];\n\nreturn feeds.map(f => ({ json: f }));"
       },
       "id": "rss-list",
       "name": "Lista feedów RSS",
