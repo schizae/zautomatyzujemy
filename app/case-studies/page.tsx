@@ -8,6 +8,9 @@ import type { CaseStudy } from '@/types'
 export const metadata: Metadata = {
   title: 'Case Study — Realizacje Zautomatyzujemy.pl',
   description: 'Przykłady wdrożeń AI i automatyzacji dla firm MŚP. Sprawdź nasze realizacje.',
+  alternates: {
+    canonical: '/case-studies',
+  },
 }
 
 export default async function CaseStudiesPage() {

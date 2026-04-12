@@ -12,6 +12,9 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Blog — Baza Wiedzy',
   description: 'Artykuły o automatyzacji AI, n8n i transformacji cyfrowej dla MŚP.',
+  alternates: {
+    canonical: '/blog',
+  },
 }
 
 export default async function BlogPage() {

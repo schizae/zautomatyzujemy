@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { CaseStudy } from '@/types'
 
@@ -71,11 +72,12 @@ export async function CaseStudySection() {
               {/* Image */}
               <div className="relative aspect-video rounded-3xl overflow-hidden mb-8">
                 {cs.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={cs.image}
                     alt={cs.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale opacity-40 group-hover:opacity-100 group-hover:grayscale-0"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale opacity-40 group-hover:opacity-100 group-hover:grayscale-0"
                   />
                 ) : (
                   <div className="w-full h-full bg-[#1e201e] flex items-center justify-center">

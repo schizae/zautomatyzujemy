@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { PostPreview } from '@/types'
@@ -96,12 +97,15 @@ export async function BlogPreview() {
               <div className="glass-card p-4 rounded-[2rem] border border-[#3d4949]/10 mb-6 hover:border-[#70e5ea]/30 transition-all">
                 {/* Image */}
                 {post.cover_image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={post.cover_image}
-                    alt={post.title}
-                    className="w-full h-48 object-cover rounded-2xl mb-6"
-                  />
+                  <div className="relative w-full h-48 mb-6">
+                    <Image
+                      src={post.cover_image}
+                      alt={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover rounded-2xl"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-48 rounded-2xl mb-6 bg-[#282a28] flex items-center justify-center">
                     <span className="text-[#70e5ea]/30 text-4xl font-headline font-black">AI</span>

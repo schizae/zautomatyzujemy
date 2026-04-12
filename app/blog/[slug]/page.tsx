@@ -6,7 +6,11 @@ import { ArrowLeft } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
+import { JsonLd } from '@/components/seo/json-ld'
 import type { Post } from '@/types'
+
+const SITE_URL =
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -25,17 +29,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('posts')
-    .select('title, excerpt, cover_image')
+    .select('title, excerpt, cover_image, published_at, updated_at, author')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
 
   if (!data) return { title: 'Artykuł nie znaleziony' }
 
+  const description = data.excerpt ?? data.title
+
   return {
-    title: `${data.title} — Blog Zautomatyzujemy.pl`,
-    description: data.excerpt ?? undefined,
-    openGraph: data.cover_image ? { images: [data.cover_image] } : undefined,
+    title: data.title,
+    description,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      title: data.title,
+      description,
+      url: `/blog/${slug}`,
+      images: data.cover_image ? [{ url: data.cover_image }] : [],
+      publishedTime: data.published_at ?? undefined,
+      modifiedTime: data.updated_at ?? undefined,
+      authors: data.author ? [data.author] : ['Zautomatyzujemy.pl'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: data.title,
+      description,
+      images: data.cover_image ? [data.cover_image] : [],
+    },
   }
 }
 
@@ -55,6 +79,56 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt ?? post.title,
+          image: post.cover_image ?? undefined,
+          datePublished: post.published_at ?? post.created_at,
+          dateModified: post.updated_at ?? post.published_at ?? post.created_at,
+          author: {
+            '@type': 'Person',
+            name: post.author ?? 'Zautomatyzujemy.pl',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Zautomatyzujemy.pl',
+            url: SITE_URL,
+          },
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${SITE_URL}/blog/${post.slug}`,
+          },
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Strona główna',
+              item: SITE_URL,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Blog',
+              item: `${SITE_URL}/blog`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: post.title,
+              item: `${SITE_URL}/blog/${post.slug}`,
+            },
+          ],
+        }}
+      />
       {/* Header */}
       <div className="bg-slate-950 pt-20 pb-16 px-6">
         <div className="max-w-3xl mx-auto">

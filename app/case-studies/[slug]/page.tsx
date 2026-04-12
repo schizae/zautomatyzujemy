@@ -1,11 +1,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
+import { JsonLd } from '@/components/seo/json-ld'
 import type { CaseStudy } from '@/types'
+
+const SITE_URL =
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -22,10 +27,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .single()
 
   if (!data) return { title: 'Realizacja nie znaleziona' }
+
+  const description = data.description ?? data.title
+
   return {
-    title: `${data.title} — Case Study Zautomatyzujemy.pl`,
-    description: data.description,
-    openGraph: data.cover_image ? { images: [data.cover_image] } : undefined,
+    title: data.title,
+    description,
+    alternates: {
+      canonical: `/case-studies/${slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      title: data.title,
+      description,
+      url: `/case-studies/${slug}`,
+      images: data.cover_image ? [{ url: data.cover_image }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: data.title,
+      description,
+      images: data.cover_image ? [data.cover_image] : [],
+    },
   }
 }
 
@@ -44,6 +67,55 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: item.title,
+          description: item.description ?? item.title,
+          image: item.cover_image ?? undefined,
+          author: {
+            '@type': 'Organization',
+            name: 'Zautomatyzujemy.pl',
+            url: SITE_URL,
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Zautomatyzujemy.pl',
+            url: SITE_URL,
+          },
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${SITE_URL}/case-studies/${item.slug}`,
+          },
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Strona główna',
+              item: SITE_URL,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Case Study',
+              item: `${SITE_URL}/case-studies`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: item.title,
+              item: `${SITE_URL}/case-studies/${item.slug}`,
+            },
+          ],
+        }}
+      />
       {/* Header */}
       <div className="bg-slate-950 pt-20 pb-16 px-6">
         <div className="max-w-3xl mx-auto">
@@ -70,12 +142,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
       {/* Cover image */}
       {item.cover_image && (
-        <div className="max-w-3xl mx-auto px-6 -mt-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div className="relative max-w-3xl mx-auto px-6 -mt-8 aspect-video">
+          <Image
             src={item.cover_image}
             alt={item.title}
-            className="w-full rounded-2xl shadow-xl object-cover aspect-video"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="rounded-2xl shadow-xl object-cover"
           />
         </div>
       )}

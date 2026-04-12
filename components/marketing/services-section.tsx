@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Brain, Bot, GraduationCap, Building2, ArrowRight } from 'lucide-react'
 
 const services = [
@@ -128,12 +129,15 @@ export function ServicesSection() {
             </p>
           </div>
           <div className="hidden lg:block relative z-10 flex-1 h-full">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHuh36ION_jAL0INUvstCyK6Jf2BWe_-YuLoxwwYMpQS0EeHAmu2YhCrjp3mfnUB3-Un6gOZcUuGC3inwz1kOMU4TVdHPu-lAzAGdEbsmxFTvmAGQ1POzxCSY_-RI1SUFh_A-IqiRulz6nUvD0XdazuqVT4E3C_vU6JWSmBikfE3_otsam3BE_C1RjA7HyOUV-i0cP4qaf9C3CgAP7jogorOM5mU3nEyIDTCBwq1YVsVGskMN7njn5S5gQ2WzOSINPxrixbrADAZOq"
-              alt="Highly detailed computer circuitry glowing with cyan light"
-              className="rounded-2xl object-cover h-48 w-full opacity-50 grayscale contrast-125"
-            />
+            <div className="relative h-48 w-full">
+              <Image
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHuh36ION_jAL0INUvstCyK6Jf2BWe_-YuLoxwwYMpQS0EeHAmu2YhCrjp3mfnUB3-Un6gOZcUuGC3inwz1kOMU4TVdHPu-lAzAGdEbsmxFTvmAGQ1POzxCSY_-RI1SUFh_A-IqiRulz6nUvD0XdazuqVT4E3C_vU6JWSmBikfE3_otsam3BE_C1RjA7HyOUV-i0cP4qaf9C3CgAP7jogorOM5mU3nEyIDTCBwq1YVsVGskMN7njn5S5gQ2WzOSINPxrixbrADAZOq"
+                alt="Szczegółowe obwody komputerowe świecące cyjanowym światłem — wdrożenia AI"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="rounded-2xl object-cover opacity-50 grayscale contrast-125"
+              />
+            </div>
           </div>
         </div>
       </div>

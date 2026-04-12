@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 
 const ease = [0.21, 0.47, 0.32, 0.98] as const
@@ -95,11 +96,13 @@ export function HeroSection({ content }: HeroSectionProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.4, ease }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_0O7fIuIol2OysfIT6g2TQOonKCC3u9yHtt-Q7d7f4qecegF2cPoeci8oifEd8LS9J2uJTxKD4CUu4ZxyikZQzp2NTF2-WwUacceI-pHcqGurB_yBG-ofdxhl-GvXyI9ayVZjOqC7GIa-kE_dBEgfZfxUBnQLewzklw4uN4XTfwSlz6jqHVc33dh7jBivpxaraamZrSAst7jGoIUWi48GuXueOSLbLW409fYmkRaHKtGa0cu0YBEt81HABO-LEKRjZSWW4rpGVKN"
-              alt="Futuristic crystalline AI structure"
-              className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+              alt="Futurystyczna krystaliczna struktura AI symbolizująca automatyzację procesów"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#121412] via-transparent to-transparent" />
           </motion.div>
