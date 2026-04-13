@@ -4,6 +4,7 @@ import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
 import { ServicesSection } from '@/components/marketing/services-section'
 import { CaseStudySection } from '@/components/marketing/case-study-section'
+import { AboutSection } from '@/components/marketing/about-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
@@ -14,16 +15,16 @@ const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
-  title: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI | Chatboty, n8n, LLM',
+  title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm | Chatboty, n8n, AI Act',
   description:
-    'Wdrażamy AI i automatyzacje dla firm. Chatboty, integracje n8n, RAG, LLM — oszczędzaj czas i redukuj koszty. Sesja strategiczna gratis.',
+    'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, n8n, zgodność z AI Act. Bezpłatna konsultacja.',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI',
+    title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     description:
-      'Wdrażamy AI i automatyzacje dla firm. Chatboty, integracje n8n, RAG, LLM — oszczędzaj czas i redukuj koszty.',
+      'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, n8n, zgodność z AI Act.',
     url: SITE_URL,
     type: 'website',
   },
@@ -69,6 +70,7 @@ export default async function HomePage() {
         <HeroSection content={heroContent} />
         <ServicesSection />
         <CaseStudySection />
+        <AboutSection />
         <BlogPreview />
         <ContactSection />
       </main>

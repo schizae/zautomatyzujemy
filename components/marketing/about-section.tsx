@@ -1,97 +1,138 @@
-import { Bot, Brain } from 'lucide-react'
-import {
-  SlideIn,
-  AnimatedCounter,
-  FloatingElement,
-} from '@/components/animations'
-import { createServiceClient } from '@/lib/supabase/server'
+'use client'
 
-export async function AboutSection() {
-  const supabase = createServiceClient()
-  const { data } = await supabase
-    .from('page_content')
-    .select('key, value')
-    .in('key', ['about_title', 'about_text'])
+import Image from 'next/image'
+import { SlideIn, FloatingElement } from '@/components/animations'
+import { CheckCircle2 } from 'lucide-react'
 
-  const content: Record<string, string> = Object.fromEntries(
-    (data ?? []).map((item: { key: string; value: string }) => [item.key, item.value])
-  )
-  const title = content['about_title'] ?? 'Dlaczego Automatyzacja?'
-  const text = content['about_text'] ?? 'Pomagamy firmom odzyskać czas i zasoby dzięki inteligentnym automatyzacjom opartym na AI i n8n.'
+const competences = [
+  { label: 'Automatyzacje n8n', desc: 'Workflow\'y łączące dziesiątki systemów' },
+  { label: 'LLM i chatboty RAG', desc: 'Asystenci AI znający Twój biznes' },
+  { label: 'Zgodność z AI Act', desc: 'Audyty, dokumentacja, szkolenia' },
+  { label: 'Wdrożenia dla MŚP', desc: 'Od analizy po gotowe rozwiązanie' },
+]
+
+export function AboutSection() {
   return (
-    <section className="py-24 bg-white" id="o-nas">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section className="py-32 bg-[#0d0f0d] px-6 md:px-8" id="o-nas">
+      <div className="max-w-screen-2xl mx-auto">
 
-          {/* Image — slides in from left */}
-          <SlideIn direction="left">
+        {/* Label */}
+        <div className="mb-16">
+          <span className="text-xs font-label uppercase tracking-widest text-[#70e5ea]">
+            O mnie
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+          {/* LEFT — Photo */}
+          <SlideIn direction="left" className="lg:col-span-5">
             <div className="relative">
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLkdCi-BdUmpLgnsYbzwt2kpE4f8WdFhflzmZIlPVZvuGwX3p9D6UVnay8RLks4sqqqnnwqRsEnJ8ulQxE3ykXvijhbD811FIdHkWleOIMNOQHd72jgEdBz3Jt1p8-7UmBmEJcdqZVRzYcpbef71L9AgbeoW5r9IMFE2Db70COV90xF9bowRCFObs23lPKbGptojxa5xTYfFrjwvmAs5smeDtDxzIksXDKPAi6s7mbOh2Ih1u_HHGqzcekXw28KV7HxVcDPCCtjDI"
-                  alt="Zespół współpracujący przy wdrożeniu AI"
-                  className="w-full h-full object-cover"
+
+              {/* Photo frame */}
+              <div className="relative rounded-[2.5rem] overflow-hidden border border-[#70e5ea]/15 shadow-[0_0_80px_rgba(112,229,234,0.08)]">
+                {/* Cyan corner accent top-left */}
+                <div className="absolute top-0 left-0 w-16 h-16 z-10 pointer-events-none">
+                  <div className="absolute top-4 left-4 w-6 h-px bg-[#70e5ea]/60" />
+                  <div className="absolute top-4 left-4 w-px h-6 bg-[#70e5ea]/60" />
+                </div>
+                {/* Cyan corner accent bottom-right */}
+                <div className="absolute bottom-0 right-0 w-16 h-16 z-10 pointer-events-none">
+                  <div className="absolute bottom-4 right-4 w-6 h-px bg-[#70e5ea]/60" />
+                  <div className="absolute bottom-4 right-4 w-px h-6 bg-[#70e5ea]/60" />
+                </div>
+
+                <Image
+                  src="/norbert.jpg"
+                  alt="Norbert — założyciel Zautomatyzujemy.pl"
+                  width={600}
+                  height={800}
+                  className="w-full object-cover object-top"
+                  priority
                 />
+
+                {/* Subtle bottom gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f0d]/40 via-transparent to-transparent pointer-events-none" />
               </div>
 
-              {/* Floating stat card */}
+              {/* Floating credential card */}
               <FloatingElement
-                className="absolute -bottom-10 -right-10 hidden md:block"
-                amplitude={8}
-                duration={3.5}
+                className="absolute -bottom-8 -right-4 md:-right-8 hidden md:block"
+                amplitude={6}
+                duration={4}
               >
-                <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-slate-100 max-w-xs">
-                  <p className="text-primary font-bold text-4xl mb-1">
-                    <AnimatedCounter to={50} suffix="+" />
+                <div className="bg-[#1a1c1a] border border-[#3d4949]/30 backdrop-blur-sm p-5 rounded-2xl shadow-xl max-w-[200px]">
+                  <p className="text-[#70e5ea] font-headline font-bold text-2xl mb-0.5">Inż.</p>
+                  <p className="text-[#e2e3df] font-headline font-bold text-sm leading-tight">
+                    Informatyki
                   </p>
-                  <p className="text-slate-600 text-sm font-medium">
-                    Udało nam się zoptymalizować procesy w ponad 50 firmach
-                    w Polsce.
+                  <p className="text-[#bcc9c9] text-xs font-body mt-2 leading-snug">
+                    n8n · LLM · RAG · AI Act
                   </p>
                 </div>
               </FloatingElement>
             </div>
           </SlideIn>
 
-          {/* Text — slides in from right */}
-          <SlideIn direction="right" delay={0.15}>
-            <h2 className="text-sm font-bold text-primary tracking-widest uppercase mb-4">
-              Nasza Misja
-            </h2>
-            <h3 className="text-4xl font-bold mb-8 leading-tight">
-              {title}
-            </h3>
-            <p className="text-slate-600 text-lg leading-relaxed mb-10">
-              {text}
-            </p>
+          {/* RIGHT — Text */}
+          <SlideIn direction="right" delay={0.15} className="lg:col-span-7">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                {
-                  icon: <Bot size={22} />,
-                  title: 'Automatyzacje',
-                  desc: 'Tworzymy spójne ekosystemy łączące Twoje ulubione narzędzia w jeden organizm.',
-                },
-                {
-                  icon: <Brain size={22} />,
-                  title: 'Sztuczna Inteligencja',
-                  desc: 'Wdrażamy modele językowe i wizyjne, które rozumieją Twoje dane i klientów.',
-                },
-              ].map((item) => (
-                <div key={item.title} className="flex gap-4 items-start">
-                  <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-primary flex-shrink-0">
-                    {item.icon}
-                  </div>
+            {/* Name & role */}
+            <div className="mb-8">
+              <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight text-[#e2e3df] mb-2">
+                Norbert Mentoz
+              </h2>
+              <p className="text-[#70e5ea] font-label text-sm uppercase tracking-widest">
+                Założyciel · Inżynier Informatyki · Ekspert AI i Automatyzacji
+              </p>
+            </div>
+
+            {/* Paragraphs */}
+            <div className="space-y-5 text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
+              <p>
+                Zautomatyzujemy.pl to jednoosobowa firma — i to jest świadomy wybór, nie wada.
+                Kiedy zlecasz projekt mnie, rozmawiasz bezpośrednio z osobą, która go zaprojektuje,
+                zbuduje i wdroży. Bez przepychania przez account managerów, bez głuchego telefonu
+                między Tobą a programistą.
+              </p>
+              <p>
+                Ukończyłem informatykę i od lat buduję systemy automatyzacji i AI dla firm —
+                od małych biur rachunkowych, przez sklepy internetowe, po agencje marketingowe.
+                Pracuję z n8n, modelami językowymi (GPT, Gemini, Claude), systemami RAG i
+                narzędziami integracji. Zamiast sprzedawać gotowe szablony, analizuję konkretny
+                proces w Twojej firmie i buduję rozwiązanie pod ten jeden cel.
+              </p>
+              <p>
+                Śledzę AI Act od pierwszych projektów regulacji — i pomagam firmom przygotować
+                się na sierpień 2026 zanim temat stanie się pilny. Jeśli używasz AI w firmie
+                (nawet tylko ChatGPT do maili), masz obowiązki prawne. Lepiej wiedzieć
+                o nich zawczasu.
+              </p>
+              <p>
+                Jeśli szukasz taniej agencji, która zrealizuje projekt na procent i zniknie —
+                nie jestem dobrym wyborem. Jeśli szukasz kogoś, kto naprawdę rozumie Twój
+                problem i zostaje na dłużej, żeby upewnić się, że wdrożenie działa —
+                porozmawiajmy.
+              </p>
+            </div>
+
+            {/* Competences grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {competences.map((c) => (
+                <div
+                  key={c.label}
+                  className="flex items-start gap-3 bg-[#1a1c1a] rounded-2xl p-4 border border-[#3d4949]/10"
+                >
+                  <CheckCircle2 className="text-[#70e5ea] shrink-0 mt-0.5" size={18} />
                   <div>
-                    <h4 className="font-bold mb-2">{item.title}</h4>
-                    <p className="text-sm text-slate-600">{item.desc}</p>
+                    <p className="text-[#e2e3df] font-headline font-bold text-sm">{c.label}</p>
+                    <p className="text-[#bcc9c9] text-xs font-body mt-0.5">{c.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </SlideIn>
 
+          </SlideIn>
         </div>
       </div>
     </section>
