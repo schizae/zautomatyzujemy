@@ -27,7 +27,7 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI',
+    default: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     template: '%s | Zautomatyzujemy.pl',
   },
   description:
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     locale: 'pl_PL',
     url: SITE_URL,
     siteName: 'Zautomatyzujemy.pl',
-    title: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI',
+    title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     description:
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI',
+    title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     description:
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
   },

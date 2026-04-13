@@ -2,8 +2,6 @@ import Link from 'next/link'
 
 const footerLinks = [
   { label: 'Polityka Prywatności', href: '/privacy-policy' },
-  { label: 'LinkedIn', href: '#' },
-  { label: 'GitHub', href: '#' },
 ]
 
 export function Footer() {

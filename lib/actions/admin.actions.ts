@@ -224,7 +224,8 @@ Styl: profesjonalny, praktyczny, przydatny dla właścicieli firm MŚP.`,
 
 const ALLOWED_PAGE_CONTENT_KEYS = new Set([
   'hero_title', 'hero_subtitle', 'hero_description', 'hero_cta',
-  'about_title', 'about_description',
+  'hero_cta_primary', 'hero_cta_secondary',
+  'about_title', 'about_description', 'about_text',
   'services_title', 'services_subtitle',
   'contact_title', 'contact_description',
   'cta_title', 'cta_description',

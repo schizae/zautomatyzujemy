@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { createServiceClient } from '@/lib/supabase/server'
+import { sendLeadNotification } from '@/lib/email/resend'
 import type { ActionResult } from '@/types'
 
 const ContactSchema = z.object({
@@ -39,7 +40,12 @@ export async function submitContactAction(
     return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
   }
 
-  // Fire-and-forget do n8n (nie blokuje odpowiedzi)
+  // Fire-and-forget — email + n8n (nie blokują odpowiedzi)
+  sendLeadNotification({ source: 'contact_form', name, email, message }).catch(
+    (err: unknown) => console.error('[resend] contact form notification failed:', err)
+  )
+
+  // Fire-and-forget do n8n
   const webhookUrl = process.env.N8N_LEAD_WEBHOOK_URL
   if (webhookUrl) {
     fetch(webhookUrl, {

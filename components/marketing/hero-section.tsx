@@ -114,9 +114,9 @@ export function HeroSection({ content }: HeroSectionProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.9, ease }}
           >
-            <div className="text-4xl font-headline font-bold text-[#70e5ea] mb-1">90%</div>
+            <div className="text-4xl font-headline font-bold text-[#70e5ea] mb-1">40h</div>
             <div className="text-xs font-label text-[#bcc9c9] uppercase tracking-widest leading-tight">
-              OSZCZĘDNOŚĆ CZASU NA PROCESACH PO AUTOMATYZACJI
+              TYGODNIOWO OSZCZĘDNOŚCI DLA KLIENTÓW PO AUTOMATYZACJI
             </div>
           </motion.div>
         </div>

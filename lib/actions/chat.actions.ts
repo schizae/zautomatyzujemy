@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sanitizeUserContent } from '@/lib/prompt-sanitize'
+import { sendLeadNotification } from '@/lib/email/resend'
 import type { ActionResult } from '@/types'
 
 export interface ChatMessage {
@@ -88,6 +89,14 @@ BRIEF: `,
   if (error) {
     return { success: false, error: error.message }
   }
+
+  // Fire-and-forget — email + n8n (nie blokują odpowiedzi)
+  sendLeadNotification({
+    source: 'chatbot',
+    name: extractedName,
+    email: validEmail,
+    message: brief,
+  }).catch((err: unknown) => console.error('[resend] chat lead notification failed:', err))
 
   // Fire-and-forget do n8n
   const webhookUrl = process.env.N8N_LEAD_WEBHOOK_URL
