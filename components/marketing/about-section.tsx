@@ -44,7 +44,7 @@ export function AboutSection() {
 
                 <Image
                   src="/norbert.jpg"
-                  alt="Norbert — założyciel Zautomatyzujemy.pl"
+                  alt="Norbert Chojnacki — założyciel Zautomatyzujemy.pl"
                   width={600}
                   height={800}
                   className="w-full object-cover object-top"
@@ -80,7 +80,7 @@ export function AboutSection() {
             {/* Name & role */}
             <div className="mb-8">
               <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight text-[#e2e3df] mb-2">
-                Norbert Mentoz
+                Norbert Chojnacki
               </h2>
               <p className="text-[#70e5ea] font-label text-sm uppercase tracking-widest">
                 Założyciel · Inżynier Informatyki · Ekspert AI i Automatyzacji
