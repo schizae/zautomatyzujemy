@@ -9,7 +9,7 @@ const FROM_EMAIL =
 const TO_EMAIL = process.env['NOTIFICATION_EMAIL'] ?? ''
 
 export interface LeadNotificationData {
-  source: 'contact_form' | 'chatbot'
+  source: 'contact_form' | 'chatbot' | 'lead_magnet'
   name: string | null
   email: string
   message: string
@@ -18,8 +18,14 @@ export interface LeadNotificationData {
 export async function sendLeadNotification(data: LeadNotificationData): Promise<void> {
   if (!TO_EMAIL || !process.env['RESEND_API_KEY']) return
 
-  const sourceLabel = data.source === 'contact_form' ? 'Formularz kontaktowy' : 'Chatbot'
-  const emoji = data.source === 'contact_form' ? '📩' : '🤖'
+  const sourceLabel =
+    data.source === 'contact_form' ? 'Formularz kontaktowy'
+    : data.source === 'chatbot' ? 'Chatbot'
+    : 'Lead magnet — Checklista AI Act'
+  const emoji =
+    data.source === 'contact_form' ? '📩'
+    : data.source === 'chatbot' ? '🤖'
+    : '📋'
   const subject = `${emoji} Nowy lead — ${sourceLabel}: ${data.name ?? data.email}`
 
   await resend.emails.send({

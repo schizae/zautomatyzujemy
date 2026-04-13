@@ -5,6 +5,45 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { sendLeadNotification } from '@/lib/email/resend'
 import type { ActionResult } from '@/types'
 
+const LeadMagnetSchema = z.object({
+  email: z.string().email('Podaj poprawny adres e-mail.'),
+})
+
+export async function subscribeLeadMagnetAction(
+  _prev: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  const parsed = LeadMagnetSchema.safeParse({ email: formData.get('email') })
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
+  }
+
+  const { email } = parsed.data
+  const supabase = createServiceClient()
+
+  const { error } = await supabase.from('leads').insert({
+    name: null,
+    email,
+    conversation_summary: 'Lead magnet: Checklista AI Act dla MŚP',
+    source: 'lead_magnet',
+    n8n_sent: false,
+  })
+
+  if (error) {
+    return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
+  }
+
+  sendLeadNotification({
+    source: 'lead_magnet',
+    name: null,
+    email,
+    message: 'Zapisał się na checklistę AI Act dla MŚP',
+  }).catch((err: unknown) => console.error('[resend] lead magnet notification failed:', err))
+
+  return { success: true }
+}
+
 const ContactSchema = z.object({
   name: z.string().min(2, 'Imię i nazwisko musi mieć min. 2 znaki.').max(100),
   email: z.string().email('Podaj poprawny adres e-mail.'),

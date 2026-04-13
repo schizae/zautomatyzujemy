@@ -5,6 +5,8 @@ import { HeroSection } from '@/components/marketing/hero-section'
 import { ServicesSection } from '@/components/marketing/services-section'
 import { CaseStudySection } from '@/components/marketing/case-study-section'
 import { AboutSection } from '@/components/marketing/about-section'
+import { AiActBanner } from '@/components/marketing/ai-act-banner'
+import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
@@ -68,8 +70,10 @@ export default async function HomePage() {
       <Navbar />
       <main id="main">
         <HeroSection content={heroContent} />
+        <AiActBanner />
         <ServicesSection />
         <CaseStudySection />
+        <LeadMagnetSection />
         <AboutSection />
         <BlogPreview />
         <ContactSection />
