@@ -43,7 +43,7 @@ export function AboutSection() {
                 </div>
 
                 <Image
-                  src="/norbert.jpg"
+                  src="/norbert.png"
                   alt="Norbert Chojnacki — założyciel Zautomatyzujemy.pl"
                   width={600}
                   height={800}
