@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 
@@ -10,7 +11,11 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ content }: HeroSectionProps) {
-  const title = content['hero_title'] ?? 'Precyzja\u00a0AI\u00a0w Infrastrukturze.'
+  // Tytuł może zawierać placeholder {{AI}} dla podświetlonego wyrazu.
+  // Fallback używa %%AI%% jako separatora w stringu domyślnym.
+  const rawTitle = content['hero_title'] ?? 'Precyzja\u00a0%%AI%%\u00a0w Infrastrukturze.'
+  // Obsługa starego formatu (bez placeholder) — zachowaj kompatybilność
+  const title = rawTitle.includes('%%') ? rawTitle : rawTitle.replace('AI', '%%AI%%')
   const description =
     content['hero_description'] ??
     'Nie tylko budujemy boty. Tworzymy dedykowane warstwy automatyzacji i sztucznej inteligencji dostosowane pod Twoje systemy.'
@@ -45,11 +50,11 @@ export function HeroSection({ content }: HeroSectionProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease }}
           >
-            {title.includes('AI') ? (
+            {title.includes('%%AI%%') ? (
               <>
-                {title.split('AI')[0]}
+                {title.split('%%AI%%')[0]}
                 <span className="text-[#70e5ea] italic">AI</span>
-                {title.split('AI')[1]}
+                {title.split('%%AI%%')[1]}
               </>
             ) : (
               title
@@ -73,18 +78,18 @@ export function HeroSection({ content }: HeroSectionProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7, ease }}
           >
-            <a
-              href="#kontakt"
+            <Link
+              href="/#kontakt"
               className="px-10 py-5 rounded-full bg-[#70e5ea] text-[#003739] font-headline font-bold text-lg hover:brightness-110 transition-all"
             >
               {ctaPrimary}
-            </a>
-            <a
-              href="#uslugi"
+            </Link>
+            <Link
+              href="/#uslugi"
               className="px-10 py-5 rounded-full border border-[#3d4949] hover:bg-[#282a28] transition-all text-[#e2e3df] font-headline font-bold text-lg"
             >
               {ctaSecondary}
-            </a>
+            </Link>
           </motion.div>
         </div>
 

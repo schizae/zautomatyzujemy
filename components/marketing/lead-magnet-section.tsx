@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState } from 'react'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
 import { Shield, CheckCircle2, Loader2 } from 'lucide-react'
@@ -65,9 +66,9 @@ export function LeadMagnetSection() {
                   <p className="text-[#bcc9c9] font-body text-base leading-relaxed">
                     Twój adres email został zapisany. Skontaktuję się z Tobą wkrótce i prześlę
                     checklistę. Możesz też od razu umówić{' '}
-                    <a href="#kontakt" className="text-[#70e5ea] hover:underline">
+                    <Link href="/#kontakt" className="text-[#70e5ea] hover:underline">
                       bezpłatną konsultację
-                    </a>.
+                    </Link>.
                   </p>
                 </div>
               ) : (

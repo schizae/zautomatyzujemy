@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Plus, Pencil, Trash2, Eye, EyeOff } from 'lucide-react'
+import { Plus, Pencil, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getAdminPosts } from '@/lib/actions/admin.actions'
 import { DeleteButton } from './_components/delete-button'

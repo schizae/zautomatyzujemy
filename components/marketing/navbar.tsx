@@ -8,11 +8,11 @@ import { useAuth } from '@/lib/contexts/auth-context'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { label: 'Rozwiązania', href: '#uslugi' },
-  { label: 'Case Studies', href: '#case-study' },
-  { label: 'Blog', href: '#blog' },
-  { label: 'O nas', href: '#o-nas' },
-  { label: 'Kontakt', href: '#kontakt' },
+  { label: 'Rozwiązania', href: '/#uslugi' },
+  { label: 'Case Studies', href: '/#case-study' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'O nas', href: '/#o-nas' },
+  { label: 'Kontakt', href: '/#kontakt' },
 ]
 
 export function Navbar() {
@@ -96,7 +96,7 @@ export function Navbar() {
               href="/account/register"
               className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
-              Get Started
+              Dołącz
             </Link>
           )}
         </div>
@@ -164,7 +164,7 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
               className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
             >
-              Get Started
+              Dołącz
             </Link>
           )}
         </div>

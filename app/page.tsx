@@ -11,7 +11,7 @@ import { BlogPreview } from '@/components/marketing/blog-preview'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const supabase = createServiceClient()
+  const supabase = await createClient()
   const { data } = await supabase
     .from('page_content')
     .select('key, value')

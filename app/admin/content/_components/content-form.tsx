@@ -14,7 +14,7 @@ interface ContentFormProps {
 
 const initialState: ActionResult = { success: true }
 
-export function ContentForm({ items, section, title }: ContentFormProps) {
+export function ContentForm({ items, section: _section, title }: ContentFormProps) {
   const [state, formAction, isPending] = useActionState(upsertPageContentAction, initialState)
   const [values, setValues] = useState<Record<string, string>>(
     () => Object.fromEntries(items.map(item => [item.key, item.value]))

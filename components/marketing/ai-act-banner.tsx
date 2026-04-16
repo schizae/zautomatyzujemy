@@ -18,7 +18,7 @@ export function AiActBanner() {
 
         {/* CTA */}
         <Link
-          href="#uslugi"
+          href="/#uslugi"
           className="shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/30 text-[#ffa07b] text-xs font-label font-bold uppercase tracking-wider hover:bg-[#ffa07b]/20 transition-colors"
         >
           Sprawdź zgodność

@@ -26,7 +26,7 @@ export async function CtaSection() {
             {description}
           </p>
           <Link
-            href="#kontakt"
+            href="/#kontakt"
             className="inline-flex items-center justify-center rounded-full bg-primary text-white px-10 py-4 text-base font-bold shadow-xl shadow-primary/40 hover:bg-primary/90 hover:scale-105 transition-all duration-200"
           >
             Umów bezpłatną konsultację

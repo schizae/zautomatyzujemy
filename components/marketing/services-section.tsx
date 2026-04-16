@@ -55,7 +55,7 @@ export function ServicesSection() {
               </p>
               <div className="flex items-center gap-3">
                 <Link
-                  href="#kontakt"
+                  href="/#kontakt"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/30 text-[#ffa07b] font-headline font-bold text-sm hover:bg-[#ffa07b]/20 transition-colors"
                 >
                   Sprawdź zgodność swojej firmy
@@ -146,7 +146,7 @@ export function ServicesSection() {
 
           <div className="relative z-10 mt-10">
             <Link
-              href="#kontakt"
+              href="/#kontakt"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#70e5ea] text-[#003739] font-headline font-bold text-base hover:brightness-110 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               Umów bezpłatną konsultację
