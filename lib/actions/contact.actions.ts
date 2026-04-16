@@ -1,9 +1,25 @@
 'use server'
 
 import { z } from 'zod'
+import { headers } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sendLeadNotification } from '@/lib/email/resend'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import type { ActionResult } from '@/types'
+
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
+async function getClientIp(): Promise<string> {
+  const headersList = await headers()
+  return headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+}
+
+/** Honeypot: pole "website" jest ukryte przed ludźmi, ale boty je wypełniają. */
+function isBot(formData: FormData): boolean {
+  return (formData.get('website') as string | null)?.trim() !== ''
+}
+
+// ─── Lead Magnet ──────────────────────────────────────────────────────────────
 
 const LeadMagnetSchema = z.object({
   email: z.string().email('Podaj poprawny adres e-mail.'),
@@ -13,6 +29,17 @@ export async function subscribeLeadMagnetAction(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
+  // Honeypot — cicho odrzucamy boty (pozorny sukces)
+  if (isBot(formData)) {
+    return { success: true }
+  }
+
+  // Rate limiting: 3 próby / 60s per IP
+  const ip = await getClientIp()
+  if (!checkRateLimit(`lead_magnet:${ip}`, { maxRequests: 3, windowMs: 60_000 })) {
+    return { success: false, error: 'Zbyt wiele prób. Spróbuj ponownie za chwilę.' }
+  }
+
   const parsed = LeadMagnetSchema.safeParse({ email: formData.get('email') })
 
   if (!parsed.success) {
@@ -44,20 +71,37 @@ export async function subscribeLeadMagnetAction(
   return { success: true }
 }
 
+// ─── Contact Form ─────────────────────────────────────────────────────────────
+
 const ContactSchema = z.object({
   name: z.string().min(2, 'Imię i nazwisko musi mieć min. 2 znaki.').max(100),
   email: z.string().email('Podaj poprawny adres e-mail.'),
   message: z.string().min(10, 'Wiadomość musi mieć min. 10 znaków.').max(2000),
+  gdprConsent: z.literal('true', {
+    errorMap: () => ({ message: 'Wymagana jest zgoda na przetwarzanie danych osobowych.' }),
+  }),
 })
 
 export async function submitContactAction(
   _prev: ActionResult<string>,
   formData: FormData
 ): Promise<ActionResult<string>> {
+  // Honeypot — cicho odrzucamy boty (pozorny sukces)
+  if (isBot(formData)) {
+    return { success: true, data: 'sent' }
+  }
+
+  // Rate limiting: 3 próby / 60s per IP
+  const ip = await getClientIp()
+  if (!checkRateLimit(`contact:${ip}`, { maxRequests: 3, windowMs: 60_000 })) {
+    return { success: false, error: 'Zbyt wiele prób. Spróbuj ponownie za chwilę.' }
+  }
+
   const parsed = ContactSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
     message: formData.get('message'),
+    gdprConsent: formData.get('gdprConsent'),
   })
 
   if (!parsed.success) {
@@ -92,7 +136,7 @@ export async function submitContactAction(
       headers: {
         'Content-Type': 'application/json',
         ...(process.env.N8N_WEBHOOK_SECRET && {
-          'Authorization': `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
+          Authorization: `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
         }),
       },
       body: JSON.stringify({ name, email, message, source: 'contact_form', timestamp: new Date().toISOString() }),

@@ -24,6 +24,7 @@ export function ContactForm() {
   const [email, setEmail] = useState('')
   const [goal, setGoal] = useState(GOAL_OPTIONS[0]!.value)
   const [message, setMessage] = useState('')
+  const [gdprConsent, setGdprConsent] = useState(false)
 
   const isSuccess = state.success && 'data' in state && state.data === 'sent'
   const [showSuccess, setShowSuccess] = useState(false)
@@ -34,6 +35,7 @@ export function ContactForm() {
       setEmail('')
       setGoal(GOAL_OPTIONS[0]!.value)
       setMessage('')
+      setGdprConsent(false)
       setShowSuccess(true)
       const timer = setTimeout(() => setShowSuccess(false), 4000)
       return () => clearTimeout(timer)
@@ -47,6 +49,12 @@ export function ContactForm() {
       <input type="hidden" name="email" value={email} />
       <input type="hidden" name="goal" value={goal} />
       <input type="hidden" name="message" value={message} />
+      <input type="hidden" name="gdprConsent" value={gdprConsent ? 'true' : 'false'} />
+
+      {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
+      <div aria-hidden="true" className="hidden">
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
@@ -104,6 +112,31 @@ export function ContactForm() {
         />
       </div>
 
+      {/* GDPR consent */}
+      <label className="flex items-start gap-3 cursor-pointer group">
+        <input
+          type="checkbox"
+          checked={gdprConsent}
+          onChange={(e) => setGdprConsent(e.target.checked)}
+          required
+          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#1e201e] accent-[#70e5ea] cursor-pointer"
+        />
+        <span className="text-xs font-body text-[#bcc9c9] leading-relaxed">
+          Wyrażam zgodę na przetwarzanie moich danych osobowych przez Zautomatyzujemy.pl
+          w celu udzielenia odpowiedzi na zapytanie, zgodnie z{' '}
+          <a
+            href="/privacy-policy"
+            className="text-[#70e5ea] hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Polityką Prywatności
+          </a>
+          . Zgoda jest dobrowolna i można ją wycofać w dowolnym momencie.{' '}
+          <span className="text-red-400">*</span>
+        </span>
+      </label>
+
       {!state.success && (
         <p className="rounded-lg bg-red-900/30 border border-red-500/30 px-4 py-2.5 text-sm font-medium text-red-400 font-body">
           {state.error}
@@ -119,7 +152,7 @@ export function ContactForm() {
 
       <button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !gdprConsent}
         className="w-full bg-[#70e5ea] text-[#003739] font-headline font-bold py-5 rounded-full text-lg hover:shadow-[0_0_30px_rgba(112,229,234,0.3)] transition-all hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
       >
         {isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

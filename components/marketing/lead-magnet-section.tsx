@@ -82,6 +82,11 @@ export function LeadMagnetSection() {
                   </p>
 
                   <form action={formAction} className="space-y-4">
+                    {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
+                    <div aria-hidden="true" className="hidden">
+                      <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+                    </div>
+
                     <div>
                       <label htmlFor="lm-email" className="block text-xs font-label uppercase tracking-wider text-[#bcc9c9] mb-2">
                         Adres e-mail

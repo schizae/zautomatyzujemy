@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
+import { CookieBanner } from '@/components/marketing/cookie-banner'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -105,6 +106,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Przejdź do treści
         </a>
         <Providers>{children}</Providers>
+        <CookieBanner />
       </body>
     </html>
   )
