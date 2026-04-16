@@ -9,6 +9,8 @@ const competences = [
   { label: 'LLM i chatboty RAG', desc: 'Asystenci AI znający Twój biznes' },
   { label: 'Zgodność z AI Act', desc: 'Audyty, dokumentacja, szkolenia' },
   { label: 'Wdrożenia dla MŚP', desc: 'Od analizy po gotowe rozwiązanie' },
+  { label: 'Szkolenia AI', desc: 'Uczymy zespoły, jak efektywnie używać AI' },
+  { label: 'Dedykowane oprogramowanie', desc: 'Aplikacje i systemy szyte pod Twój biznes' },
 ]
 
 export function AboutSection() {
@@ -19,7 +21,7 @@ export function AboutSection() {
         {/* Label */}
         <div className="mb-16">
           <span className="text-xs font-label uppercase tracking-widest text-[#70e5ea]">
-            O mnie
+            O nas
           </span>
         </div>
 
@@ -90,29 +92,30 @@ export function AboutSection() {
             {/* Paragraphs */}
             <div className="space-y-5 text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
               <p>
-                Zautomatyzujemy.pl to jednoosobowa firma — i to jest świadomy wybór, nie wada.
-                Kiedy zlecasz projekt mnie, rozmawiasz bezpośrednio z osobą, która go zaprojektuje,
-                zbuduje i wdroży. Bez przepychania przez account managerów, bez głuchego telefonu
-                między Tobą a programistą.
+                Zautomatyzujemy.pl to firma specjalizująca się w praktycznym wdrożeniu AI
+                i automatyzacji dla biznesu. Gdy powierzasz nam projekt, od razu trafiasz
+                do eksperta — bez warstw pośredników, bez informacji gubionej w kolejnych
+                mailach. Zyskujesz jedno miejsce odpowiedzialności: od analizy Twojego procesu,
+                przez projektowanie, aż po działające wdrożenie.
               </p>
               <p>
-                Ukończyłem informatykę i od lat buduję systemy automatyzacji i AI dla firm —
-                od małych biur rachunkowych, przez sklepy internetowe, po agencje marketingowe.
-                Pracuję z n8n, modelami językowymi (GPT, Gemini, Claude), systemami RAG i
-                narzędziami integracji. Zamiast sprzedawać gotowe szablony, analizuję konkretny
-                proces w Twojej firmie i buduję rozwiązanie pod ten jeden cel.
+                Budujemy systemy automatyzacji i AI dla firm z różnych branż — od biur
+                rachunkowych, przez sklepy internetowe, po agencje marketingowe. Pracujemy
+                z n8n, modelami językowymi (GPT, Gemini, Claude) oraz systemami RAG.
+                Zamiast gotowych szablonów, każde rozwiązanie projektujemy od podstaw —
+                pod konkretny proces i konkretny cel Twojej firmy.
               </p>
               <p>
-                Śledzę AI Act od pierwszych projektów regulacji — i pomagam firmom przygotować
-                się na sierpień 2026 zanim temat stanie się pilny. Jeśli używasz AI w firmie
-                (nawet tylko ChatGPT do maili), masz obowiązki prawne. Lepiej wiedzieć
-                o nich zawczasu.
+                Śledzimy AI Act od pierwszych projektów regulacji i pomagamy firmom
+                przygotować się na sierpień 2026, zanim temat stanie się pilny. Jeśli
+                używasz AI w firmie — nawet tylko ChatGPT do maili — masz obowiązki
+                prawne. Lepiej wiedzieć o nich zawczasu i działać z wyprzedzeniem.
               </p>
               <p>
-                Jeśli szukasz taniej agencji, która zrealizuje projekt na procent i zniknie —
-                nie jestem dobrym wyborem. Jeśli szukasz kogoś, kto naprawdę rozumie Twój
-                problem i zostaje na dłużej, żeby upewnić się, że wdrożenie działa —
-                porozmawiajmy.
+                Zależy nam na partnerstwie, nie jednorazowej transakcji. Po wdrożeniu
+                zostajemy z Tobą — sprawdzamy, czy system działa zgodnie z oczekiwaniami,
+                i reagujemy, gdy coś wymaga korekty. Nasz cel to Twój wymierny wynik,
+                nie odhaczony ticket. Jeśli myślisz podobnie — porozmawiajmy.
               </p>
             </div>
 
