@@ -4,6 +4,8 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Regulamin',
   description: 'Regulamin świadczenia usług serwisu zautomatyzujemy.pl.',
+  robots: { index: false, follow: false },
+  alternates: { canonical: '/regulamin' },
 }
 
 export default function RegulaPage() {

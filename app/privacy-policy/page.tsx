@@ -4,6 +4,8 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Polityka Prywatności',
   description: 'Polityka prywatności serwisu zautomatyzujemy.pl — informacje o przetwarzaniu danych osobowych zgodnie z RODO.',
+  robots: { index: false, follow: false },
+  alternates: { canonical: '/privacy-policy' },
 }
 
 export default function PrivacyPolicyPage() {

@@ -48,6 +48,10 @@ export const metadata: Metadata = {
   authors: [{ name: 'Zautomatyzujemy.pl' }],
   creator: 'Zautomatyzujemy.pl',
   publisher: 'Zautomatyzujemy.pl',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'pl_PL',
@@ -56,6 +60,14 @@ export const metadata: Metadata = {
     title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     description:
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

@@ -30,12 +30,20 @@ export function Footer() {
             Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty
             i skalują Twój biznes.
           </p>
-          <a
-            href="mailto:kontakt@zautomatyzujemy.pl"
-            className="inline-block text-sm font-body text-[#70e5ea] hover:underline"
-          >
-            kontakt@zautomatyzujemy.pl
-          </a>
+          <div className="space-y-1.5">
+            <a
+              href="mailto:biuro@zautomatyzujemy.pl"
+              className="block text-sm font-body text-[#70e5ea] hover:underline"
+            >
+              biuro@zautomatyzujemy.pl
+            </a>
+            <a
+              href="tel:+48730094465"
+              className="block text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
+            >
+              +48 730 094 465
+            </a>
+          </div>
         </div>
 
         {/* Navigation */}

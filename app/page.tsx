@@ -17,7 +17,7 @@ const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
-  title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm | Chatboty, n8n, AI Act',
+  title: 'AI i automatyzacja dla firm — Zautomatyzujemy.pl',
   description:
     'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, n8n, zgodność z AI Act. Bezpłatna konsultacja.',
   alternates: {
@@ -65,6 +65,35 @@ export default async function HomePage() {
           description:
             'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
           inLanguage: 'pl-PL',
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: 'Zautomatyzujemy.pl',
+          url: SITE_URL,
+          telephone: '+48730094465',
+          email: 'biuro@zautomatyzujemy.pl',
+          description:
+            'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM dla firm MŚP.',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'ul. Sportowa 5/33',
+            addressLocality: 'Chojnice',
+            postalCode: '89-600',
+            addressCountry: 'PL',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: 53.6977,
+            longitude: 17.5572,
+          },
+          areaServed: {
+            '@type': 'Country',
+            name: 'Polska',
+          },
+          priceRange: '$$',
         }}
       />
       <Navbar />
