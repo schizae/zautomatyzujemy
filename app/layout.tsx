@@ -62,7 +62,7 @@ export const metadata: Metadata = {
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
     images: [
       {
-        url: '/opengraph-image',
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
@@ -74,6 +74,7 @@ export const metadata: Metadata = {
     title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
     description:
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
+    images: [`${SITE_URL}/opengraph-image`],
   },
   robots: {
     index: true,
