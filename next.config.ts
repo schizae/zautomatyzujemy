@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const securityHeaders = [
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
@@ -19,7 +20,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://i.ibb.co",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com",
+      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://o4511235084910592.ingest.de.sentry.io",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -62,4 +63,9 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  silent: !process.env.CI,
+  // Source maps upload wymaga SENTRY_AUTH_TOKEN — można dodać później
+  sourcemaps: { disable: true },
+  telemetry: false,
+})
