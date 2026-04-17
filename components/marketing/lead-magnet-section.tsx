@@ -61,11 +61,19 @@ export function LeadMagnetSection() {
                     <CheckCircle2 className="text-[#ffa07b]" size={28} />
                   </div>
                   <h3 className="text-2xl font-headline font-bold text-[#e2e3df] mb-3">
-                    Gotowe!
+                    Sprawdź skrzynkę!
                   </h3>
-                  <p className="text-[#bcc9c9] font-body text-base leading-relaxed">
-                    Twój adres email został zapisany. Skontaktuję się z Tobą wkrótce i prześlę
-                    checklistę. Możesz też od razu umówić{' '}
+                  <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-4">
+                    Wysłałem Ci email z linkiem do checklisty. Możesz też otworzyć ją od razu:
+                  </p>
+                  <Link
+                    href="/ai-act-checklist"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#ffa07b]/30 text-[#ffa07b] text-sm font-label hover:bg-[#ffa07b]/10 transition-colors mb-6"
+                  >
+                    Otwórz checklistę →
+                  </Link>
+                  <p className="text-[#5a6464] font-body text-sm">
+                    Możesz też od razu umówić{' '}
                     <Link href="/#kontakt" className="text-[#70e5ea] hover:underline">
                       bezpłatną konsultację
                     </Link>.
@@ -77,7 +85,7 @@ export function LeadMagnetSection() {
                     Pobierz bezpłatnie
                   </h3>
                   <p className="text-[#bcc9c9] font-body text-sm mb-8">
-                    Podaj swój adres email — wyślę checklistę w ciągu 24 godzin.
+                    Podaj swój adres email — link do checklisty dostaniesz natychmiast.
                     Bez spamu, bez automatycznych sekwencji.
                   </p>
 

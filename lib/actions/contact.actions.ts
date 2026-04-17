@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { headers } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase/server'
-import { sendLeadNotification } from '@/lib/email/resend'
+import { sendLeadNotification, sendChecklistDelivery } from '@/lib/email/resend'
 import { checkRateLimit } from '@/lib/rate-limiter'
 import type { ActionResult } from '@/types'
 
@@ -67,6 +67,10 @@ export async function subscribeLeadMagnetAction(
     email,
     message: 'Zapisał się na checklistę AI Act dla MŚP',
   }).catch((err: unknown) => console.error('[resend] lead magnet notification failed:', err))
+
+  sendChecklistDelivery(email).catch(
+    (err: unknown) => console.error('[resend] checklist delivery failed:', err)
+  )
 
   return { success: true }
 }
