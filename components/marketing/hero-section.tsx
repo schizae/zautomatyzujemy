@@ -35,7 +35,7 @@ export function HeroSection({ content }: HeroSectionProps) {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#282a28] mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease }}
+            transition={{ duration: 0.5, delay: 0.05, ease }}
           >
             <span className="w-2 h-2 rounded-full bg-[#ffa07b] animate-pulse shadow-[0_0_8px_#ffa07b]" />
             <span className="text-xs font-label uppercase tracking-widest text-[#bcc9c9]">
@@ -45,10 +45,10 @@ export function HeroSection({ content }: HeroSectionProps) {
 
           {/* Headline */}
           <motion.h1
-            className="text-6xl md:text-8xl font-headline font-bold leading-[0.9] tracking-tighter mb-8 text-[#e2e3df]"
-            initial={{ opacity: 0, y: 30 }}
+            className="text-5xl sm:text-6xl md:text-8xl font-headline font-bold leading-[0.9] tracking-tighter mb-8 text-[#e2e3df] break-words"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease }}
+            transition={{ duration: 0.5, delay: 0.1, ease }}
           >
             {title.includes('%%AI%%') ? (
               <>
@@ -64,9 +64,9 @@ export function HeroSection({ content }: HeroSectionProps) {
           {/* Description */}
           <motion.p
             className="text-xl md:text-2xl text-[#bcc9c9] max-w-xl mb-12 font-light leading-relaxed font-body"
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5, ease }}
+            transition={{ duration: 0.5, delay: 0.25, ease }}
           >
             {description}
           </motion.p>
@@ -74,19 +74,19 @@ export function HeroSection({ content }: HeroSectionProps) {
           {/* Buttons */}
           <motion.div
             className="flex flex-wrap gap-6"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7, ease }}
+            transition={{ duration: 0.5, delay: 0.4, ease }}
           >
             <Link
               href="/#kontakt"
-              className="px-10 py-5 rounded-full bg-[#70e5ea] text-[#003739] font-headline font-bold text-lg hover:brightness-110 transition-all"
+              className="px-6 sm:px-10 py-4 sm:py-5 rounded-full bg-[#70e5ea] text-[#003739] font-headline font-bold text-base sm:text-lg hover:brightness-110 transition-all"
             >
               {ctaPrimary}
             </Link>
             <Link
               href="/#uslugi"
-              className="px-10 py-5 rounded-full border border-[#3d4949] hover:bg-[#282a28] transition-all text-[#e2e3df] font-headline font-bold text-lg"
+              className="px-6 sm:px-10 py-4 sm:py-5 rounded-full border border-[#3d4949] hover:bg-[#282a28] transition-all text-[#e2e3df] font-headline font-bold text-base sm:text-lg"
             >
               {ctaSecondary}
             </Link>

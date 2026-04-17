@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { ChatWidget } from '@/components/chat/chat-widget'
 import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
@@ -12,6 +13,21 @@ import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
 import { createClient } from '@/lib/supabase/server'
+
+const getHeroContent = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('page_content')
+      .select('key, value')
+      .in('key', ['hero_title', 'hero_description', 'hero_cta_primary', 'hero_cta_secondary'])
+    return Object.fromEntries(
+      (data ?? []).map((item: { key: string; value: string }) => [item.key, item.value])
+    )
+  },
+  ['hero-content'],
+  { revalidate: 3600 }
+)
 
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
@@ -45,15 +61,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('page_content')
-    .select('key, value')
-    .in('key', ['hero_title', 'hero_description', 'hero_cta_primary', 'hero_cta_secondary'])
-
-  const heroContent: Record<string, string> = Object.fromEntries(
-    (data ?? []).map((item: { key: string; value: string }) => [item.key, item.value])
-  )
+  const heroContent = await getHeroContent()
 
   return (
     <>

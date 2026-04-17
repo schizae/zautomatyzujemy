@@ -21,7 +21,7 @@ export function CaseStudyCarousel({ items }: CaseStudyCarouselProps) {
   if (items.length === 0) return null
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden md:overflow-visible">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {visible.map((item, i) => {
           const isFirst = i === 0
