@@ -1,0 +1,29 @@
+name: Blog Auto — Artykuł AI
+
+on:
+  schedule:
+    - cron: '0 9 * * 5' # Każdy piątek ~10:00 CET (09:00 UTC)
+  workflow_dispatch: # Możliwość ręcznego uruchomienia z GitHub UI
+
+jobs:
+  generate-post:
+    name: Generuj i publikuj artykuł
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generuj i publikuj artykuł
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: node .github/scripts/blog-auto.mjs
