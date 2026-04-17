@@ -17,16 +17,16 @@ const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
-  title: 'AI i automatyzacja dla firm — Zautomatyzujemy.pl',
+  title: 'AI i automatyzacja dla firm | Zautomatyzujemy.pl',
   description:
     'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, n8n, zgodność z AI Act. Bezpłatna konsultacja.',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Zautomatyzujemy.pl — AI i automatyzacja dla firm',
+    title: 'AI i automatyzacja dla firm | Zautomatyzujemy.pl',
     description:
-      'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, n8n, zgodność z AI Act.',
+      'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, integracje n8n, zgodność z AI Act. Bezpłatna konsultacja.',
     url: SITE_URL,
     type: 'website',
   },
