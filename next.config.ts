@@ -64,8 +64,10 @@ const nextConfig: NextConfig = {
 }
 
 export default withSentryConfig(nextConfig, {
+  org: 'zautomatyzujemy',
+  project: 'javascript-nextjs',
   silent: !process.env.CI,
+  telemetry: false,
   // Source maps upload wymaga SENTRY_AUTH_TOKEN — można dodać później
   sourcemaps: { disable: true },
-  telemetry: false,
 })
