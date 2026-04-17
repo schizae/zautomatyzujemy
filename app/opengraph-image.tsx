@@ -39,23 +39,26 @@ export default function OgImage() {
             letterSpacing: 6,
             textTransform: 'uppercase',
             marginBottom: 28,
+            display: 'flex',
           }}
         >
           ZAUTOMATYZUJEMY.PL
         </div>
 
-        {/* Headline */}
+        {/* Headline — dwie linie jako osobne divy */}
         <div
           style={{
-            color: '#ffffff',
-            fontSize: 72,
-            fontWeight: 900,
-            lineHeight: 1.1,
+            display: 'flex',
+            flexDirection: 'column',
             marginBottom: 36,
           }}
         >
-          AI i automatyzacja
-          {'\n'}dla Twojej firmy
+          <div style={{ color: '#ffffff', fontSize: 72, fontWeight: 900, lineHeight: 1.1 }}>
+            AI i automatyzacja
+          </div>
+          <div style={{ color: '#ffffff', fontSize: 72, fontWeight: 900, lineHeight: 1.1 }}>
+            dla Twojej firmy
+          </div>
         </div>
 
         {/* Tags */}
@@ -64,6 +67,7 @@ export default function OgImage() {
             color: '#9ca3af',
             fontSize: 26,
             letterSpacing: 1,
+            display: 'flex',
           }}
         >
           Chatboty · Integracje n8n · RAG · AI Act
