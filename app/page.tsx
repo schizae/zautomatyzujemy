@@ -29,6 +29,20 @@ export const metadata: Metadata = {
       'Automatyzuję procesy i wdrażam AI w małych i średnich firmach. Chatboty, integracje n8n, zgodność z AI Act. Bezpłatna konsultacja.',
     url: SITE_URL,
     type: 'website',
+    images: [
+      {
+        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD0_0O7fIuIol2OysfIT6g2TQOonKCC3u9yHtt-Q7d7f4qecegF2cPoeci8oifEd8LS9J2uJTxKD4CUu4ZxyikZQzp2NTF2-WwUacceI-pHcqGurB_yBG-ofdxhl-GvXyI9ayVZjOqC7GIa-kE_dBEgfZfxUBnQLewzklw4uN4XTfwSlz6jqHVc33dh7jBivpxaraamZrSAst7jGoIUWi48GuXueOSLbLW409fYmkRaHKtGa0cu0YBEt81HABO-LEKRjZSWW4rpGVKN',
+        width: 1200,
+        height: 630,
+        alt: 'Futurystyczna krystaliczna struktura AI symbolizująca automatyzację procesów',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuD0_0O7fIuIol2OysfIT6g2TQOonKCC3u9yHtt-Q7d7f4qecegF2cPoeci8oifEd8LS9J2uJTxKD4CUu4ZxyikZQzp2NTF2-WwUacceI-pHcqGurB_yBG-ofdxhl-GvXyI9ayVZjOqC7GIa-kE_dBEgfZfxUBnQLewzklw4uN4XTfwSlz6jqHVc33dh7jBivpxaraamZrSAst7jGoIUWi48GuXueOSLbLW409fYmkRaHKtGa0cu0YBEt81HABO-LEKRjZSWW4rpGVKN',
+    ],
   },
 }
 
