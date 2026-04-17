@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { unstable_cache } from 'next/cache'
 import { ChatWidget } from '@/components/chat/chat-widget'
 import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
@@ -12,22 +11,31 @@ import { BlogPreview } from '@/components/marketing/blog-preview'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
-import { createClient } from '@/lib/supabase/server'
 
-const getHeroContent = unstable_cache(
-  async (): Promise<Record<string, string>> => {
-    const supabase = await createClient()
-    const { data } = await supabase
-      .from('page_content')
-      .select('key, value')
-      .in('key', ['hero_title', 'hero_description', 'hero_cta_primary', 'hero_cta_secondary'])
-    return Object.fromEntries(
-      (data ?? []).map((item: { key: string; value: string }) => [item.key, item.value])
-    )
-  },
-  ['hero-content'],
-  { revalidate: 3600 }
-)
+async function getHeroContent(): Promise<Record<string, string>> {
+  const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
+  const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
+
+  if (!supabaseUrl || !supabaseAnonKey) return {}
+
+  const keys = 'hero_title,hero_description,hero_cta_primary,hero_cta_secondary'
+
+  const res = await fetch(
+    `${supabaseUrl}/rest/v1/page_content?select=key,value&key=in.(${keys})`,
+    {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+      },
+      next: { revalidate: 3600 },
+    }
+  )
+
+  if (!res.ok) return {}
+
+  const data: { key: string; value: string }[] = await res.json()
+  return Object.fromEntries(data.map(item => [item.key, item.value]))
+}
 
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
