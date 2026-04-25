@@ -2,7 +2,12 @@
 
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env['RESEND_API_KEY'])
+// Lazy — nie tworzymy instancji przy załadowaniu modułu (Resend v6 rzuca przy undefined key)
+function getResend(): Resend {
+  const key = process.env['RESEND_API_KEY']
+  if (!key) throw new Error('RESEND_API_KEY not set')
+  return new Resend(key)
+}
 
 const FROM_EMAIL =
   process.env['RESEND_FROM_EMAIL'] ?? 'powiadomienia@zautomatyzujemy.pl'
@@ -18,10 +23,10 @@ export interface LeadNotificationData {
 export async function sendChecklistDelivery(email: string): Promise<void> {
   if (!process.env['RESEND_API_KEY']) return
 
-  const siteUrl = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  const siteUrl = 'https://zautomatyzujemy.pl'
   const checklistUrl = `${siteUrl}/ai-act-checklist`
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: '📋 Twoja checklista AI Act dla MŚP — Zautomatyzujemy.pl',
@@ -112,7 +117,7 @@ export async function sendLeadNotification(data: LeadNotificationData): Promise<
     : '📋'
   const subject = `${emoji} Nowy lead — ${sourceLabel}: ${data.name ?? data.email}`
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: TO_EMAIL,
     subject,
