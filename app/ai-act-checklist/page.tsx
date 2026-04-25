@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckSquare, Square, AlertTriangle, Clock, Shield, BookOpen, FileText, Users } from 'lucide-react'
+import { SquareCheck, Square, AlertTriangle, Clock, Shield, BookOpen, FileText, Users } from 'lucide-react'
+import { PrintButton } from './print-button'
 
 export const metadata: Metadata = {
   title: 'Checklista AI Act dla MŚP 2026 | Zautomatyzujemy.pl',
@@ -189,10 +190,13 @@ export default function AiActChecklistPage() {
             Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu —
             konkretne kroki, które musisz podjąć przed <strong className="text-[#ffa07b]">2 sierpnia 2026</strong>.
           </p>
-          <p className="text-[#5a6464] text-xs font-body mt-4">
-            Opracowano na podstawie Rozporządzenia (UE) 2024/1689 (EU AI Act). Aktualizacja: kwiecień 2026.
-            To jest przewodnik informacyjny — w sprawach prawnych skonsultuj się z radcą prawnym.
-          </p>
+          <div className="flex items-center gap-3 mt-4">
+            <PrintButton />
+            <p className="text-[#5a6464] text-xs font-body">
+              Opracowano na podstawie Rozporządzenia (UE) 2024/1689. Kwiecień 2026.
+              Przewodnik informacyjny — w sprawach prawnych skonsultuj się z radcą prawnym.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -290,8 +294,8 @@ export default function AiActChecklistPage() {
         </div>
 
         {/* CTA */}
-        <div className="rounded-2xl border border-[#3d4949]/30 bg-[#111311] p-6 md:p-8 text-center">
-          <CheckSquare size={28} className="text-[#ffa07b] mx-auto mb-4" />
+        <div className="rounded-2xl border border-[#3d4949]/30 bg-[#111311] p-6 md:p-8 text-center print:hidden">
+          <SquareCheck size={28} className="text-[#ffa07b] mx-auto mb-4" />
           <h2 className="text-xl font-headline font-bold text-[#e2e3df] mb-3">
             Potrzebujesz pomocy z wdrożeniem?
           </h2>
