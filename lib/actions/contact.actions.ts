@@ -61,7 +61,7 @@ export async function subscribeLeadMagnetAction(
     return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
   }
 
-  await Promise.allSettled([
+  const emailResults = await Promise.allSettled([
     sendChecklistDelivery(email),
     sendLeadNotification({
       source: 'lead_magnet',
@@ -70,6 +70,14 @@ export async function subscribeLeadMagnetAction(
       message: 'Zapisał się na checklistę AI Act dla MŚP',
     }),
   ])
+
+  emailResults.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.error(`[email ${i === 0 ? 'checklist' : 'notification'}] failed:`, result.reason)
+    } else {
+      console.log(`[email ${i === 0 ? 'checklist' : 'notification'}] sent ok`)
+    }
+  })
 
   return { success: true }
 }
