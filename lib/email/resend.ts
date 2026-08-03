@@ -13,6 +13,23 @@ const FROM_EMAIL =
   process.env['RESEND_FROM_EMAIL'] ?? 'powiadomienia@zautomatyzujemy.pl'
 const TO_EMAIL = process.env['NOTIFICATION_EMAIL'] ?? ''
 
+type SendResult = Awaited<ReturnType<Resend['emails']['send']>>
+
+/**
+ * Resend SDK nie rzuca wyjątkiem przy błędzie API — zwraca { data: null, error }.
+ * Bez tej kontroli odrzucony mail wyglądałby na wysłany.
+ */
+function assertSent(label: string, result: SendResult): void {
+  if (result.error) {
+    throw new Error(
+      `[resend:${label}] from=${FROM_EMAIL} ${result.error.name}: ${result.error.message}`
+    )
+  }
+  console.log(
+    `[resend:${label}] wysłano z ${FROM_EMAIL}, id=${result.data?.id ?? 'brak id'}`
+  )
+}
+
 export interface LeadNotificationData {
   source: 'contact_form' | 'chatbot' | 'lead_magnet'
   name: string | null
@@ -21,12 +38,15 @@ export interface LeadNotificationData {
 }
 
 export async function sendChecklistDelivery(email: string): Promise<void> {
-  if (!process.env['RESEND_API_KEY']) return
+  if (!process.env['RESEND_API_KEY']) {
+    console.warn('[resend:checklist] pominięto — brak RESEND_API_KEY')
+    return
+  }
 
   const siteUrl = 'https://zautomatyzujemy.pl'
   const checklistUrl = `${siteUrl}/ai-act-checklist`
 
-  await getResend().emails.send({
+  const result = await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: '📋 Twoja checklista AI Act dla MŚP — Zautomatyzujemy.pl',
@@ -102,10 +122,17 @@ export async function sendChecklistDelivery(email: string): Promise<void> {
 </body>
 </html>`,
   })
+
+  assertSent(`checklist→${email}`, result)
 }
 
 export async function sendLeadNotification(data: LeadNotificationData): Promise<void> {
-  if (!TO_EMAIL || !process.env['RESEND_API_KEY']) return
+  if (!TO_EMAIL || !process.env['RESEND_API_KEY']) {
+    console.warn(
+      `[resend:notification] pominięto — TO_EMAIL=${TO_EMAIL ? 'ok' : 'brak'}, klucz=${process.env['RESEND_API_KEY'] ? 'ok' : 'brak'}`
+    )
+    return
+  }
 
   const sourceLabel =
     data.source === 'contact_form' ? 'Formularz kontaktowy'
@@ -117,12 +144,14 @@ export async function sendLeadNotification(data: LeadNotificationData): Promise<
     : '📋'
   const subject = `${emoji} Nowy lead — ${sourceLabel}: ${data.name ?? data.email}`
 
-  await getResend().emails.send({
+  const result = await getResend().emails.send({
     from: FROM_EMAIL,
     to: TO_EMAIL,
     subject,
     html: buildEmailHtml(data, sourceLabel),
   })
+
+  assertSent('notification', result)
 }
 
 function buildEmailHtml(data: LeadNotificationData, sourceLabel: string): string {
