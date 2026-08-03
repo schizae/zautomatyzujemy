@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { headers } from 'next/headers'
+import { after } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sendLeadNotification, sendChecklistDelivery } from '@/lib/email/resend'
 import { checkRateLimit } from '@/lib/rate-limiter'
@@ -134,26 +135,30 @@ export async function submitContactAction(
     return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
   }
 
-  // Fire-and-forget — email + n8n (nie blokują odpowiedzi)
-  sendLeadNotification({ source: 'contact_form', name, email, message }).catch(
+  // Czekamy na maila — lead jest już w bazie, więc błąd wysyłki nie psuje formularza
+  await sendLeadNotification({ source: 'contact_form', name, email, message }).catch(
     (err: unknown) => console.error('[resend] contact form notification failed:', err)
   )
 
-  // Fire-and-forget do n8n
+  // after() — n8n ma timeout 5s, nie blokujemy nim odpowiedzi
   const webhookUrl = process.env.N8N_LEAD_WEBHOOK_URL
   if (webhookUrl) {
-    fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(process.env.N8N_WEBHOOK_SECRET && {
-          Authorization: `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
-        }),
-      },
-      body: JSON.stringify({ name, email, message, source: 'contact_form', timestamp: new Date().toISOString() }),
-      signal: AbortSignal.timeout(5000),
-    }).catch((err: unknown) => {
-      console.error('[n8n webhook] contact form failed:', err)
+    after(async () => {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(process.env.N8N_WEBHOOK_SECRET && {
+              Authorization: `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
+            }),
+          },
+          body: JSON.stringify({ name, email, message, source: 'contact_form', timestamp: new Date().toISOString() }),
+          signal: AbortSignal.timeout(5000),
+        })
+      } catch (err: unknown) {
+        console.error('[n8n webhook] contact form failed:', err)
+      }
     })
   }
 

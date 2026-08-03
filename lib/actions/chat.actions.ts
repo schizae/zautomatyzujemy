@@ -3,6 +3,7 @@
 import { generateText } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
+import { after } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sanitizeUserContent } from '@/lib/prompt-sanitize'
 import { sendLeadNotification } from '@/lib/email/resend'
@@ -90,35 +91,39 @@ BRIEF: `,
     return { success: false, error: error.message }
   }
 
-  // Fire-and-forget — email + n8n (nie blokują odpowiedzi)
-  sendLeadNotification({
+  // Czekamy na maila — lead jest już w bazie, więc błąd wysyłki nie psuje akcji
+  await sendLeadNotification({
     source: 'chatbot',
     name: extractedName,
     email: validEmail,
     message: brief,
   }).catch((err: unknown) => console.error('[resend] chat lead notification failed:', err))
 
-  // Fire-and-forget do n8n
+  // after() — n8n ma timeout 5s, nie blokujemy nim odpowiedzi
   const webhookUrl = process.env.N8N_LEAD_WEBHOOK_URL
   if (webhookUrl) {
-    fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(process.env.N8N_WEBHOOK_SECRET && {
-          'Authorization': `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
-        }),
-      },
-      body: JSON.stringify({
-        email: validEmail,
-        name: extractedName,
-        conversation_summary: brief,
-        source: 'chatbot',
-        timestamp: new Date().toISOString(),
-      }),
-      signal: AbortSignal.timeout(5000),
-    }).catch((err: unknown) => {
-      console.error('[n8n webhook] chat lead failed:', err)
+    after(async () => {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(process.env.N8N_WEBHOOK_SECRET && {
+              'Authorization': `Bearer ${process.env.N8N_WEBHOOK_SECRET}`,
+            }),
+          },
+          body: JSON.stringify({
+            email: validEmail,
+            name: extractedName,
+            conversation_summary: brief,
+            source: 'chatbot',
+            timestamp: new Date().toISOString(),
+          }),
+          signal: AbortSignal.timeout(5000),
+        })
+      } catch (err: unknown) {
+        console.error('[n8n webhook] chat lead failed:', err)
+      }
     })
   }
 
