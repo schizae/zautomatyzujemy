@@ -268,9 +268,15 @@ async function main() {
       continue
     }
 
-    const { error: deleteError } = await supabase.from('documents').delete().eq('source', source)
-    if (deleteError) {
-      console.error(`❌ ${source}: błąd usuwania starych chunków —`, deleteError.message)
+    // Id starych chunków zbieramy przed zapisem, żeby skasować je dopiero po udanym
+    // insercie — gdyby zapis padł, źródło zostałoby bez danych do kolejnego przebiegu
+    const { data: previousRows, error: previousError } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('source', source)
+
+    if (previousError) {
+      console.error(`❌ ${source}: nie udało się odczytać starych chunków —`, previousError.message)
       continue
     }
 
@@ -287,18 +293,36 @@ async function main() {
       continue
     }
 
+    const previousIds = (previousRows ?? [])
+      .map(row => row.id)
+      .filter(id => typeof id === 'string')
+
+    if (previousIds.length > 0) {
+      const { error: deleteError } = await supabase.from('documents').delete().in('id', previousIds)
+      if (deleteError) {
+        // Duplikaty w wynikach RAG są nieprzyjemne, ale to i tak lepsze niż puste źródło
+        console.error(`⚠️  ${source}: zapisano nowe chunki, ale stare zostały —`, deleteError.message)
+      }
+    }
+
     syncedSources.push(source)
     console.log(`✅ ${source}: zapisano ${chunks.length} chunków`)
   }
 
-  // Sprzątanie: źródła, których już nie ma (artykuł cofnięty do szkicu, usunięty plik)
+  /**
+   * Sprzątanie: źródła, których już nie ma (artykuł cofnięty do szkicu, usunięty plik).
+   * Porównujemy z listą źródeł OCZEKIWANYCH, a nie zsynchronizowanych — źródło, które
+   * padło w tym przebiegu na błędzie API, nadal istnieje i jego dane muszą przetrwać.
+   * Porównanie z syncedSources skasowałoby przy wyczerpanym limicie Gemini całą bazę.
+   */
+  const expectedSources = new Set(documents.map(doc => doc.source))
   const { data: existingRows, error: listError } = await supabase.from('documents').select('source')
 
   if (listError) {
     console.error('⚠️  Nie udało się sprawdzić osieroconych źródeł:', listError.message)
   } else {
     const orphans = [...new Set((existingRows ?? []).map(row => row.source))].filter(
-      source => source && !syncedSources.includes(source)
+      source => source && !expectedSources.has(source)
     )
 
     if (orphans.length > 0) {
@@ -311,7 +335,11 @@ async function main() {
     }
   }
 
-  console.log('\n🎉 Gotowe! Baza wiedzy jest zaktualizowana.')
+  const failed = documents.length - syncedSources.length
+  console.log(
+    `\n🎉 Gotowe! Zsynchronizowano ${syncedSources.length}/${documents.length} źródeł` +
+      (failed > 0 ? ` — ${failed} nie powiodło się, ich stare dane pozostały nietknięte.` : '.')
+  )
 }
 
 main().catch(err => {
