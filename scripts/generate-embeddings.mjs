@@ -22,8 +22,13 @@ const KNOWLEDGE_DIR = join(ROOT, 'knowledge')
 
 const CHUNK_SIZE = 500
 const CHUNK_OVERLAP = 50
-const EMBED_BATCH = 100 // limit text-embedding-004 na jedno wywołanie
+const EMBED_BATCH = 100
 const SUPPORTED_EXTENSIONS = new Set(['.txt', '.md'])
+
+// text-embedding-004 został wycofany z API — potwierdzone przez ListModels 2026-08-04
+const EMBEDDING_MODEL = 'gemini-embedding-001'
+// Musi zgadzać się z vector(768) z migracji 002 oraz z app/api/chat/route.ts
+const EMBEDDING_DIMENSIONS = 768
 
 /**
  * Dzieli tekst na chunki z nakładaniem (overlap).
@@ -163,8 +168,16 @@ async function embedChunks(chunks) {
   const result = []
   for (let i = 0; i < chunks.length; i += EMBED_BATCH) {
     const { embeddings } = await embedMany({
-      model: google.textEmbeddingModel('text-embedding-004'),
+      model: google.textEmbeddingModel(EMBEDDING_MODEL),
       values: chunks.slice(i, i + EMBED_BATCH),
+      providerOptions: {
+        google: {
+          // Kolumna w bazie to vector(768); model domyślnie zwraca 3072
+          outputDimensionality: EMBEDDING_DIMENSIONS,
+          // Dokumenty i zapytania embeduje się asymetrycznie — to poprawia trafność
+          taskType: 'RETRIEVAL_DOCUMENT',
+        },
+      },
     })
     result.push(...embeddings)
   }
@@ -179,8 +192,15 @@ async function embedChunks(chunks) {
  */
 async function probe(supabase, question) {
   const { embeddings } = await embedMany({
-    model: google.textEmbeddingModel('text-embedding-004'),
+    model: google.textEmbeddingModel(EMBEDDING_MODEL),
     values: [question],
+    providerOptions: {
+      google: {
+        outputDimensionality: EMBEDDING_DIMENSIONS,
+        // RETRIEVAL_QUERY, nie _DOCUMENT — tu embedujemy pytanie, nie treść
+        taskType: 'RETRIEVAL_QUERY',
+      },
+    },
   })
 
   const { data, error } = await supabase.rpc('match_documents', {

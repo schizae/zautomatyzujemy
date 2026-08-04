@@ -36,15 +36,28 @@ function buildCoreMessages(messages: UIMessage[]) {
 async function getContext(userText: string): Promise<string> {
   try {
     const { embedding } = await embed({
-      model: google.textEmbeddingModel('text-embedding-004'),
+      // text-embedding-004 wycofany z API; 768 wymiarów musi zgadzać się z migracją 002
+      model: google.textEmbeddingModel('gemini-embedding-001'),
       value: userText,
       maxRetries: 0,
+      providerOptions: {
+        google: {
+          outputDimensionality: 768,
+          // Zapytanie, nie dokument — musi być parą dla RETRIEVAL_DOCUMENT ze skryptu
+          taskType: 'RETRIEVAL_QUERY',
+        },
+      },
     })
 
     const supabase = createServiceClient()
+    /**
+     * 0.6, nie 0.7 — zmierzone na realnej bazie (321 chunków, gemini-embedding-001/768):
+     * trafne treści plasują się w 0.65-0.73, a pytania spoza tematu nie przekraczają 0.0.
+     * Przy 0.7 odpadała m.in. odpowiedź o przebiegu współpracy (0.679).
+     */
     const { data } = await supabase.rpc('match_documents', {
       query_embedding: embedding,
-      match_threshold: 0.7,
+      match_threshold: 0.6,
       match_count: 5,
     })
 
