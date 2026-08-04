@@ -106,10 +106,10 @@ export function AboutSection() {
                 pod konkretny proces i konkretny cel Twojej firmy.
               </p>
               <p>
-                Śledzimy AI Act od pierwszych projektów regulacji i pomagamy firmom
-                przygotować się na sierpień 2026, zanim temat stanie się pilny. Jeśli
-                używasz AI w firmie — nawet tylko ChatGPT do maili — masz obowiązki
-                prawne. Lepiej wiedzieć o nich zawczasu i działać z wyprzedzeniem.
+                Śledzimy AI Act od pierwszych projektów regulacji — przez kolejne
+                nowelizacje, aż po Digital Omnibus. Jeśli używasz AI w firmie — nawet
+                tylko ChatGPT do maili — masz obowiązki prawne, a część z nich jest
+                już egzekwowana. Lepiej wiedzieć o nich zawczasu niż przy kontroli.
               </p>
               <p>
                 Zależy nam na partnerstwie, nie jednorazowej transakcji. Po wdrożeniu

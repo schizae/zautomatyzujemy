@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { headers } from 'next/headers'
 import { after } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
 import { sendLeadNotification, sendChecklistDelivery } from '@/lib/email/resend'
 import { checkRateLimit } from '@/lib/rate-limiter'
 import type { ActionResult } from '@/types'
@@ -25,6 +26,38 @@ function isBot(formData: FormData): boolean {
 const LeadMagnetSchema = z.object({
   email: z.string().email('Podaj poprawny adres e-mail.'),
 })
+
+/**
+ * Zapis do newslettera — osobny od leada, bo to osobna zgoda (RODO art. 7).
+ * Zwraca token wypisu, żeby trafił do stopki maila.
+ */
+async function subscribeToNewsletter(email: string, ip: string): Promise<string | null> {
+  const supabase = createServiceClient()
+
+  // onConflict — ponowny zapis tym samym adresem odnawia zgodę i cofa wypis
+  const { data, error } = await supabase
+    .from('newsletter_subscribers')
+    .upsert(
+      {
+        email,
+        consent_at: new Date().toISOString(),
+        consent_ip: ip,
+        consent_text: NEWSLETTER_CONSENT_TEXT,
+        source: 'lead_magnet',
+        unsubscribed_at: null,
+      },
+      { onConflict: 'email' }
+    )
+    .select('unsubscribe_token')
+    .single()
+
+  if (error) {
+    console.error('[newsletter] zapis nieudany:', error.message)
+    return null
+  }
+
+  return typeof data?.unsubscribe_token === 'string' ? data.unsubscribe_token : null
+}
 
 export async function subscribeLeadMagnetAction(
   _prev: ActionResult,
@@ -62,8 +95,12 @@ export async function subscribeLeadMagnetAction(
     return { success: false, error: 'Błąd zapisu. Spróbuj ponownie.' }
   }
 
+  // Zgoda dobrowolna — checklistę wysyłamy niezależnie od niej
+  const wantsNewsletter = formData.get('newsletterConsent') === 'true'
+  const unsubscribeToken = wantsNewsletter ? await subscribeToNewsletter(email, ip) : null
+
   const emailResults = await Promise.allSettled([
-    sendChecklistDelivery(email),
+    sendChecklistDelivery(email, unsubscribeToken),
     sendLeadNotification({
       source: 'lead_magnet',
       name: null,

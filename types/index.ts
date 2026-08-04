@@ -54,6 +54,18 @@ export interface Lead {
   created_at: string
 }
 
+export interface NewsletterSubscriber {
+  id: string
+  email: string
+  consent_at: string
+  consent_ip: string | null
+  consent_text: string
+  source: string
+  unsubscribe_token: string
+  unsubscribed_at: string | null
+  created_at: string
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export interface ApiSuccessResponse<T> {

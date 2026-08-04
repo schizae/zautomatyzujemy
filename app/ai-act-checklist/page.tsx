@@ -4,11 +4,14 @@ import { SquareCheck, Square, AlertTriangle, Clock, Shield, BookOpen, FileText, 
 import { PrintButton } from './print-button'
 
 export const metadata: Metadata = {
-  title: 'Checklista AI Act dla MŚP 2026 | Zautomatyzujemy.pl',
+  title: 'Checklista AI Act dla MŚP | Zautomatyzujemy.pl',
   description:
-    'Praktyczna checklista zgodności z rozporządzeniem EU AI Act dla małych i średnich firm. Bez prawniczego żargonu — konkretne kroki przed 2 sierpnia 2026.',
+    'Praktyczna checklista zgodności z rozporządzeniem EU AI Act dla małych i średnich firm. Bez prawniczego żargonu — obowiązki, które już obowiązują, i terminy, które dopiero nadejdą.',
   alternates: { canonical: '/ai-act-checklist' },
 }
+
+// Status "obowiązuje" liczy się z zegara — odświeżamy raz na dobę, żeby strona nie zamarła na dacie builda
+export const revalidate = 86400
 
 interface CheckItem {
   text: string
@@ -73,7 +76,7 @@ const sections: Section[] = [
     id: 'obowiazki',
     icon: Shield,
     title: 'Obowiązki wdrażającego (deployer) — systemy wysokiego ryzyka',
-    badge: 'Termin: sierpień 2026',
+    badge: 'Termin: grudzień 2027',
     badgeColor: 'text-[#70e5ea] border-[#70e5ea]/30 bg-[#70e5ea]/10',
     items: [
       {
@@ -121,12 +124,12 @@ const sections: Section[] = [
     id: 'ai-literacy',
     icon: BookOpen,
     title: 'AI literacy — szkolenia pracowników',
-    badge: 'Termin: sierpień 2025',
+    badge: 'Obowiązuje od lutego 2025',
     badgeColor: 'text-[#ffa07b] border-[#ffa07b]/30 bg-[#ffa07b]/10',
     items: [
       {
         text: 'Zapewniłem odpowiedni poziom wiedzy o AI wszystkim pracownikom korzystającym z systemów AI',
-        note: 'Art. 4 AI Act: obowiązek "AI literacy" obowiązuje od 2 sierpnia 2025. Nie wymaga certyfikatów — wystarczy udokumentowane szkolenie wewnętrzne.',
+        note: 'Art. 4 AI Act: obowiązek "AI literacy" obowiązuje od 2 lutego 2025. Nie wymaga certyfikatów — wystarczy udokumentowane szkolenie wewnętrzne.',
       },
       {
         text: 'Przeszkoliłem osoby odpowiedzialne za zarządzanie systemami AI wysokiego ryzyka (pełna interpretacja wymagań)',
@@ -159,12 +162,27 @@ const sections: Section[] = [
   },
 ]
 
+/**
+ * Daty w ISO — status "minęło" liczymy z zegara, nie na sztywno.
+ * Terminy dla systemów wysokiego ryzyka przesunięte przez Digital Omnibus
+ * (przyjęty 29.06.2026, opublikowany w Dz.U. UE 24.07.2026).
+ */
 const timeline = [
-  { date: '2 luty 2025', label: 'Zakaz systemów AI nieakceptowalnego ryzyka', done: true },
-  { date: '2 sierpień 2025', label: 'Przepisy o modelach GPAI (AI ogólnego przeznaczenia) + AI literacy', done: false },
-  { date: '2 sierpień 2026', label: 'Pełne obowiązki dla systemów AI wysokiego ryzyka (Aneks I)', done: false },
-  { date: '2 sierpień 2027', label: 'Obowiązki dla istniejących systemów AI wysokiego ryzyka (Aneks III)', done: false },
+  { iso: '2025-02-02', label: 'Zakaz systemów AI nieakceptowalnego ryzyka + obowiązek AI literacy (Art. 4)' },
+  { iso: '2025-08-02', label: 'Przepisy o modelach GPAI (AI ogólnego przeznaczenia), nadzór i kary' },
+  { iso: '2026-08-02', label: 'Obowiązki przejrzystości (Art. 50) — oznaczanie chatbotów i treści generowanych przez AI' },
+  { iso: '2026-12-02', label: 'Koniec okresu przejściowego na znakowanie treści dla systemów wprowadzonych przed 2 sierpnia 2026' },
+  { iso: '2027-12-02', label: 'Samodzielne systemy wysokiego ryzyka (Aneks III) — termin przesunięty przez Digital Omnibus' },
+  { iso: '2028-08-02', label: 'Systemy wysokiego ryzyka wbudowane w produkty regulowane (Aneks I)' },
 ]
+
+function formatPlDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('pl-PL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
 
 export default function AiActChecklistPage() {
   return (
@@ -187,13 +205,15 @@ export default function AiActChecklistPage() {
             Checklista: Zgodność z AI Act dla MŚP
           </h1>
           <p className="text-[#bcc9c9] font-body text-base leading-relaxed max-w-2xl">
-            Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu —
-            konkretne kroki, które musisz podjąć przed <strong className="text-[#ffa07b]">2 sierpnia 2026</strong>.
+            Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu.
+            Obowiązki przejrzystości <strong className="text-[#ffa07b]">obowiązują od 2 sierpnia 2026</strong> i są
+            już egzekwowane karami — a terminy dla systemów wysokiego ryzyka zostały przesunięte na grudzień 2027.
           </p>
           <div className="flex items-center gap-3 mt-4">
             <PrintButton />
             <p className="text-[#5a6464] text-xs font-body">
-              Opracowano na podstawie Rozporządzenia (UE) 2024/1689. Kwiecień 2026.
+              Opracowano na podstawie Rozporządzenia (UE) 2024/1689 wraz ze zmianami wprowadzonymi
+              przez Digital Omnibus (Dz.U. UE, 24 lipca 2026). Stan na sierpień 2026.
               Przewodnik informacyjny — w sprawach prawnych skonsultuj się z radcą prawnym.
             </p>
           </div>
@@ -209,19 +229,22 @@ export default function AiActChecklistPage() {
             <h2 className="text-sm font-label uppercase tracking-wider text-[#70e5ea]">Kluczowe daty</h2>
           </div>
           <div className="space-y-3">
-            {timeline.map((item) => (
-              <div key={item.date} className="flex gap-4 items-start">
-                <div className={`shrink-0 w-2 h-2 rounded-full mt-1.5 ${item.done ? 'bg-[#3d4949]' : 'bg-[#ffa07b]'}`} />
-                <div>
-                  <span className={`text-xs font-label ${item.done ? 'text-[#5a6464]' : 'text-[#ffa07b]'}`}>
-                    {item.date}{item.done ? ' (minęło)' : ''}
-                  </span>
-                  <p className={`text-sm font-body ${item.done ? 'text-[#5a6464] line-through' : 'text-[#e2e3df]'}`}>
-                    {item.label}
-                  </p>
+            {timeline.map((item) => {
+              const done = new Date(item.iso) < new Date()
+              return (
+                <div key={item.iso} className="flex gap-4 items-start">
+                  <div className={`shrink-0 w-2 h-2 rounded-full mt-1.5 ${done ? 'bg-[#3d4949]' : 'bg-[#ffa07b]'}`} />
+                  <div>
+                    <span className={`text-xs font-label ${done ? 'text-[#5a6464]' : 'text-[#ffa07b]'}`}>
+                      {formatPlDate(item.iso)}{done ? ' (obowiązuje)' : ''}
+                    </span>
+                    <p className={`text-sm font-body ${done ? 'text-[#5a6464]' : 'text-[#e2e3df]'}`}>
+                      {item.label}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
@@ -278,10 +301,10 @@ export default function AiActChecklistPage() {
               'Audyt narzędzi AI używanych w firmie — stwórz listę',
               'Klasyfikacja każdego narzędzia według poziomów ryzyka AI Act',
               'Wdrożenie transparentności: chatboty i AI muszą się identyfikować',
-              'Szkolenie pracowników z AI literacy (termin: sierpień 2025)',
+              'Szkolenie pracowników z AI literacy (obowiązuje od lutego 2025)',
               'Opracowanie firmowej polityki AI (AI Policy)',
               'Aktualizacja polityki prywatności i umów z dostawcami AI',
-              'Przygotowanie dokumentacji dla systemów wysokiego ryzyka (termin: sierpień 2026)',
+              'Przygotowanie dokumentacji dla systemów wysokiego ryzyka (termin: grudzień 2027)',
             ].map((step, idx) => (
               <li key={idx} className="flex gap-4 items-start">
                 <span className="shrink-0 w-6 h-6 rounded-full bg-[#70e5ea]/10 border border-[#70e5ea]/30 text-[#70e5ea] text-xs font-label flex items-center justify-center">

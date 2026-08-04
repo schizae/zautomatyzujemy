@@ -37,7 +37,10 @@ export interface LeadNotificationData {
   message: string
 }
 
-export async function sendChecklistDelivery(email: string): Promise<void> {
+export async function sendChecklistDelivery(
+  email: string,
+  unsubscribeToken?: string | null
+): Promise<void> {
   if (!process.env['RESEND_API_KEY']) {
     console.warn('[resend:checklist] pominięto — brak RESEND_API_KEY')
     return
@@ -45,6 +48,13 @@ export async function sendChecklistDelivery(email: string): Promise<void> {
 
   const siteUrl = 'https://zautomatyzujemy.pl'
   const checklistUrl = `${siteUrl}/ai-act-checklist`
+
+  // Link wypisu tylko dla tych, którzy zapisali się na newsletter —
+  // sam mail z checklistą jest transakcyjny (zamówiony przez użytkownika)
+  const unsubscribeRow = unsubscribeToken
+    ? `<br>Zapisałeś/aś się na nasz newsletter.
+       <a href="${siteUrl}/newsletter/wypisz?token=${unsubscribeToken}" style="color:#9ca3af">Wypisz się</a>`
+    : ''
 
   const result = await getResend().emails.send({
     from: FROM_EMAIL,
@@ -74,8 +84,9 @@ export async function sendChecklistDelivery(email: string): Promise<void> {
               tutaj Norbert z Zautomatyzujemy.pl. Obiecałem checklistę — trzymasz ją poniżej.
             </p>
             <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6">
-              Znajdziesz w niej konkretne kroki, które Twoja firma powinna podjąć przed <strong>2 sierpnia 2026</strong>,
-              żeby być zgodna z unijnym rozporządzeniem AI Act — bez prawniczego żargonu.
+              Znajdziesz w niej konkretne kroki, żeby Twoja firma była zgodna z unijnym rozporządzeniem
+              AI Act — bez prawniczego żargonu. Obowiązki przejrzystości <strong>obowiązują od 2 sierpnia 2026</strong>
+              i są już egzekwowane karami, a terminy dla systemów wysokiego ryzyka przesunięto na grudzień 2027.
             </p>
 
             <table width="100%" cellpadding="0" cellspacing="0">
@@ -111,7 +122,7 @@ export async function sendChecklistDelivery(email: string): Promise<void> {
           <td style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb">
             <p style="margin:0;font-size:12px;color:#9ca3af">
               Zautomatyzujemy.pl · <a href="${siteUrl}" style="color:#9ca3af">${siteUrl}</a>
-              <br>Wysłano, bo zapisałeś/aś się na naszej stronie.
+              <br>Wysłano, bo poprosiłeś/aś o checklistę na naszej stronie.${unsubscribeRow}
             </p>
           </td>
         </tr>

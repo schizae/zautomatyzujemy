@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useActionState } from 'react'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
+import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
 import { Shield, CheckCircle2, Loader2 } from 'lucide-react'
 import type { ActionResult } from '@/types'
 
@@ -40,7 +41,7 @@ export function LeadMagnetSection() {
               </h2>
               <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
                 Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu —
-                konkretne kroki, które musisz podjąć przed 2 sierpnia 2026.
+                obowiązki, które już obowiązują, i terminy, które dopiero nadejdą.
               </p>
 
               <ul className="space-y-3">
@@ -86,7 +87,7 @@ export function LeadMagnetSection() {
                   </h3>
                   <p className="text-[#bcc9c9] font-body text-sm mb-8">
                     Podaj swój adres email — link do checklisty dostaniesz natychmiast.
-                    Bez spamu, bez automatycznych sekwencji.
+                    Sama checklista jest bezwarunkowa, newsletter to osobna decyzja.
                   </p>
 
                   <form action={formAction} className="space-y-4">
@@ -109,6 +110,18 @@ export function LeadMagnetSection() {
                       />
                     </div>
 
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        name="newsletterConsent"
+                        value="true"
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#3d4949] bg-[#1a1c1a] accent-[#ffa07b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa07b]/40"
+                      />
+                      <span className="text-[#bcc9c9] text-xs font-body leading-relaxed group-hover:text-[#e2e3df] transition-colors">
+                        {NEWSLETTER_CONSENT_TEXT}
+                      </span>
+                    </label>
+
                     {!state.success && state.error && (
                       <p className="text-red-400 text-sm font-body">{state.error}</p>
                     )}
@@ -128,8 +141,12 @@ export function LeadMagnetSection() {
                       )}
                     </button>
 
-                    <p className="text-[#5a6464] text-xs font-body text-center">
-                      Twój email nie trafi do żadnej bazy marketingowej.
+                    <p className="text-[#5a6464] text-xs font-body text-center leading-relaxed">
+                      Bez zaznaczonej zgody użyjemy Twojego adresu wyłącznie do wysłania
+                      checklisty. Zasady opisuje{' '}
+                      <Link href="/privacy-policy" className="text-[#70e5ea] hover:underline">
+                        polityka prywatności
+                      </Link>.
                     </p>
                   </form>
                 </>

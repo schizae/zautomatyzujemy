@@ -10,9 +10,9 @@ export function AiActBanner() {
           <AlertTriangle className="text-[#ffa07b] shrink-0" size={18} />
           <p className="text-sm font-body text-[#e2e3df]">
             <span className="font-headline font-bold text-[#ffa07b]">AI Act</span>
-            {' '}wchodzi w życie{' '}
-            <span className="font-bold">2 sierpnia 2026.</span>
-            {' '}Czy Twoja firma jest gotowa?
+            {' '}już obowiązuje —{' '}
+            <span className="font-bold">kary do 15 mln € lub 3% obrotu.</span>
+            {' '}Czy Twoja firma jest zgodna?
           </p>
         </div>
 

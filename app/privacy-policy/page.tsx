@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
           Polityka Prywatności
         </h1>
         <p className="text-[#bcc9c9] mb-12">
-          Ostatnia aktualizacja: 3 kwietnia 2026
+          Ostatnia aktualizacja: 4 sierpnia 2026
         </p>
 
         <div className="space-y-10 text-[#bcc9c9] leading-7">
@@ -76,6 +76,14 @@ export default function PrivacyPolicyPage() {
                 danych).
               </li>
               <li>
+                <strong className="text-[#e2e3df]">Newsletter marketingowy</strong> —
+                art. 6 ust. 1 lit. a RODO (odrębna, dobrowolna zgoda). Zapis na
+                newsletter nie jest warunkiem otrzymania checklisty AI Act ani żadnej
+                innej usługi. Zgodę możesz wycofać w każdej chwili — link do wypisu
+                znajduje się w każdej wiadomości. Wycofanie zgody nie wpływa na
+                zgodność z prawem przetwarzania sprzed jej wycofania.
+              </li>
+              <li>
                 <strong className="text-[#e2e3df]">Bezpieczeństwo i analityka</strong> —
                 art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).
               </li>
@@ -100,6 +108,10 @@ export default function PrivacyPolicyPage() {
                 <strong className="text-[#e2e3df]">n8n GmbH</strong> — automatyzacja
                 procesów biznesowych (webhook do obsługi leadów).
               </li>
+              <li>
+                <strong className="text-[#e2e3df]">Resend Inc.</strong> — wysyłka
+                wiadomości e-mail (potwierdzenia, checklista, newsletter).
+              </li>
             </ul>
           </section>
 
@@ -111,6 +123,9 @@ export default function PrivacyPolicyPage() {
               Dane z formularza kontaktowego i chatbota przechowujemy przez okres
               niezbędny do realizacji celu, nie dłużej niż 24 miesiące od ostatniego
               kontaktu. Dane techniczne (logi) przechowujemy maksymalnie 12 miesięcy.
+              Adres e-mail zapisany na newsletter przetwarzamy do momentu wycofania
+              zgody; po wypisie zachowujemy wyłącznie zapis samej zgody i jej wycofania,
+              jako dowód wymagany przepisami o ochronie danych.
             </p>
           </section>
 
