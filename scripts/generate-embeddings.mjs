@@ -1,25 +1,28 @@
 /**
- * Skrypt do generowania embeddingów z plików w katalogu knowledge/
- * Użycie: pnpm db:generate
+ * Generowanie embeddingów bazy wiedzy chatbota.
  *
- * Ładuje zmienne z .env.local przez flagę --env-file (Node 20.6+)
+ * Źródła: pliki knowledge/*.md oraz treści z Supabase
+ * (posts, case_studies, faq_items, services, page_content).
+ *
+ * Lokalnie:  pnpm db:generate
+ * W CI:      node scripts/generate-embeddings.mjs
+ * Diagnoza:  node --env-file=.env.local scripts/generate-embeddings.mjs --probe "ile kosztuje automatyzacja"
  */
 
 import { createClient } from '@supabase/supabase-js'
 import { google } from '@ai-sdk/google'
 import { embedMany } from 'ai'
 import { readdir, readFile } from 'node:fs/promises'
-import { join, extname, basename } from 'node:path'
+import { join, extname, basename, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const KNOWLEDGE_DIR = join(ROOT, 'knowledge')
 
 const CHUNK_SIZE = 500
 const CHUNK_OVERLAP = 50
+const EMBED_BATCH = 100 // limit text-embedding-004 na jedno wywołanie
 const SUPPORTED_EXTENSIONS = new Set(['.txt', '.md'])
 
 /**
@@ -43,88 +46,272 @@ function chunkText(text) {
   return chunks
 }
 
+/**
+ * Dokumenty z katalogu knowledge/.
+ * @returns {Promise<{source: string, text: string}[]>}
+ */
+async function collectFileDocuments() {
+  let files
+  try {
+    files = await readdir(KNOWLEDGE_DIR)
+  } catch {
+    console.warn('⚠️  Brak katalogu knowledge/ — pomijam źródła plikowe.')
+    return []
+  }
+
+  const docs = []
+  for (const file of files) {
+    if (!SUPPORTED_EXTENSIONS.has(extname(file).toLowerCase())) continue
+    const text = await readFile(join(KNOWLEDGE_DIR, file), 'utf-8')
+    docs.push({ source: `file:${basename(file)}`, text })
+  }
+  return docs
+}
+
+/**
+ * Dokumenty z Supabase — tylko treści opublikowane/aktywne.
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @returns {Promise<{source: string, text: string}[]>}
+ */
+async function collectDbDocuments(supabase) {
+  const docs = []
+
+  const { data: posts, error: postsError } = await supabase
+    .from('posts')
+    .select('slug, title, excerpt, content, tags')
+    .eq('is_published', true)
+  if (postsError) throw new Error(`posts: ${postsError.message}`)
+
+  for (const post of posts ?? []) {
+    const tags = Array.isArray(post.tags) && post.tags.length > 0
+      ? `\nTagi: ${post.tags.join(', ')}`
+      : ''
+    docs.push({
+      source: `post:${post.slug}`,
+      text: `Artykuł z bloga: ${post.title}${tags}\n\n${post.excerpt ?? ''}\n\n${post.content ?? ''}`,
+    })
+  }
+
+  const { data: caseStudies, error: caseStudiesError } = await supabase
+    .from('case_studies')
+    .select('slug, title, description, content, tag')
+    .eq('is_active', true)
+  if (caseStudiesError) throw new Error(`case_studies: ${caseStudiesError.message}`)
+
+  for (const study of caseStudies ?? []) {
+    docs.push({
+      source: `case-study:${study.slug}`,
+      text: `Wdrożenie u klienta (case study): ${study.title}\nKategoria: ${study.tag ?? 'brak'}\n\n${study.description ?? ''}\n\n${study.content ?? ''}`,
+    })
+  }
+
+  const { data: faqItems, error: faqError } = await supabase
+    .from('faq_items')
+    .select('question, answer')
+    .eq('is_active', true)
+    .order('sort_order')
+  if (faqError) throw new Error(`faq_items: ${faqError.message}`)
+
+  if (faqItems && faqItems.length > 0) {
+    docs.push({
+      source: 'faq',
+      text: `Najczęściej zadawane pytania:\n\n${faqItems
+        .map(item => `Pytanie: ${item.question}\nOdpowiedź: ${item.answer}`)
+        .join('\n\n')}`,
+    })
+  }
+
+  const { data: services, error: servicesError } = await supabase
+    .from('services')
+    .select('title, description')
+    .eq('is_active', true)
+    .order('sort_order')
+  if (servicesError) throw new Error(`services: ${servicesError.message}`)
+
+  if (services && services.length > 0) {
+    docs.push({
+      source: 'services',
+      text: `Nasze usługi:\n\n${services
+        .map(service => `${service.title}: ${service.description ?? ''}`)
+        .join('\n\n')}`,
+    })
+  }
+
+  const { data: pageContent, error: pageContentError } = await supabase
+    .from('page_content')
+    .select('key, label, value')
+  if (pageContentError) throw new Error(`page_content: ${pageContentError.message}`)
+
+  if (pageContent && pageContent.length > 0) {
+    docs.push({
+      source: 'page-content',
+      text: `Treści ze strony firmowej:\n\n${pageContent
+        .map(item => `${item.label ?? item.key}: ${item.value ?? ''}`)
+        .join('\n\n')}`,
+    })
+  }
+
+  return docs
+}
+
+/**
+ * Embeddingi w partiach — jedno wywołanie API ma limit wartości.
+ * @param {string[]} chunks
+ * @returns {Promise<number[][]>}
+ */
+async function embedChunks(chunks) {
+  const result = []
+  for (let i = 0; i < chunks.length; i += EMBED_BATCH) {
+    const { embeddings } = await embedMany({
+      model: google.textEmbeddingModel('text-embedding-004'),
+      values: chunks.slice(i, i + EMBED_BATCH),
+    })
+    result.push(...embeddings)
+  }
+  return result
+}
+
+/**
+ * Tryb diagnostyczny — pokazuje realne podobieństwo dla zadanego pytania.
+ * Bez tego nie da się sensownie dobrać match_threshold w app/api/chat/route.ts.
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @param {string} question
+ */
+async function probe(supabase, question) {
+  const { embeddings } = await embedMany({
+    model: google.textEmbeddingModel('text-embedding-004'),
+    values: [question],
+  })
+
+  const { data, error } = await supabase.rpc('match_documents', {
+    query_embedding: embeddings[0],
+    match_threshold: 0.0,
+    match_count: 10,
+  })
+
+  if (error) {
+    console.error('❌ match_documents:', error.message)
+    process.exit(1)
+  }
+
+  console.log(`\n🔍 Pytanie: "${question}"\n`)
+  if (!data || data.length === 0) {
+    console.log('   Brak jakichkolwiek wyników — baza wiedzy jest pusta.')
+    return
+  }
+
+  for (const row of data) {
+    const source = row.metadata?.source ?? 'brak'
+    const preview = row.content.slice(0, 90).replace(/\n/g, ' ')
+    console.log(`   ${row.similarity.toFixed(3)}  [${source}]  ${preview}…`)
+  }
+  console.log('\n   Próg w app/api/chat/route.ts wynosi 0.7 — odetnie wszystko poniżej.\n')
+}
+
 async function main() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !serviceRoleKey) {
-    console.error('❌ Brakuje zmiennych środowiskowych: NEXT_PUBLIC_SUPABASE_URL lub SUPABASE_SERVICE_ROLE_KEY')
+    console.error('❌ Brakuje zmiennych: NEXT_PUBLIC_SUPABASE_URL lub SUPABASE_SERVICE_ROLE_KEY')
     process.exit(1)
   }
 
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    console.error('❌ Brakuje zmiennej środowiskowej: GOOGLE_GENERATIVE_AI_API_KEY')
+    console.error('❌ Brakuje zmiennej: GOOGLE_GENERATIVE_AI_API_KEY')
     process.exit(1)
   }
 
   const supabase = createClient(supabaseUrl, serviceRoleKey)
 
-  let files
-  try {
-    files = await readdir(KNOWLEDGE_DIR)
-  } catch {
-    console.error(`❌ Nie można odczytać katalogu knowledge/. Upewnij się, że istnieje: ${KNOWLEDGE_DIR}`)
-    process.exit(1)
-  }
-
-  const textFiles = files.filter(f => SUPPORTED_EXTENSIONS.has(extname(f).toLowerCase()))
-
-  if (textFiles.length === 0) {
-    console.log('⚠️  Brak plików .txt lub .md w katalogu knowledge/')
-    console.log('   Dodaj dokumenty (cennik, FAQ, opis usług) i uruchom ponownie.')
+  const probeIndex = process.argv.indexOf('--probe')
+  if (probeIndex !== -1) {
+    const question = process.argv[probeIndex + 1]
+    if (!question) {
+      console.error('❌ Użycie: --probe "treść pytania"')
+      process.exit(1)
+    }
+    await probe(supabase, question)
     return
   }
 
-  console.log(`📂 Znaleziono ${textFiles.length} plik(ów) w knowledge/\n`)
+  const documents = [
+    ...(await collectFileDocuments()),
+    ...(await collectDbDocuments(supabase)),
+  ]
 
-  for (const file of textFiles) {
-    const source = basename(file)
-    const content = await readFile(join(KNOWLEDGE_DIR, file), 'utf-8')
-    const chunks = chunkText(content)
+  if (documents.length === 0) {
+    console.log('⚠️  Brak treści do zaindeksowania.')
+    return
+  }
+
+  console.log(`📂 Źródeł do zaindeksowania: ${documents.length}\n`)
+
+  const syncedSources = []
+
+  for (const { source, text } of documents) {
+    const chunks = chunkText(text)
 
     if (chunks.length === 0) {
-      console.log(`⏭  ${source}: pominięto (pusty plik)`)
+      console.log(`⏭  ${source}: pominięto (pusta treść)`)
       continue
     }
 
     console.log(`⚙️  ${source}: ${chunks.length} chunków — generuję embeddingi...`)
 
-    // Usuń stare embeddingi dla tego pliku
-    const { error: deleteError } = await supabase
-      .from('documents')
-      .delete()
-      .eq('source', source)
-
-    if (deleteError) {
-      console.error(`❌ Błąd usuwania starych danych dla ${source}:`, deleteError.message)
+    // Embeddingi PRZED kasowaniem — błąd API nie może zostawić bazy bez danych
+    let embeddings
+    try {
+      embeddings = await embedChunks(chunks)
+    } catch (err) {
+      console.error(`❌ ${source}: błąd embeddingu —`, err instanceof Error ? err.message : err)
       continue
     }
 
-    // Generuj embeddingi (Google text-embedding-004, 768 dim)
-    const { embeddings } = await embedMany({
-      model: google.textEmbeddingModel('text-embedding-004'),
-      values: chunks,
-    })
+    const { error: deleteError } = await supabase.from('documents').delete().eq('source', source)
+    if (deleteError) {
+      console.error(`❌ ${source}: błąd usuwania starych chunków —`, deleteError.message)
+      continue
+    }
 
-    // Zapisz do Supabase
-    const rows = chunks.map((chunk, i) => ({
+    const rows = chunks.map((chunk, index) => ({
       content: chunk,
-      embedding: embeddings[i],
+      embedding: embeddings[index],
       source,
-      metadata: { source, chunk_index: i, total_chunks: chunks.length },
+      metadata: { source, chunk_index: index, total_chunks: chunks.length },
     }))
 
     const { error: insertError } = await supabase.from('documents').insert(rows)
-
     if (insertError) {
-      console.error(`❌ Błąd zapisu dla ${source}:`, insertError.message)
+      console.error(`❌ ${source}: błąd zapisu —`, insertError.message)
       continue
     }
 
-    console.log(`✅ ${source}: zapisano ${chunks.length} chunków\n`)
+    syncedSources.push(source)
+    console.log(`✅ ${source}: zapisano ${chunks.length} chunków`)
   }
 
-  console.log('🎉 Gotowe! Baza wiedzy jest zaktualizowana.')
+  // Sprzątanie: źródła, których już nie ma (artykuł cofnięty do szkicu, usunięty plik)
+  const { data: existingRows, error: listError } = await supabase.from('documents').select('source')
+
+  if (listError) {
+    console.error('⚠️  Nie udało się sprawdzić osieroconych źródeł:', listError.message)
+  } else {
+    const orphans = [...new Set((existingRows ?? []).map(row => row.source))].filter(
+      source => source && !syncedSources.includes(source)
+    )
+
+    if (orphans.length > 0) {
+      const { error: cleanupError } = await supabase.from('documents').delete().in('source', orphans)
+      if (cleanupError) {
+        console.error('⚠️  Błąd sprzątania:', cleanupError.message)
+      } else {
+        console.log(`\n🧹 Usunięto osierocone źródła: ${orphans.join(', ')}`)
+      }
+    }
+  }
+
+  console.log('\n🎉 Gotowe! Baza wiedzy jest zaktualizowana.')
 }
 
 main().catch(err => {
