@@ -15,7 +15,7 @@ import { saveChatLeadAction } from '@/lib/actions/chat.actions'
 // Odrzuca losowe ciągi z @, wymaga sensownej struktury
 const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
-const GREETING = `Witaj w Zautomatyzujemy.pl! W czym mogę Ci pomóc w kwestii automatyzacji i wdrożeń AI?`
+const GREETING = `Cześć! Jestem Automatek — asystent AI firmy Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert — właściciel firmy. W czym mogę pomóc?`
 
 const QUICK_REPLIES = [
   'Ile kosztuje automatyzacja?',
@@ -291,7 +291,7 @@ export function ChatWidget() {
               <div className="flex-1">
                 <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Automatek</h5>
                 <p className="text-[10px] text-[#70e5ea] uppercase font-label tracking-widest">
-                  Active &amp; Analyzing
+                  Asystent AI &middot; odpowiedzi automatyczne
                 </p>
               </div>
               <button
