@@ -49,17 +49,35 @@ export async function sendChecklistDelivery(
   const siteUrl = 'https://zautomatyzujemy.pl'
   const checklistUrl = `${siteUrl}/ai-act-checklist`
 
-  // Link wypisu tylko dla tych, którzy zapisali się na newsletter —
-  // sam mail z checklistą jest transakcyjny (zamówiony przez użytkownika)
+  // Bez tokenu (brak zgody marketingowej) kierujemy na formularz wypisu bez parametru —
+  // odbiorca i tak ma widoczną drogę wyjścia, a nie tylko adres w stopce
+  const unsubscribeUrl = unsubscribeToken
+    ? `${siteUrl}/newsletter/wypisz?token=${unsubscribeToken}`
+    : `${siteUrl}/newsletter/wypisz`
+
+  /**
+   * Nagłówki one-click tylko przy zgodzie marketingowej: wymagają adresu
+   * przyjmującego POST, a bez tokenu nie mamy kogo wypisać. Sam mail
+   * z checklistą jest transakcyjny, więc nagłówka nie potrzebuje.
+   */
+  const oneClickHeaders = unsubscribeToken
+    ? {
+        'List-Unsubscribe': `<${siteUrl}/api/newsletter/unsubscribe?token=${unsubscribeToken}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      }
+    : undefined
+
   const unsubscribeRow = unsubscribeToken
-    ? `<br>Zapisałeś/aś się na nasz newsletter.
-       <a href="${siteUrl}/newsletter/wypisz?token=${unsubscribeToken}" style="color:#9ca3af">Wypisz się</a>`
-    : ''
+    ? `<br>Zapisałeś/aś się także na nasz newsletter.
+       <a href="${unsubscribeUrl}" style="color:#9ca3af">Wypisz się</a>`
+    : `<br><a href="${unsubscribeUrl}" style="color:#9ca3af">Nie chcę więcej wiadomości</a>`
 
   const result = await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: '📋 Twoja checklista AI Act dla MŚP — Zautomatyzujemy.pl',
+    // RFC 8058 — Gmail i Yahoo pokazują wtedy przycisk "Wypisz" obok nadawcy
+    ...(oneClickHeaders && { headers: oneClickHeaders }),
     html: `<!DOCTYPE html>
 <html lang="pl">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
