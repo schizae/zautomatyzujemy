@@ -178,7 +178,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-primary font-semibold hover:underline"
           >
             <ArrowLeft size={16} />
-            Wróć do wszystkich realizacji
+            Wróć do wszystkich scenariuszy
           </Link>
         </div>
       )}
