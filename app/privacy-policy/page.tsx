@@ -49,8 +49,9 @@ export default function PrivacyPolicyPage() {
                 i nazwisko, adres e-mail, treść wiadomości, wybrany cel współpracy.
               </li>
               <li>
-                <strong className="text-[#e2e3df]">Chatbot:</strong> adres e-mail
-                (jeśli podany dobrowolnie), treść rozmowy z asystentem AI.
+                <strong className="text-[#e2e3df]">Chatbot:</strong> adres e-mail,
+                imię, numer telefonu oraz preferowane godziny kontaktu — wszystkie
+                podawane dobrowolnie w rozmowie — a także treść rozmowy z asystentem AI.
               </li>
               <li>
                 <strong className="text-[#e2e3df]">Dane techniczne:</strong> adres IP,

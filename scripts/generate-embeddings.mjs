@@ -225,7 +225,7 @@ async function probe(supabase, question) {
     const preview = row.content.slice(0, 90).replace(/\n/g, ' ')
     console.log(`   ${row.similarity.toFixed(3)}  [${source}]  ${preview}…`)
   }
-  console.log('\n   Próg w app/api/chat/route.ts wynosi 0.7 — odetnie wszystko poniżej.\n')
+  console.log('\n   Próg w app/api/chat/route.ts wynosi 0.6 — odetnie wszystko poniżej.\n')
 }
 
 async function main() {

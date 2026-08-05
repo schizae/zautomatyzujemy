@@ -139,7 +139,8 @@ export function ChatWidget() {
   const [chatError, setChatError] = useState<string | null>(null)
 
   const leadSavedRef = useRef(false)
-  const leadIdRef = useRef<string | null>(null)
+  // Stan, nie ref — pojawienie się id musi wznowić efekt Fazy 2, a ref nie renderuje
+  const [leadId, setLeadId] = useState<string | null>(null)
   const enrichCountRef = useRef(0)
   const lastEnrichedCountRef = useRef(0)
 
@@ -242,14 +243,14 @@ export function ChatWidget() {
     lastEnrichedCountRef.current = chatMessages.length
     startSaveLead(async () => {
       const result = await saveChatLeadAction(detectedEmail!, chatMessages)
-      if (result.success && result.data) leadIdRef.current = result.data
+      if (result.success && result.data) setLeadId(result.data)
       setLeadSaved(true)
     })
   }, [messages, isLoading])
 
   // Faza 2: dane podane po e-mailu (telefon, godziny) dogrywamy do tego samego wiersza
   useEffect(() => {
-    if (!leadIdRef.current || isLoading) return
+    if (!leadId || isLoading) return
     if (enrichCountRef.current >= MAX_LEAD_ENRICHMENTS) return
 
     const chatMessages = messages
@@ -261,14 +262,13 @@ export function ChatWidget() {
 
     if (chatMessages.length <= lastEnrichedCountRef.current) return
 
-    const leadId = leadIdRef.current
     enrichCountRef.current += 1
     lastEnrichedCountRef.current = chatMessages.length
 
     startSaveLead(async () => {
       await updateChatLeadAction(leadId, chatMessages)
     })
-  }, [messages, isLoading])
+  }, [messages, isLoading, leadId])
 
   function submitForm() {
     if (!input.trim() || isLoading) return

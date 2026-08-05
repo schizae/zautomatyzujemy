@@ -58,10 +58,19 @@ function readField(source: string, label: string): string | null {
   return value
 }
 
+const CONVERSATION_LIMIT = 4000
+
+/**
+ * Przy długiej rozmowie liczy się jej KONIEC — tam pada telefon i godziny kontaktu.
+ * sanitizeUserContent obcina od początku (slice(0, n)), więc dla transkrypcji
+ * przycinamy sami od końca. Inaczej dane podane późno wypadałyby z okna kontekstu.
+ */
 function toConversationText(messages: ChatMessage[]): string {
-  return messages
+  const full = messages
     .map(m => `${m.role === 'user' ? 'Klient' : 'Asystent'}: ${m.content}`)
     .join('\n')
+
+  return full.length <= CONVERSATION_LIMIT ? full : full.slice(-CONVERSATION_LIMIT)
 }
 
 /**
@@ -69,7 +78,7 @@ function toConversationText(messages: ChatMessage[]): string {
  * BRIEF musi być OSTATNI w formacie — jego regex łapie tekst do końca odpowiedzi.
  */
 async function extractLeadDetails(messages: ChatMessage[]): Promise<LeadDetails> {
-  const sanitizedConversation = sanitizeUserContent(toConversationText(messages), 4000)
+  const sanitizedConversation = sanitizeUserContent(toConversationText(messages), CONVERSATION_LIMIT)
 
   try {
     const { text } = await generateText({
@@ -247,7 +256,7 @@ export async function updateChatLeadAction(
 
   const { data: existing, error: fetchError } = await supabase
     .from('leads')
-    .select('email, phone, preferred_contact_time')
+    .select('email, name, phone, preferred_contact_time')
     .eq('id', validLeadId)
     .single()
 
@@ -255,16 +264,31 @@ export async function updateChatLeadAction(
     return { success: false, error: fetchError.message }
   }
 
-  const hadContactDetails = Boolean(existing?.phone || existing?.preferred_contact_time)
+  const previousName = typeof existing?.name === 'string' ? existing.name : null
+  const previousPhone = typeof existing?.phone === 'string' ? existing.phone : null
+  const previousContactTime =
+    typeof existing?.preferred_contact_time === 'string' ? existing.preferred_contact_time : null
+
+  const hadContactDetails = Boolean(previousPhone || previousContactTime)
   const details = await extractLeadDetails(validMessages)
-  const hasContactDetails = Boolean(details.phone || details.preferredContactTime)
+
+  /**
+   * Ekstrakcja przez model bywa zawodna — jedno nieudane rozpoznanie nie może
+   * wymazać danych, które klient już podał. Dlatego null nigdy nie nadpisuje
+   * wcześniejszej wartości; nowa wartość ma pierwszeństwo tylko gdy istnieje.
+   */
+  const name = details.name ?? previousName
+  const phone = details.phone ?? previousPhone
+  const preferredContactTime = details.preferredContactTime ?? previousContactTime
+
+  const hasContactDetails = Boolean(phone || preferredContactTime)
 
   const { error: updateError } = await supabase
     .from('leads')
     .update({
-      name: details.name,
-      phone: details.phone,
-      preferred_contact_time: details.preferredContactTime,
+      name,
+      phone,
+      preferred_contact_time: preferredContactTime,
       conversation_summary: details.brief,
       conversation_log: validMessages,
       lead_score: details.score,
@@ -280,12 +304,12 @@ export async function updateChatLeadAction(
   if (!hadContactDetails && hasContactDetails && typeof existing?.email === 'string') {
     await sendLeadNotification({
       source: 'chatbot',
-      name: details.name,
+      name,
       email: existing.email,
       message: details.brief,
       chatDetails: {
-        phone: details.phone,
-        preferredContactTime: details.preferredContactTime,
+        phone,
+        preferredContactTime,
         score: details.score,
         scoreReason: details.scoreReason,
         isUpdate: true,
