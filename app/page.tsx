@@ -107,17 +107,13 @@ export default async function HomePage() {
           email: 'kontakt@zautomatyzujemy.pl',
           description:
             'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM dla firm MŚP.',
+          // Bez ulicy i współrzędnych — działalność prowadzona z domu, wizytówka
+          // Google w trybie firmy usługowej również nie pokazuje adresu
           address: {
             '@type': 'PostalAddress',
-            streetAddress: 'ul. Sportowa 5/33',
             addressLocality: 'Chojnice',
             postalCode: '89-600',
             addressCountry: 'PL',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: 53.6977,
-            longitude: 17.5572,
           },
           areaServed: {
             '@type': 'Country',
