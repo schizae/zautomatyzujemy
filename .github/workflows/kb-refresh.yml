@@ -1,0 +1,34 @@
+name: Baza wiedzy — odświeżanie embeddingów
+
+on:
+  schedule:
+    - cron: '30 9 * * 5' # Piątek 09:30 UTC — 30 min po blog-auto.yml
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    name: Przelicz embeddingi
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Skrypt korzysta z @supabase/supabase-js, ai i @ai-sdk/google
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Generuj embeddingi
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # SDK czyta GOOGLE_GENERATIVE_AI_API_KEY, sekret nazywa się GOOGLE_API_KEY
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: node scripts/generate-embeddings.mjs
