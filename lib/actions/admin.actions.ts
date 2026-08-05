@@ -189,7 +189,7 @@ export async function generatePostAction(
     const { object } = await generateObject({
       model: google('gemini-2.5-flash'),
       schema: GeneratedPostSchema,
-      prompt: `Napisz artykuł blogowy po polsku dla firmy Zautomatyzujemy.pl (agencja automatyzacji AI i n8n).
+      prompt: `Napisz artykuł blogowy po polsku dla Zautomatyzujemy.pl (automatyzacja procesów z AI i n8n).
 
 Temat: ${topic}
 
