@@ -32,9 +32,14 @@
 
 ## Wymagania wstępne (tylko właściciel)
 
-- [ ] **Zdecydować, który adres kontaktowy jest właściwy** — `biuro@zautomatyzujemy.pl` czy `kontakt@zautomatyzujemy.pl`, i potwierdzić, że skrzynka faktycznie odbiera pocztę. Blokuje Zadanie 8.
-- [ ] **Podać dane administratora danych** — imię i nazwisko do polityki prywatności. Blokuje Zadanie 8.
-- [ ] **Zdecydować o nazewnictwie firmy** — patrz Zadanie 10, gdzie są dwa warianty do wyboru. Blokuje Zadanie 10.
+- [ ] **PILNE: uruchomić przekierowanie poczty dla `kontakt@zautomatyzujemy.pl`** — właściciel potwierdził 2026-08-05, że **żadna skrzynka w domenie nie istnieje**, a strona podaje dwa adresy. Wiadomości od klientów przepadają bez śladu. Domena ma skonfigurowany DNS pod Resend, więc wystarczy darmowe przekierowanie: Cloudflare Email Routing (jeśli domena jest na Cloudflare) albo funkcja forwardingu u rejestratora. Cel: `kontakt@zautomatyzujemy.pl` → prywatna skrzynka właściciela.
+
+  Nie blokuje kodu — Zadanie 8 ujednolica adres w serwisie niezależnie. Blokuje natomiast **realną możliwość odbierania poczty**, więc do czasu wykonania strona obiecuje kanał kontaktu, który nie działa.
+
+**Decyzje właściciela podjęte 2026-08-05:**
+- Administrator danych: **Norbert Chojnacki**
+- Adres kontaktowy w całym serwisie: **`kontakt@zautomatyzujemy.pl`** (`biuro@` znika — sugeruje biuro, którego nie ma)
+- Nazewnictwo: **wariant A — pierwsza osoba**, freelancer planujący rejestrację działalności
 - [ ] **Włączyć Web Analytics** w panelu Vercela: Project → Analytics → Enable. Blokuje weryfikację Zadania 13.
 - [ ] **Założyć wizytówkę Google** w trybie firmy usługowej: https://business.google.com → nowy profil → kategoria „Usługi informatyczne" → przy pytaniu o adres wybrać „Nie, obsługuję klientów w ich lokalizacji" → obszar: Chojnice i okolice. Adres podawany wyłącznie do weryfikacji, publicznie niewidoczny. Dane NAP muszą być identyczne z `LocalBusiness` JSON-LD po Zadaniu 9: nazwa `Zautomatyzujemy.pl`, telefon `+48730094465`, miejscowość Chojnice.
 - [ ] **Pobrać token weryfikacyjny Search Console** — https://search.google.com/search-console → Dodaj zasób → prefiks URL `https://zautomatyzujemy.pl` → metoda „tag HTML" → skopiować wartość `content`. Blokuje Zadanie 14.
@@ -628,8 +633,6 @@ git commit -m "fix(rag): case studies oznaczone w bazie wiedzy jako scenariusze 
 **Pliki:**
 - Modyfikacja: `app/privacy-policy/page.tsx:35` oraz sekcja 7 (cookies)
 
-**Zależność:** wymaga imienia i nazwiska od właściciela oraz decyzji o adresie kontaktowym.
-
 - [ ] **Krok 1: Uzupełnij administratora (linia ~35)**
 
 Było:
@@ -638,12 +641,12 @@ Było:
               (dalej: &ldquo;Administrator&rdquo;). W sprawach dotyczących ochrony danych
 ```
 
-Ma być — podstaw dane przekazane przez właściciela w miejsce `IMIĘ NAZWISKO` i `ADRES@zautomatyzujemy.pl`:
+Ma być:
 ```tsx
-              Administratorem Twoich danych osobowych jest IMIĘ NAZWISKO, prowadzący
-              działalność pod marką Zautomatyzujemy.pl, z siedzibą w Chojnicach
+              Administratorem Twoich danych osobowych jest Norbert Chojnacki,
+              prowadzący działalność pod marką Zautomatyzujemy.pl w Chojnicach
               (dalej: &ldquo;Administrator&rdquo;). Kontakt w sprawach ochrony danych:
-              ADRES@zautomatyzujemy.pl. W sprawach dotyczących ochrony danych
+              kontakt@zautomatyzujemy.pl. W sprawach dotyczących ochrony danych
 ```
 
 - [ ] **Krok 2: Dopisz analitykę do sekcji o cookies (linia ~158)**
@@ -671,7 +674,9 @@ Uruchom, żeby zobaczyć rozbieżność:
 grep -rn "biuro@zautomatyzujemy.pl\|kontakt@zautomatyzujemy.pl" --include=*.tsx --include=*.ts --include=*.md . | grep -v node_modules
 ```
 
-Zamień wszystkie wystąpienia na adres wskazany przez właściciela. Nie ruszaj `powiadomienia@zautomatyzujemy.pl` — to adres nadawcy w Resend, nie kontakt dla klientów.
+Zamień **wszystkie** wystąpienia `biuro@zautomatyzujemy.pl` na `kontakt@zautomatyzujemy.pl`. Nie ruszaj `powiadomienia@zautomatyzujemy.pl` — to adres nadawcy w Resend, nie kanał kontaktu dla klientów.
+
+Uwaga: żadna z tych skrzynek dziś nie odbiera poczty. Ujednolicenie adresu w kodzie jest warunkiem koniecznym, ale niewystarczającym — dopóki nie zadziała przekierowanie z wymagań wstępnych, wiadomości od klientów nadal będą przepadać.
 
 - [ ] **Krok 4: Sprawdź typy, lint i build**
 
@@ -753,14 +758,7 @@ git commit -m "fix(prywatnosc): usuniecie adresu domowego z danych strukturalnyc
 
 Serwis konsekwentnie mówi „agencja" i „właściciel firmy", podczas gdy działalność startuje jako jednoosobowa i niezarejestrowana. Nie jest to nadużycie prawne, ale przy pierwszym pytaniu klienta o NIP powstaje niezręczność, a spójność przekazu buduje zaufanie mocniej niż napompowana nazwa.
 
-**Decyzja właściciela — dwa warianty:**
-
-| Wariant | Brzmienie | Kiedy wybrać |
-|---|---|---|
-| **A — pierwsza osoba** (zalecany) | „Pomagam firmom automatyzować procesy", „Nazywam się Norbert Chojnacki" | Sprzedaż relacyjna, klient wie z kim rozmawia. Buduje zaufanie u MŚP, które wolą konkretną osobę od anonimowego podmiotu. |
-| **B — marka bez słowa „agencja"** | „Zautomatyzujemy.pl — automatyzacja procesów dla MŚP", bez „agencji" i „właściciela firmy" | Jeśli planujesz rozbudowę zespołu i nie chcesz przepisywać treści za pół roku. |
-
-Poniższe kroki zakładają wariant A. Przy wariancie B zamiast pierwszej osoby użyj nazwy marki, zachowując zasadę: **nie używamy słów „agencja" ani „właściciel firmy"**.
+**Decyzja właściciela (2026-08-05): wariant A — pierwsza osoba.** Freelancer planujący rejestrację działalności. Zasada obowiązująca w całym zadaniu: **nie używamy słów „agencja" ani „właściciel firmy"**; mówimy w pierwszej osobie albo o marce.
 
 - [ ] **Krok 1: `app/page.tsx` — opis w LocalBusiness**
 
