@@ -99,14 +99,23 @@ async function collectDbDocuments(supabase) {
 
   const { data: caseStudies, error: caseStudiesError } = await supabase
     .from('case_studies')
-    .select('slug, title, description, content, tag')
+    .select('slug, title, description, content, tag, is_example')
     .eq('is_active', true)
   if (caseStudiesError) throw new Error(`case_studies: ${caseStudiesError.message}`)
 
   for (const study of caseStudies ?? []) {
+    // Bez tej adnotacji bot opowiada o scenariuszach poglądowych jak o zrealizowanych wdrożeniach
+    const naglowek = study.is_example
+      ? `PRZYKŁAD POGLĄDOWY (nie jest to zrealizowane wdrożenie u klienta): ${study.title}`
+      : `Zrealizowane wdrożenie u klienta: ${study.title}`
+
+    const zastrzezenie = study.is_example
+      ? '\n\nUWAGA: powyższy scenariusz jest przykładem pokazującym możliwości, a nie opisem wykonanego projektu. Nie przedstawiaj go klientowi jako referencji ani nie obiecuj takich samych efektów.'
+      : ''
+
     docs.push({
       source: `case-study:${study.slug}`,
-      text: `Wdrożenie u klienta (case study): ${study.title}\nKategoria: ${study.tag ?? 'brak'}\n\n${study.description ?? ''}\n\n${study.content ?? ''}`,
+      text: `${naglowek}\nKategoria: ${study.tag ?? 'brak'}\n\n${study.description ?? ''}\n\n${study.content ?? ''}${zastrzezenie}`,
     })
   }
 
