@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { saveChatLeadAction } from '@/lib/actions/chat.actions'
+import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
 
@@ -16,6 +16,9 @@ import { saveChatLeadAction } from '@/lib/actions/chat.actions'
 const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
 const GREETING = `Cześć! Jestem Automatek — asystent AI firmy Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert — właściciel firmy. W czym mogę pomóc?`
+
+// Limit dogrywek danych leada — chroni przed serią wywołań Gemini w długiej rozmowie
+const MAX_LEAD_ENRICHMENTS = 3
 
 const QUICK_REPLIES = [
   'Ile kosztuje automatyzacja?',
@@ -136,6 +139,9 @@ export function ChatWidget() {
   const [chatError, setChatError] = useState<string | null>(null)
 
   const leadSavedRef = useRef(false)
+  const leadIdRef = useRef<string | null>(null)
+  const enrichCountRef = useRef(0)
+  const lastEnrichedCountRef = useRef(0)
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
@@ -216,7 +222,7 @@ export function ChatWidget() {
     if (isOpen) setUnreadCount(0)
   }, [isOpen])
 
-  // Email detection → save lead
+  // Faza 1: wykrycie e-maila → natychmiastowy zapis leada
   useEffect(() => {
     if (leadSavedRef.current || isLoading || messages.length === 0) return
     let detectedEmail: string | null = null
@@ -233,9 +239,34 @@ export function ChatWidget() {
         role: m.role as 'user' | 'assistant',
         content: m.parts.filter(isTextUIPart).map(p => p.text).join(' '),
       }))
+    lastEnrichedCountRef.current = chatMessages.length
     startSaveLead(async () => {
-      await saveChatLeadAction(detectedEmail!, chatMessages)
+      const result = await saveChatLeadAction(detectedEmail!, chatMessages)
+      if (result.success && result.data) leadIdRef.current = result.data
       setLeadSaved(true)
+    })
+  }, [messages, isLoading])
+
+  // Faza 2: dane podane po e-mailu (telefon, godziny) dogrywamy do tego samego wiersza
+  useEffect(() => {
+    if (!leadIdRef.current || isLoading) return
+    if (enrichCountRef.current >= MAX_LEAD_ENRICHMENTS) return
+
+    const chatMessages = messages
+      .filter(m => m.role === 'user' || m.role === 'assistant')
+      .map(m => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.parts.filter(isTextUIPart).map(p => p.text).join(' '),
+      }))
+
+    if (chatMessages.length <= lastEnrichedCountRef.current) return
+
+    const leadId = leadIdRef.current
+    enrichCountRef.current += 1
+    lastEnrichedCountRef.current = chatMessages.length
+
+    startSaveLead(async () => {
+      await updateChatLeadAction(leadId, chatMessages)
     })
   }, [messages, isLoading])
 
