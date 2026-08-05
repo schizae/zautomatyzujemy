@@ -100,7 +100,7 @@ export function AboutSection() {
               </p>
               <p>
                 Budujemy systemy automatyzacji i AI dla firm z różnych branż — od biur
-                rachunkowych, przez sklepy internetowe, po agencje marketingowe. Pracujemy
+                rachunkowych, przez sklepy internetowe, po firmy marketingowe. Pracujemy
                 z n8n, modelami językowymi (GPT, Gemini, Claude) oraz systemami RAG.
                 Zamiast gotowych szablonów, każde rozwiązanie projektujemy od podstaw —
                 pod konkretny proces i konkretny cel Twojej firmy.

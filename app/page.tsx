@@ -82,7 +82,7 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           description:
-            'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM.',
+            'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM.',
           sameAs: [],
         }}
       />
@@ -106,7 +106,7 @@ export default async function HomePage() {
           telephone: '+48730094465',
           email: 'kontakt@zautomatyzujemy.pl',
           description:
-            'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM dla firm MŚP.',
+            'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM dla małych i średnich firm.',
           // Bez ulicy i współrzędnych — działalność prowadzona z domu, wizytówka
           // Google w trybie firmy usługowej również nie pokazuje adresu
           address: {
