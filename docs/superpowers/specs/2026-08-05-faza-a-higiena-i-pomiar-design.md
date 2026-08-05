@@ -11,9 +11,10 @@ Audyt strony zautomatyzujemy.pl wykazał, że witryna nie jest gotowa na ruch, k
 
 | Obszar | Stan zastany |
 |---|---|
-| Usługi na stronie głównej | 1 wpis testowy: `chatbot ` / „robimy czatboty na zamowienie" |
-| FAQ | 1 wpis testowy: „kto jest CEO" / „CEO Firmy jestem JA " |
-| Case studies | 3 fikcyjne wdrożenia prezentowane jako rzeczywiste |
+| Tabela `services` | 1 wpis testowy: `chatbot ` / „robimy czatboty na zamowienie" — **nierenderowany publicznie** |
+| Tabela `faq_items` | 1 wpis testowy: „kto jest CEO" / „CEO Firmy jestem JA " — **nierenderowany publicznie** |
+| Komponent `FaqSection` | gotowy, ale **nigdzie nieimportowany** i ostylowany pod nieaktualny jasny motyw |
+| Case studies | 3 fikcyjne wdrożenia; strona główna oznacza je poprawnie, podstrony twierdzą, że to realizacje |
 | Pomiar | brak Search Console, brak analityki, brak wizytówki Google |
 | Administrator danych | wskazany jako „Zautomatyzujemy.pl" — nazwa domeny, nie podmiot |
 | Adres w `LocalBusiness` | pełny adres domowy + współrzędne, publicznie w źródle strony |
@@ -42,9 +43,19 @@ Każda z tych rzeczy to inwestycja tygodni i nie ma sensu jej zaczynać, dopóki
 
 ## A1. Wiarygodność treści
 
-### Usługi — 6 kafelków
+### Usługi — 6 wpisów do tabeli, bez zmian na stronie głównej
 
-Siatka to `md:grid-cols-3` (`components/marketing/services-section.tsx:23`), więc sześć wpisów wypełnia dwa rzędy równo. Treści wynikają z oferty opisanej w `BASE_SYSTEM` w `app/api/chat/route.ts`.
+**Korekta po weryfikacji kodu (2026-08-05):** `components/marketing/services-section.tsx` nie przyjmuje
+propsów i nie czyta z bazy — to ręcznie zbudowany bento grid z zaszytą treścią, w tym flagowym kaflem
+o AI Act. Wygląda dobrze i **nie ruszamy go w tej fazie**.
+
+Tabelę `services` czytają dziś tylko dwa miejsca: panel admina (`lib/actions/admin.actions.ts`)
+i skrypt embeddingów (`scripts/generate-embeddings.mjs:130`). Czyli wpis testowy nie szkodzi
+odwiedzającym — szkodzi **chatbotowi**, który ma go w bazie wiedzy i może zacytować.
+
+Dlatego tabelę wypełniamy rzetelną listą usług: bot ma odpowiadać zgodnie z faktyczną ofertą,
+a panel admina i ewentualna przyszła sekcja dostają gotowe źródło prawdy. Treści wynikają
+z oferty opisanej w `BASE_SYSTEM` w `app/api/chat/route.ts`.
 
 1. **Automatyzacja procesów biznesowych** — Łączymy narzędzia, z których już korzystasz: CRM, system księgowy, sklep, arkusze, pocztę. Dane przepływają między nimi bez ręcznego przepisywania. Buduję na n8n i Make, więc rozwiązanie zostaje Twoje i możesz je rozwijać bez uzależnienia ode mnie.
 
@@ -58,9 +69,21 @@ Siatka to `md:grid-cols-3` (`components/marketing/services-section.tsx:23`), wi�
 
 6. **Strony i oprogramowanie na zamówienie** — Szybkie, dostępne strony i aplikacje szyte pod proces, którego nie obsłuży żadne gotowe narzędzie.
 
-### FAQ — 6 pytań
+### FAQ — 6 pytań plus podpięcie martwej sekcji
 
-Sekcja znika całkowicie przy pustej bazie (`components/marketing/faq-section.tsx:21`).
+**Korekta po weryfikacji kodu (2026-08-05):** `components/marketing/FaqSection` istnieje, poprawnie
+czyta z bazy i zwraca `null` przy pustych danych — ale **nie jest nigdzie importowany**. Powstał
+i nigdy nie trafił na stronę. Do tego jest ostylowany pod jasny motyw (`bg-white`, `border-slate-100`,
+`hover:bg-slate-50`, `text-slate-600`), którego strona już nie używa — dziś obowiązuje ciemny
+(`#121412`, `#e2e3df`, akcent `#70e5ea`).
+
+Zakres rośnie więc o trzy rzeczy ponad samo wypełnienie tabeli:
+- przestylowanie sekcji na ciemny motyw, spójnie z resztą strony
+- import i osadzenie w `app/page.tsx`
+- schemat `FAQPage` (patrz A4), który bez widocznej sekcji nie miałby pokrycia w treści
+
+To najlepszy stosunek wartości do kosztu w całej fazie: komponent jest gotowy, a FAQ na stronie
+głównej daje realną wartość SEO na zapytania długiego ogona i szansę na rozszerzony wynik w Google.
 
 **Wiążące ograniczenie:** FAQ trafia do bazy wiedzy RAG, więc chatbot będzie stąd cytował. Odpowiedzi muszą być zgodne z jego granicami decyzyjnymi — żadnych kwot, terminów ani zobowiązań. Sprzeczność między FAQ a promptem oznacza bota, który sam sobie przeczy.
 
@@ -92,10 +115,25 @@ Slugi zostają bez zmian — są w sitemapie, w linkach i jako klucze `source` w
 
 Z opisów znikają zmyślone liczby („30%", „40h/tydz", „95%", „80%"), bo są niesprawdzalne i wprost wprowadzają w błąd.
 
-**Oznaczenie w trzech miejscach:**
-- widoczna etykieta „Przykład możliwej automatyzacji" na kaflu i na stronie szczegółowej
-- zdanie w nagłówku sekcji wyjaśniające, że to scenariusze poglądowe, a nie zrealizowane wdrożenia
-- oznaczenie w treści strony szczegółowej, nie tylko wizualnie — strony emitują `Article` JSON-LD, więc Google też nie może być wprowadzony w błąd
+**Korekta po weryfikacji na żywej stronie (2026-08-05):** sekcja na stronie głównej
+(`components/marketing/case-study-section.tsx`) **jest już poprawnie oznaczona** — nagłówek brzmi
+„PRZYKŁADOWE SCENARIUSZE WDROŻEŃ", a pod nim stoi zdanie, że scenariusze pokazują typowe wdrożenia,
+a prawdziwe wyniki zależą od specyfiki procesu. Tej sekcji nie ruszamy poza tytułami kafli.
+
+Problem dotyczy wyłącznie podstron, gdzie komunikat jest **odwrotny** niż na stronie głównej:
+
+| Miejsce | Obecna treść | Do zmiany |
+|---|---|---|
+| `app/case-studies/page.tsx:45` | „Przykłady wdrożeń AI i automatyzacji, które przyniosły realne rezultaty." | usunąć twierdzenie o rezultatach |
+| `app/case-studies/page.tsx:10` (meta description) | „…Sprawdź nasze realizacje." | „realizacje" sugeruje projekty wykonane |
+| `app/case-studies/page.tsx:53` (pusty stan) | „Brak dostępnych realizacji." | jw. |
+| `app/case-studies/[slug]/page.tsx` | brak jakiegokolwiek oznaczenia | dodać etykietę i zdanie w treści |
+
+Strona szczegółowa emituje `Article` JSON-LD, więc oznaczenie musi znaleźć się w treści, a nie tylko
+w warstwie wizualnej — inaczej wprowadza w błąd również Google.
+
+**Etykieta** „Przykład możliwej automatyzacji" na kaflu listy i na stronie szczegółowej, sterowana
+kolumną `is_example`.
 
 **Nowa kolumna `case_studies.is_example`** (boolean, domyślnie `true` dla obecnych trzech). Uzasadnienie mimo zasady YAGNI: gdy pojawi się pierwszy prawdziwy klient, rozróżnienie musi istnieć w danych. Zaszycie etykiety w kodzie oznaczałoby, że przy pierwszej realnej referencji trzeba zmieniać komponent i ryzykować, że prawdziwe wdrożenie zostanie oznaczone jako fikcja.
 
