@@ -9,6 +9,7 @@ import { AiActBanner } from '@/components/marketing/ai-act-banner'
 import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { RoiCalculator } from '@/components/marketing/roi-calculator'
+import { FaqSection } from '@/components/marketing/faq-section'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
@@ -135,6 +136,7 @@ export default async function HomePage() {
         <AboutSection />
         <BlogPreview />
         <RoiCalculator />
+        <FaqSection />
         <ContactSection />
       </main>
       <Footer />
