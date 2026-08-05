@@ -32,10 +32,10 @@ export function Footer() {
           </p>
           <div className="space-y-1.5">
             <a
-              href="mailto:biuro@zautomatyzujemy.pl"
+              href="mailto:kontakt@zautomatyzujemy.pl"
               className="block text-sm font-body text-[#70e5ea] hover:underline"
             >
-              biuro@zautomatyzujemy.pl
+              kontakt@zautomatyzujemy.pl
             </a>
             <a
               href="tel:+48730094465"

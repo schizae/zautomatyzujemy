@@ -104,7 +104,7 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           telephone: '+48730094465',
-          email: 'biuro@zautomatyzujemy.pl',
+          email: 'kontakt@zautomatyzujemy.pl',
           description:
             'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM dla firm MŚP.',
           address: {

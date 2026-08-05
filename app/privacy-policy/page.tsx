@@ -32,8 +32,10 @@ export default function PrivacyPolicyPage() {
               1. Administrator danych
             </h2>
             <p>
-              Administratorem Twoich danych osobowych jest Zautomatyzujemy.pl
-              (dalej: &ldquo;Administrator&rdquo;). W sprawach dotyczących ochrony danych
+              Administratorem Twoich danych osobowych jest Norbert Chojnacki,
+              prowadzący działalność pod marką Zautomatyzujemy.pl w Chojnicach
+              (dalej: &ldquo;Administrator&rdquo;). Kontakt w sprawach ochrony danych:
+              kontakt@zautomatyzujemy.pl. W sprawach dotyczących ochrony danych
               osobowych możesz skontaktować się z nami pod adresem e-mail:
               <span className="text-[#70e5ea]"> kontakt@zautomatyzujemy.pl</span>.
             </p>
@@ -158,6 +160,8 @@ export default function PrivacyPolicyPage() {
               Strona wykorzystuje pliki cookies wyłącznie w celach technicznych
               (sesja administratora). Nie stosujemy cookies śledzących ani reklamowych.
               Możesz zarządzać plikami cookies w ustawieniach przeglądarki.
+              Do zliczania odwiedzin korzystamy z Vercel Web Analytics — narzędzia,
+              które nie zapisuje plików cookies i nie tworzy profilu użytkownika.
             </p>
           </section>
 
