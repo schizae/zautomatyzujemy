@@ -13,6 +13,8 @@ import { FaqSection } from '@/components/marketing/faq-section'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
+import { createServiceClient } from '@/lib/supabase/server'
+import type { FaqItem } from '@/types'
 
 async function getHeroContent(): Promise<Record<string, string>> {
   const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
@@ -73,6 +75,15 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const heroContent = await getHeroContent()
 
+  const supabase = createServiceClient()
+  const { data: faqData } = await supabase
+    .from('faq_items')
+    .select('question, answer')
+    .eq('is_active', true)
+    .order('sort_order')
+
+  const faqItems = (faqData ?? []) as Pick<FaqItem, 'question' | 'answer'>[]
+
   return (
     <>
       <JsonLd
@@ -122,6 +133,22 @@ export default async function HomePage() {
           priceRange: '$$',
         }}
       />
+      {faqItems.length > 0 && (
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqItems.map(item => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          }}
+        />
+      )}
       <Navbar />
       <main id="main">
         <HeroSection content={heroContent} />
