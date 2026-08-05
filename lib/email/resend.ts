@@ -30,11 +30,23 @@ function assertSent(label: string, result: SendResult): void {
   )
 }
 
+export interface ChatLeadDetails {
+  phone: string | null
+  preferredContactTime: string | null
+  /** Potencjał leada 1-5 */
+  score: number | null
+  scoreReason: string | null
+  /** true = uzupełnienie wcześniej wysłanego leada */
+  isUpdate: boolean
+}
+
 export interface LeadNotificationData {
   source: 'contact_form' | 'chatbot' | 'lead_magnet'
   name: string | null
   email: string
   message: string
+  /** Dane zbierane wyłącznie przez chatbota; null dla pozostałych źródeł */
+  chatDetails: ChatLeadDetails | null
 }
 
 export async function sendChecklistDelivery(
@@ -171,7 +183,9 @@ export async function sendLeadNotification(data: LeadNotificationData): Promise<
     data.source === 'contact_form' ? '📩'
     : data.source === 'chatbot' ? '🤖'
     : '📋'
-  const subject = `${emoji} Nowy lead — ${sourceLabel}: ${data.name ?? data.email}`
+  const scoreTag = data.chatDetails?.score ? ` [${data.chatDetails.score}/5]` : ''
+  const prefix = data.chatDetails?.isUpdate ? '📞 Uzupełnienie leada' : 'Nowy lead'
+  const subject = `${emoji} ${prefix}${scoreTag} — ${sourceLabel}: ${data.name ?? data.email}`
 
   const result = await getResend().emails.send({
     from: FROM_EMAIL,
@@ -186,6 +200,26 @@ export async function sendLeadNotification(data: LeadNotificationData): Promise<
 function buildEmailHtml(data: LeadNotificationData, sourceLabel: string): string {
   const nameRow = data.name
     ? `<tr><td style="padding:8px 0;color:#6b7280;font-size:13px;width:120px">Imię</td><td style="padding:8px 0;font-size:14px;font-weight:600;color:#111827">${escHtml(data.name)}</td></tr>`
+    : ''
+
+  const details = data.chatDetails
+
+  const scoreColor =
+    !details?.score ? '#6b7280'
+    : details.score >= 4 ? '#16a34a'
+    : details.score === 3 ? '#ca8a04'
+    : '#9ca3af'
+
+  const scoreRow = details?.score
+    ? `<tr><td style="padding:8px 0;color:#6b7280;font-size:13px;width:120px">Ocena</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:${scoreColor}">${'★'.repeat(details.score)}${'☆'.repeat(5 - details.score)} &nbsp;${details.score}/5${details.scoreReason ? `<span style="display:block;margin-top:4px;font-weight:400;font-size:13px;color:#6b7280">${escHtml(details.scoreReason)}</span>` : ''}</td></tr>`
+    : ''
+
+  const phoneRow = details?.phone
+    ? `<tr><td style="padding:8px 0;color:#6b7280;font-size:13px;width:120px">Telefon</td><td style="padding:8px 0;font-size:14px;font-weight:600;color:#111827"><a href="tel:${escHtml(details.phone)}" style="color:#0ea5e9;text-decoration:none">${escHtml(details.phone)}</a></td></tr>`
+    : ''
+
+  const contactTimeRow = details?.preferredContactTime
+    ? `<tr><td style="padding:8px 0;color:#6b7280;font-size:13px;width:120px">Kontakt</td><td style="padding:8px 0;font-size:14px;font-weight:600;color:#111827">${escHtml(details.preferredContactTime)}</td></tr>`
     : ''
 
   return `<!DOCTYPE html>
@@ -209,7 +243,10 @@ function buildEmailHtml(data: LeadNotificationData, sourceLabel: string): string
           <td style="padding:32px">
             <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
               ${nameRow}
+              ${scoreRow}
               <tr><td style="padding:8px 0;color:#6b7280;font-size:13px;width:120px">Email</td><td style="padding:8px 0;font-size:14px;font-weight:600;color:#111827"><a href="mailto:${escHtml(data.email)}" style="color:#0ea5e9;text-decoration:none">${escHtml(data.email)}</a></td></tr>
+              ${phoneRow}
+              ${contactTimeRow}
               <tr><td style="padding:8px 0;color:#6b7280;font-size:13px">Źródło</td><td style="padding:8px 0;font-size:14px;font-weight:600;color:#111827">${escHtml(sourceLabel)}</td></tr>
             </table>
 

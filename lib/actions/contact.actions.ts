@@ -106,6 +106,7 @@ export async function subscribeLeadMagnetAction(
       name: null,
       email,
       message: 'Zapisał się na checklistę AI Act dla MŚP',
+      chatDetails: null,
     }),
   ])
 
@@ -173,7 +174,7 @@ export async function submitContactAction(
   }
 
   // Czekamy na maila — lead jest już w bazie, więc błąd wysyłki nie psuje formularza
-  await sendLeadNotification({ source: 'contact_form', name, email, message }).catch(
+  await sendLeadNotification({ source: 'contact_form', name, email, message, chatDetails: null }).catch(
     (err: unknown) => console.error('[resend] contact form notification failed:', err)
   )
 
