@@ -7,7 +7,7 @@ import type { CaseStudy } from '@/types'
 
 export const metadata: Metadata = {
   title: 'Case Study — Realizacje Zautomatyzujemy.pl',
-  description: 'Przykłady wdrożeń AI i automatyzacji dla firm MŚP. Sprawdź nasze realizacje.',
+  description: 'Przykładowe scenariusze wdrożeń AI i automatyzacji dla firm MŚP. Zobacz, co da się zautomatyzować w Twojej firmie.',
   alternates: {
     canonical: '/case-studies',
   },
@@ -36,13 +36,14 @@ export default async function CaseStudiesPage() {
             Wróć na stronę główną
           </Link>
           <p className="text-xs font-bold text-primary tracking-widest uppercase mb-3">
-            Realizacje
+            Przykładowe scenariusze
           </p>
           <h1 className="text-5xl font-extrabold text-white tracking-tight">
             Case Study
           </h1>
           <p className="text-slate-400 mt-4 text-lg">
-            Przykłady wdrożeń AI i automatyzacji, które przyniosły realne rezultaty.
+            Scenariusze pokazujące, co da się zautomatyzować. To przykłady poglądowe,
+            a nie opisy zrealizowanych projektów — efekty zależą od specyfiki Twoich procesów.
           </p>
         </div>
       </div>
@@ -50,7 +51,7 @@ export default async function CaseStudiesPage() {
       {/* Grid */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         {items.length === 0 ? (
-          <p className="text-center text-slate-400 py-16">Brak dostępnych realizacji.</p>
+          <p className="text-center text-slate-400 py-16">Brak dostępnych scenariuszy.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {items.map(item => (
@@ -77,6 +78,11 @@ export default async function CaseStudiesPage() {
                     )}
                   </div>
                   <div className="p-6">
+                    {item.is_example && (
+                      <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-3">
+                        Przykład możliwej automatyzacji
+                      </span>
+                    )}
                     <h2 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                       {item.title}
                     </h2>
