@@ -14,14 +14,64 @@ if (!GOOGLE_API_KEY || !IMGBB_API_KEY || !WEBHOOK_SECRET || !SITE_URL) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function parseJsonFromGemini(text) {
-  try {
-    return JSON.parse(text)
-  } catch {
-    const m = text.match(/\{[\s\S]+\}/)
-    if (!m) throw new Error(`Gemini nie zwrócił JSON. Fragment: ${text.slice(0, 300)}`)
-    return JSON.parse(m[0])
+/**
+ * Gemini mimo responseMimeType: application/json potrafi wstawić surowy znak
+ * nowej linii w środku stringa. JSON zabrania znaków sterujących w literałach,
+ * więc escapujemy je, nie ruszając struktury dokumentu.
+ */
+function escapeControlCharsInStrings(json) {
+  const ESCAPES = { '\n': '\\n', '\r': '\\r', '\t': '\\t', '\b': '\\b', '\f': '\\f' }
+  let out = ''
+  let inString = false
+  let escaped = false
+
+  for (const char of json) {
+    if (escaped) {
+      out += char
+      escaped = false
+      continue
+    }
+
+    if (inString && char === '\\') {
+      out += char
+      escaped = true
+      continue
+    }
+
+    if (char === '"') {
+      inString = !inString
+      out += char
+      continue
+    }
+
+    if (inString && char.charCodeAt(0) < 0x20) {
+      out += ESCAPES[char] ?? `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`
+      continue
+    }
+
+    out += char
   }
+
+  return out
+}
+
+function parseJsonFromGemini(text) {
+  const extracted = text.match(/\{[\s\S]+\}/)
+  const candidates = extracted ? [text, extracted[0]] : [text]
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate)
+    } catch {
+      try {
+        return JSON.parse(escapeControlCharsInStrings(candidate))
+      } catch {
+        // następny kandydat
+      }
+    }
+  }
+
+  throw new Error(`Gemini nie zwrócił poprawnego JSON. Fragment: ${text.slice(0, 300)}`)
 }
 
 function sanitizeSlug(slug) {
