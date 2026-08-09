@@ -97,7 +97,7 @@ Zadanie 2 — TELEFON: Znajdź numer telefonu podany przez klienta. Przepisz go 
 
 Zadanie 3 — GODZINY: Znajdź preferowane godziny lub porę kontaktu ("po 16", "rano", "w tygodniu przed południem", "od 9 do 17"). Przepisz własnymi słowami klienta. Jeśli nie podał — napisz BRAK.
 
-Zadanie 4 — OCENA: Oceń potencjał leada dla agencji automatyzacji AI w skali 1-5:
+Zadanie 4 — OCENA: Oceń potencjał leada dla Zautomatyzujemy.pl w skali 1-5:
 5 — konkretny proces do zautomatyzowania, jasna potrzeba, pyta o wdrożenie lub wycenę
 4 — realna potrzeba biznesowa, ale zakres jeszcze niesprecyzowany
 3 — zainteresowany tematem, rozpoznaje możliwości dla swojej firmy

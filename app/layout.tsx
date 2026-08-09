@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
+import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -90,6 +91,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  // Potwierdzenie własności domeny w Google Search Console — bez tego
+  // konsola nie pokazuje zapytań ani nie przyjmuje zgłoszenia sitemapy
+  verification: {
+    google: 'PHlAs0l2ULVg1abJnn9xI5e0l4RTwb7vl1Mo6DEEpEc',
+  },
 }
 
 export const viewport: Viewport = {
@@ -120,6 +126,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </a>
         <Providers>{children}</Providers>
         <CookieBanner />
+        <Analytics />
       </body>
     </html>
   )

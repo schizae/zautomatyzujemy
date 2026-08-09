@@ -43,3 +43,13 @@ next-env.d.ts
 
 # MCP config — zawiera klucze API, nie commituj
 .mcp.json
+
+# Claude Code — ustawienia osobiste tej maszyny (uprawnienia, hooki)
+.claude/settings.local.json
+
+# Skille instalowane narzędziami (impeccable ~3,3 MB) — odtwarzalne przez
+# `npx impeccable install`, nie ma po co trzymać ich w historii repo
+.claude/skills/
+
+# Playwright Agent CLI — migawki stron, ślady, nagrania z sesji przeglądarki
+.playwright-cli/

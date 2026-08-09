@@ -31,6 +31,8 @@ const eslintConfig = [
     ignores: [
       '.next/**',
       'node_modules/**',
+      // Skrypty narzedzi agentowych (skille, hooki) — nie nasz kod, nie w repo
+      '.claude/**',
       'public/**',
       'next-env.d.ts',
       '*.config.js',

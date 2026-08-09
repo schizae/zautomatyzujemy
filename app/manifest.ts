@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Zautomatyzujemy.pl — Agencja Automatyzacji AI',
+    name: 'Zautomatyzujemy.pl — Automatyzacja Procesów z AI',
     short_name: 'Zautomatyzujemy',
     description:
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',

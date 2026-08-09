@@ -9,9 +9,12 @@ import { AiActBanner } from '@/components/marketing/ai-act-banner'
 import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { RoiCalculator } from '@/components/marketing/roi-calculator'
+import { FaqSection } from '@/components/marketing/faq-section'
 import { ContactSection } from '@/components/marketing/contact-section'
 import { Footer } from '@/components/marketing/footer'
 import { JsonLd } from '@/components/seo/json-ld'
+import { createServiceClient } from '@/lib/supabase/server'
+import type { FaqItem } from '@/types'
 
 async function getHeroContent(): Promise<Record<string, string>> {
   const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
@@ -72,6 +75,15 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const heroContent = await getHeroContent()
 
+  const supabase = createServiceClient()
+  const { data: faqData } = await supabase
+    .from('faq_items')
+    .select('question, answer')
+    .eq('is_active', true)
+    .order('sort_order')
+
+  const faqItems = (faqData ?? []) as Pick<FaqItem, 'question' | 'answer'>[]
+
   return (
     <>
       <JsonLd
@@ -81,7 +93,7 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           description:
-            'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM.',
+            'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM.',
           sameAs: [],
         }}
       />
@@ -103,20 +115,16 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           telephone: '+48730094465',
-          email: 'biuro@zautomatyzujemy.pl',
+          email: 'n.chojnacki1993@gmail.com',
           description:
-            'Agencja automatyzacji AI — chatboty, integracje n8n, RAG, wdrożenia LLM dla firm MŚP.',
+            'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM dla małych i średnich firm.',
+          // Bez ulicy i współrzędnych — działalność prowadzona z domu, wizytówka
+          // Google w trybie firmy usługowej również nie pokazuje adresu
           address: {
             '@type': 'PostalAddress',
-            streetAddress: 'ul. Sportowa 5/33',
             addressLocality: 'Chojnice',
             postalCode: '89-600',
             addressCountry: 'PL',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: 53.6977,
-            longitude: 17.5572,
           },
           areaServed: {
             '@type': 'Country',
@@ -125,6 +133,22 @@ export default async function HomePage() {
           priceRange: '$$',
         }}
       />
+      {faqItems.length > 0 && (
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqItems.map(item => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          }}
+        />
+      )}
       <Navbar />
       <main id="main">
         <HeroSection content={heroContent} />
@@ -135,6 +159,7 @@ export default async function HomePage() {
         <AboutSection />
         <BlogPreview />
         <RoiCalculator />
+        <FaqSection />
         <ContactSection />
       </main>
       <Footer />

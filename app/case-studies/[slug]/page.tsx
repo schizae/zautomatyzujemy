@@ -124,11 +124,16 @@ export default async function CaseStudyPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-8"
           >
             <ArrowLeft size={16} />
-            Wróć do realizacji
+            Wróć do scenariuszy
           </Link>
           {item.tag && (
             <span className="inline-block text-xs font-bold text-primary bg-primary/20 px-2.5 py-0.5 rounded-full mb-4">
               {item.tag}
+            </span>
+          )}
+          {item.is_example && (
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#ffa07b] bg-[#ffa07b]/15 border border-[#ffa07b]/30 px-2.5 py-0.5 rounded-full mb-4 ml-2">
+              Przykład możliwej automatyzacji
             </span>
           )}
           <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
@@ -137,6 +142,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <p className="text-slate-300 text-lg leading-relaxed">
             {item.description}
           </p>
+          {item.is_example && (
+            <p className="mt-6 rounded-2xl border border-[#ffa07b]/25 bg-[#ffa07b]/5 px-5 py-4 text-sm leading-relaxed text-slate-300">
+              To scenariusz poglądowy, a nie opis zrealizowanego projektu. Pokazuje, jak taka
+              automatyzacja działa w praktyce. Rzeczywisty zakres i efekty ustalamy dla Twojej
+              firmy podczas bezpłatnej konsultacji.
+            </p>
+          )}
         </div>
       </div>
 
@@ -166,7 +178,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-primary font-semibold hover:underline"
           >
             <ArrowLeft size={16} />
-            Wróć do wszystkich realizacji
+            Wróć do wszystkich scenariuszy
           </Link>
         </div>
       )}

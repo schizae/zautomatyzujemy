@@ -15,7 +15,7 @@ import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.act
 // Odrzuca losowe ciągi z @, wymaga sensownej struktury
 const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
-const GREETING = `Cześć! Jestem Automatek — asystent AI firmy Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert — właściciel firmy. W czym mogę pomóc?`
+const GREETING = `Cześć! Jestem Automatek — asystent AI Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert. W czym mogę pomóc?`
 
 // Limit dogrywek danych leada — chroni przed serią wywołań Gemini w długiej rozmowie
 const MAX_LEAD_ENRICHMENTS = 3

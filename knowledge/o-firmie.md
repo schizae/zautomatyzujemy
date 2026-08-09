@@ -2,7 +2,7 @@
 
 ## Kim jesteśmy
 
-Zautomatyzujemy.pl to agencja specjalizująca się w automatyzacji procesów biznesowych z pomocą sztucznej inteligencji i narzędzi no-code/low-code, takich jak n8n, Make (Integromat) oraz własne rozwiązania AI.
+Zautomatyzujemy.pl to marka, pod którą Norbert Chojnacki automatyzuje procesy biznesowe z pomocą sztucznej inteligencji i narzędzi no-code/low-code, takich jak n8n, Make (Integromat) oraz własne rozwiązania AI.
 
 ## Co robimy
 
@@ -24,7 +24,7 @@ Pomagamy firmom zaoszczędzić czas i pieniądze poprzez automatyzację powtarza
 ## Kontakt
 
 - Strona: zautomatyzujemy.pl
-- E-mail: kontakt@zautomatyzujemy.pl
+- E-mail: n.chojnacki1993@gmail.com
 - Formularz kontaktowy dostępny na stronie głównej
 
 ## Dla kogo

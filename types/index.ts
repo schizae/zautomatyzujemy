@@ -127,6 +127,8 @@ export interface CaseStudy {
   tag: string
   sort_order: number
   is_active: boolean
+  /** TRUE = scenariusz poglądowy, nie zrealizowane wdrożenie */
+  is_example: boolean
   created_at: string
   updated_at: string
 }

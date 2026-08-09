@@ -1,45 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import type { CaseStudy } from '@/types'
 
-const fallbackCases = [
-  {
-    id: '1',
-    title: 'Biuro rachunkowe: automatyzacja księgowania faktur z maili',
-    tags: ['AUTOMATYZACJA', 'N8N'],
-    description:
-      'Biuro obsługiwało dziesiątki klientów — każda faktura trafiała mailem i musiała być ręcznie przepisana do systemu. Wdrożyliśmy automatyczny pipeline: n8n pobiera załączniki, AI odczytuje dane z PDF, gotowe wpisy trafiają wprost do systemu FK. Czas obsługi jednej faktury: z 4 minut do 20 sekund.',
-    stats: [
-      { value: '~40h', label: 'oszczędności / miesiąc' },
-      { value: '-92%', label: 'czas na fakturę' },
-    ],
-    image: '',
-  },
-  {
-    id: '2',
-    title: 'Sklep internetowy: chatbot odpowiadający na 80% zapytań klientów',
-    tags: ['CHATBOT', 'LLM'],
-    description:
-      'Sklep z elektroniką tonął w powtarzających się pytaniach o dostępność, zwroty i czas dostawy. Zbudowaliśmy asystenta AI opartego na bazie wiedzy sklepu i danych z systemu zamówień. Chatbot obsługuje teraz 80% zapytań bez udziału człowieka — 24/7, po polsku i angielsku.',
-    stats: [
-      { value: '80%', label: 'zapytań bez obsługi' },
-      { value: '24/7', label: 'dostępność' },
-    ],
-    image: '',
-  },
-  {
-    id: '3',
-    title: 'Agencja marketingowa: automatyczny research i generowanie briefów',
-    tags: ['AI', 'AUTOMATYZACJA'],
-    description:
-      'Każde nowe zlecenie wymagało godzin researchu: analiza konkurencji, ton of voice, słowa kluczowe, grupa docelowa. Wdrożyliśmy workflow w n8n + LLM, który na podstawie briefu klienta automatycznie zbiera dane i generuje gotowy dokument strategiczny. Czas: z 6 godzin do 25 minut.',
-    stats: [
-      { value: '6h → 25min', label: 'czas briefa' },
-      { value: '×4', label: 'więcej projektów / tydzień' },
-    ],
-    image: '',
-  },
-]
-
 interface CaseItem {
   id: string
   title: string
@@ -50,7 +11,7 @@ interface CaseItem {
 }
 
 function buildCaseItems(data: CaseStudy[]): CaseItem[] {
-  if (data.length === 0) return fallbackCases
+  // Brak danych = sekcja się nie renderuje. Lepiej pokazać mniej niż wymyśloną treść.
   return data.map((cs) => ({
     id: cs.id,
     title: cs.title,
@@ -69,6 +30,8 @@ export async function CaseStudySection() {
     .order('sort_order')
 
   const items = buildCaseItems((data ?? []) as CaseStudy[])
+
+  if (items.length === 0) return null
 
   return (
     <section className="py-32 bg-[#0d0f0d]" id="case-study">
