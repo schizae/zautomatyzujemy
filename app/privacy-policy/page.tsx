@@ -35,9 +35,9 @@ export default function PrivacyPolicyPage() {
               Administratorem Twoich danych osobowych jest Norbert Chojnacki,
               prowadzący działalność pod marką Zautomatyzujemy.pl w Chojnicach
               (dalej: &ldquo;Administrator&rdquo;). Kontakt w sprawach ochrony danych:
-              kontakt@zautomatyzujemy.pl. W sprawach dotyczących ochrony danych
+              n.chojnacki1993@gmail.com. W sprawach dotyczących ochrony danych
               osobowych możesz skontaktować się z nami pod adresem e-mail:
-              <span className="text-[#70e5ea]"> kontakt@zautomatyzujemy.pl</span>.
+              <span className="text-[#70e5ea]"> n.chojnacki1993@gmail.com</span>.
             </p>
           </section>
 
@@ -148,7 +148,7 @@ export default function PrivacyPolicyPage() {
             </ul>
             <p className="mt-3">
               Aby skorzystać z tych praw, napisz na:
-              <span className="text-[#70e5ea]"> kontakt@zautomatyzujemy.pl</span>.
+              <span className="text-[#70e5ea]"> n.chojnacki1993@gmail.com</span>.
             </p>
           </section>
 

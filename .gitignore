@@ -50,3 +50,6 @@ next-env.d.ts
 # Skille instalowane narzędziami (impeccable ~3,3 MB) — odtwarzalne przez
 # `npx impeccable install`, nie ma po co trzymać ich w historii repo
 .claude/skills/
+
+# Playwright Agent CLI — migawki stron, ślady, nagrania z sesji przeglądarki
+.playwright-cli/

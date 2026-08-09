@@ -115,7 +115,7 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           telephone: '+48730094465',
-          email: 'kontakt@zautomatyzujemy.pl',
+          email: 'n.chojnacki1993@gmail.com',
           description:
             'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM dla małych i średnich firm.',
           // Bez ulicy i współrzędnych — działalność prowadzona z domu, wizytówka

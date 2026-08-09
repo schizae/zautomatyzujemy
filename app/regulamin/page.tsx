@@ -164,7 +164,7 @@ export default function RegulaPage() {
             </h2>
             <p>
               W sprawach związanych z Regulaminem prosimy o kontakt pod adresem:{' '}
-              <span className="text-[#70e5ea]">kontakt@zautomatyzujemy.pl</span>
+              <span className="text-[#70e5ea]">n.chojnacki1993@gmail.com</span>
             </p>
           </section>
 

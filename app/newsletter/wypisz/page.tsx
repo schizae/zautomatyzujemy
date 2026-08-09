@@ -43,10 +43,10 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             <p className="text-[#bcc9c9] font-body leading-relaxed">
               Ten link do wypisu wygasł albo jest niekompletny. Napisz na{' '}
               <a
-                href="mailto:kontakt@zautomatyzujemy.pl"
+                href="mailto:n.chojnacki1993@gmail.com"
                 className="text-[#70e5ea] hover:underline"
               >
-                kontakt@zautomatyzujemy.pl
+                n.chojnacki1993@gmail.com
               </a>
               , a wypiszemy Cię ręcznie.
             </p>
