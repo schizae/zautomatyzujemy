@@ -48,12 +48,16 @@ Przed napisaniem JAKIEGOKOLWIEK kodu lub pliku:
 ## Szybkie komendy
 
 ```bash
-pnpm dev          # development server
-pnpm build        # production build
-pnpm lint         # ESLint
-pnpm type-check   # tsc --noEmit
-pnpm test         # testy jednostkowe
+npm run dev          # development server
+npm run build        # production build
+npm run lint         # ESLint
+npm run type-check   # tsc --noEmit
+npm run db:generate  # przebudowa bazy wiedzy RAG
 ```
+
+> **Menedżer pakietów: wyłącznie npm.** CI używa `npm ci`, a jedynym lockfile'em jest
+> `package-lock.json`. Uruchomienie `pnpm add` tworzy drugi lockfile, przeciąga inne
+> wersje zależności i psuje ESLinta — tak stało się 5 sierpnia 2026.
 
 ---
 
