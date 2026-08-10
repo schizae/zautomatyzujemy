@@ -1,5 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 
+import { missingEnvError } from './env'
+
 /**
  * Klient Supabase dla Client Components (przeglądarka).
  * Używa kluczy NEXT_PUBLIC_* — bezpieczne do eksponowania.
@@ -11,10 +13,10 @@ export function createClient() {
   const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      'Brakuje zmiennych środowiskowych NEXT_PUBLIC_SUPABASE_URL lub NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
-      'Sprawdź plik .env.local (wzorzec: .env.example)'
-    )
+    throw missingEnvError({
+      NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
+    })
   }
 
   return createBrowserClient(supabaseUrl, supabaseAnonKey)

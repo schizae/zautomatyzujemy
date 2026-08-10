@@ -1,6 +1,8 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+import { missingEnvError } from './env'
+
 /**
  * Klient Supabase dla Server Components, Server Actions i Route Handlers.
  * Używa cookies do zarządzania sesją użytkownika (anon key).
@@ -12,9 +14,10 @@ export async function createClient() {
   const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      'Brakuje zmiennych środowiskowych NEXT_PUBLIC_SUPABASE_URL lub NEXT_PUBLIC_SUPABASE_ANON_KEY.'
-    )
+    throw missingEnvError({
+      NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
+    })
   }
 
   const cookieStore = await cookies()
@@ -49,9 +52,10 @@ export function createServiceClient() {
   const serviceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY']
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      'Brakuje zmiennych środowiskowych NEXT_PUBLIC_SUPABASE_URL lub SUPABASE_SERVICE_ROLE_KEY.'
-    )
+    throw missingEnvError({
+      NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
+      SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
+    })
   }
 
   return createServerClient(supabaseUrl, serviceRoleKey, {
