@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/contexts/auth-context'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { label: 'Rozwiązania', href: '/#uslugi' },
+  { label: 'Usługi', href: '/uslugi' },
   { label: 'Case Studies', href: '/#case-study' },
   { label: 'Blog', href: '/blog' },
   { label: 'O nas', href: '/#o-nas' },
