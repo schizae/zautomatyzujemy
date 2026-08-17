@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const supabase = createServiceClient()
 
-  const [postsResult, caseStudiesResult] = await Promise.all([
+  const [postsResult, caseStudiesResult, servicesResult] = await Promise.all([
     supabase
       .from('posts')
       .select('slug, updated_at')
@@ -18,10 +18,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select('slug, updated_at')
       .eq('is_active', true)
       .order('sort_order'),
+    supabase
+      .from('services')
+      .select('slug, updated_at')
+      .eq('is_active', true)
+      .order('sort_order'),
   ])
 
   const posts = postsResult.data ?? []
   const caseStudies = caseStudiesResult.data ?? []
+  const services = servicesResult.data ?? []
 
   return [
     {
@@ -35,6 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/uslugi`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/case-studies`,
@@ -69,6 +81,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(cs.updated_at as string),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
+    })),
+    ...services.map(service => ({
+      url: `${baseUrl}/uslugi/${service.slug}`,
+      lastModified: new Date(service.updated_at as string),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
     })),
   ]
 }
