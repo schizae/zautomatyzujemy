@@ -31,8 +31,10 @@ const eslintConfig = [
     ignores: [
       '.next/**',
       'node_modules/**',
-      // Skrypty narzedzi agentowych (skille, hooki) — nie nasz kod, nie w repo
+      // Skrypty narzedzi agentowych (skille, hooki) — nie nasz kod, nie w repo.
+      // Dwie sciezki, bo impeccable instaluje sie raz w .claude/, raz w .agents/
       '.claude/**',
+      '.agents/**',
       'public/**',
       'next-env.d.ts',
       '*.config.js',
