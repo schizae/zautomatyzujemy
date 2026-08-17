@@ -55,10 +55,10 @@ export function ServicesSection() {
               </p>
               <div className="flex items-center gap-3">
                 <Link
-                  href="/#kontakt"
+                  href="/uslugi/zgodnosc-z-ai-act"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/30 text-[#ffa07b] font-headline font-bold text-sm hover:bg-[#ffa07b]/20 transition-colors"
                 >
-                  Sprawdź zgodność swojej firmy
+                  Poznaj szczegóły usługi
                   <ArrowRight size={16} />
                 </Link>
               </div>
@@ -67,64 +67,71 @@ export function ServicesSection() {
         </div>
 
         {/* 2. Automatyzacja — wide */}
-        <div className="md:col-span-2 bg-[#1a1c1a] p-10 rounded-[2.5rem] flex flex-col justify-between group hover:bg-[#1e201e] transition-colors duration-500">
-          <div>
-            <Zap className="text-[#70e5ea] mb-8" size={44} />
-            <h3 className="text-3xl font-headline font-bold mb-4 text-[#e2e3df]">
-              Automatyzacja powtarzalnych procesów
-            </h3>
-            <p className="text-[#bcc9c9] text-base max-w-lg font-body leading-relaxed">
-              Wiesz, ile godzin tygodniowo Ty i Twój zespół tracicie na ręczne przepisywanie
-              faktur, przeklejanie danych między systemami, odpowiadanie na te same pytania
-              klientów? Buduję automatyzacje w n8n i narzędziach AI, które wykonują te
-              czynności za Was — 24 godziny na dobę, bez błędów, bez urlopów. Typowo
-              oszczędzam klientom od 10 do 40 godzin tygodniowo.
-            </p>
-          </div>
-          <div className="mt-10 flex items-center justify-between">
-            <div className="flex -space-x-2">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  aria-hidden="true"
-                  className="w-9 h-9 rounded-full border-2 border-[#1a1c1a] bg-[#282a28]"
-                />
-              ))}
+        <Link href="/uslugi/automatyzacja-procesow-biznesowych" className="md:col-span-2">
+          <div className="h-full bg-[#1a1c1a] p-10 rounded-[2.5rem] flex flex-col justify-between group hover:bg-[#1e201e] transition-colors duration-500">
+            <div>
+              <Zap className="text-[#70e5ea] mb-8" size={44} />
+              <h3 className="text-3xl font-headline font-bold mb-4 text-[#e2e3df]">
+                Automatyzacja powtarzalnych procesów
+              </h3>
+              <p className="text-[#bcc9c9] text-base max-w-lg font-body leading-relaxed">
+                Wiesz, ile godzin tygodniowo Ty i Twój zespół tracicie na ręczne przepisywanie
+                faktur, przeklejanie danych między systemami, odpowiadanie na te same pytania
+                klientów? Buduję automatyzacje w n8n i narzędziach AI, które wykonują te
+                czynności za Was — 24 godziny na dobę, bez błędów, bez urlopów. Ile czasu
+                odzyskacie, zależy od procesu — liczę to konkretnie podczas bezpłatnej
+                konsultacji.
+              </p>
             </div>
-            <ArrowRight
-              className="text-[#70e5ea] group-hover:translate-x-2 transition-transform"
-              size={22}
-            />
+            <div className="mt-10 flex items-center justify-between">
+              <div className="flex -space-x-2">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    aria-hidden="true"
+                    className="w-9 h-9 rounded-full border-2 border-[#1a1c1a] bg-[#282a28]"
+                  />
+                ))}
+              </div>
+              <ArrowRight
+                className="text-[#70e5ea] group-hover:translate-x-2 transition-transform"
+                size={22}
+              />
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* 3. Chatboty — narrow */}
-        <div className="bg-[#1e201e] p-10 rounded-[2.5rem] border border-[#3d4949]/10">
-          <MessageSquare className="text-[#50c9ce] mb-6" size={40} />
-          <h3 className="text-2xl font-headline font-bold mb-4 text-[#e2e3df]">
-            Chatboty i asystenci AI dla obsługi klienta
-          </h3>
-          <p className="text-[#bcc9c9] font-body leading-relaxed text-sm">
-            Twoi klienci zadają wciąż te same pytania? Buduję chatboty, które odpowiadają
-            na zapytania w oparciu o Twoją bazę wiedzy — dokumentację, regulamin, FAQ,
-            historię zamówień. Integruję z CRM-em, Messengerem, WhatsAppem. Zgodne
-            z AI Act od pierwszego dnia.
-          </p>
-        </div>
+        <Link href="/uslugi/chatboty-i-asystenci-ai">
+          <div className="h-full bg-[#1e201e] p-10 rounded-[2.5rem] border border-[#3d4949]/10">
+            <MessageSquare className="text-[#50c9ce] mb-6" size={40} />
+            <h3 className="text-2xl font-headline font-bold mb-4 text-[#e2e3df]">
+              Chatboty i asystenci AI dla obsługi klienta
+            </h3>
+            <p className="text-[#bcc9c9] font-body leading-relaxed text-sm">
+              Twoi klienci zadają wciąż te same pytania? Buduję chatboty, które odpowiadają
+              na zapytania w oparciu o Twoją bazę wiedzy — dokumentację, regulamin, FAQ,
+              historię zamówień. Integruję z CRM-em, Messengerem, WhatsAppem. Zgodne
+              z AI Act od pierwszego dnia.
+            </p>
+          </div>
+        </Link>
 
         {/* 4. Szkolenia — narrow */}
-        <div className="bg-[#1e201e] p-10 rounded-[2.5rem] border border-[#3d4949]/10">
-          <GraduationCap className="text-[#70e5ea] mb-6" size={40} />
-          <h3 className="text-2xl font-headline font-bold mb-4 text-[#e2e3df]">
-            Szkolenia zespołów z AI
-          </h3>
-          <p className="text-[#bcc9c9] font-body leading-relaxed text-sm">
-            Od lutego 2025 AI Act wymaga od firm zapewnienia pracownikom szkoleń z AI
-            literacy — nie jako dobra praktyka, ale jako obowiązek prawny. Prowadzę
-            szkolenia dostosowane do branży i poziomu zaawansowania zespołu. Wystawiam
-            zaświadczenia i dokumentację zgodną z wymogami.
-          </p>
-        </div>
+        <Link href="/uslugi/szkolenia-z-ai-dla-zespolow">
+          <div className="h-full bg-[#1e201e] p-10 rounded-[2.5rem] border border-[#3d4949]/10">
+            <GraduationCap className="text-[#70e5ea] mb-6" size={40} />
+            <h3 className="text-2xl font-headline font-bold mb-4 text-[#e2e3df]">
+              Szkolenia zespołów z AI
+            </h3>
+            <p className="text-[#bcc9c9] font-body leading-relaxed text-sm">
+              Od lutego 2025 AI Act wymaga od firm zapewnienia pracownikom szkoleń z AI
+              literacy — nie jako dobra praktyka, ale jako obowiązek prawny. Prowadzę
+              szkolenia dostosowane do branży i poziomu zaawansowania zespołu. Wystawiam
+              zaświadczenia i dokumentację zgodną z wymogami.
+            </p>
+          </div>
+        </Link>
 
         {/* 5. Bezpłatna konsultacja — wide, CTA */}
         <div className="md:col-span-2 bg-gradient-to-br from-[#003739] to-[#004d50] p-10 rounded-[2.5rem] flex flex-col justify-between group relative overflow-hidden">
@@ -155,6 +162,16 @@ export function ServicesSection() {
           </div>
         </div>
 
+      </div>
+
+      <div className="mt-12 text-center">
+        <Link
+          href="/uslugi"
+          className="inline-flex items-center gap-2 text-[#70e5ea] font-headline font-bold hover:gap-3 transition-all"
+        >
+          Zobacz wszystkie usługi
+          <ArrowRight size={18} />
+        </Link>
       </div>
     </section>
   )
