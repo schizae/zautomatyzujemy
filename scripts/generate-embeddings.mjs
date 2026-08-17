@@ -137,17 +137,23 @@ async function collectDbDocuments(supabase) {
 
   const { data: services, error: servicesError } = await supabase
     .from('services')
-    .select('title, description')
+    .select('title, description, slug, subtitle, content')
     .eq('is_active', true)
     .order('sort_order')
   if (servicesError) throw new Error(`services: ${servicesError.message}`)
 
-  if (services && services.length > 0) {
+  for (const service of services ?? []) {
     docs.push({
-      source: 'services',
-      text: `Nasze usługi:\n\n${services
-        .map(service => `${service.title}: ${service.description ?? ''}`)
-        .join('\n\n')}`,
+      source: `service:${service.slug}`,
+      text: [
+        `Usługa: ${service.title}`,
+        `Adres strony: /uslugi/${service.slug}`,
+        service.subtitle ?? '',
+        service.description,
+        service.content ?? '',
+      ]
+        .filter(Boolean)
+        .join('\n\n'),
     })
   }
 
