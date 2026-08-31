@@ -18,7 +18,11 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      // blob: jest wymagane przez AudioWorklet: Daily ładuje filtr szumów Krisp
+      // i miernik poziomu dźwięku jako moduły worklet z blob: URL. Worklety audio
+      // podlegają pod script-src, NIE pod worker-src — bez tego mikrofon jest
+      // przechwytywany, ale procesor się nie inicjuje i audio nie idzie dalej.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://i.ibb.co",
       "font-src 'self' data:",
