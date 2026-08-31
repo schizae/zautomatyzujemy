@@ -17,6 +17,7 @@
     "@sentry/nextjs": "^10.49.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
+    "@vapi-ai/web": "^2.7.0",
     "@vercel/analytics": "^2.0.1",
     "ai": "^6.0.142",
     "class-variance-authority": "^0.7.1",

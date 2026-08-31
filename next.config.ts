@@ -7,7 +7,9 @@ const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+    // microphone=(self): wymagane przez widget głosowy. (self) otwiera dostęp
+  // wyłącznie dla własnego origin, nie dla osadzonych ramek osób trzecich.
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=()' },
   {
     key: 'Strict-Transport-Security',
     value: 'max-age=63072000; includeSubDomains; preload',
@@ -20,7 +22,13 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://i.ibb.co",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://o4511235084910592.ingest.de.sentry.io",
+      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://o4511235084910592.ingest.de.sentry.io https://api.vapi.ai https://*.daily.co wss://*.daily.co",
+      // Widget głosowy: Vapi opakowuje Daily, które ładuje 'call machine'
+      // w ramce z c.daily.co i sygnalizuje przez gs.daily.co.
+      // 'self' powtórzone celowo — podanie frame-src wyłącza fallback do default-src.
+      "frame-src 'self' https://*.daily.co",
+      "media-src 'self' blob:",
+      "worker-src 'self' blob:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

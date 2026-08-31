@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
+import { VoiceWidget } from '@/components/voice/voice-widget'
 import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
@@ -22,6 +23,12 @@ const inter = Inter({
   variable: '--font-label',
   display: 'swap',
 })
+
+// Oba klucze są publiczne z definicji — trafiają do kodu strony.
+// Renderujemy widget tylko wtedy, gdy są ustawione, żeby brak konfiguracji
+// dawał brak przycisku, a nie przycisk, który po kliknięciu wyrzuca błąd.
+const VAPI_PUBLIC_KEY = process.env['NEXT_PUBLIC_VAPI_PUBLIC_KEY']
+const VAPI_ASSISTANT_ID = process.env['NEXT_PUBLIC_VAPI_ASSISTANT_ID']
 
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
@@ -125,6 +132,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Przejdź do treści
         </a>
         <Providers>{children}</Providers>
+        {VAPI_PUBLIC_KEY && VAPI_ASSISTANT_ID ? (
+          <VoiceWidget
+            publicKey={VAPI_PUBLIC_KEY}
+            assistantId={VAPI_ASSISTANT_ID}
+            side='left'
+            fallbackHref='/kontakt'
+            buttonClassName='bg-[#70e5ea] text-[#003739] hover:bg-[#50c9ce]'
+          />
+        ) : null}
         <CookieBanner />
         <Analytics />
       </body>
