@@ -319,7 +319,7 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="w-[416px] md:w-[500px] glass-card rounded-3xl border border-[#3d4949]/30 shadow-2xl overflow-hidden flex flex-col mb-2"
+            className="w-[calc(100vw-4rem)] max-w-[416px] md:max-w-[500px] glass-card rounded-3xl border border-[#3d4949]/30 shadow-2xl overflow-hidden flex flex-col mb-2"
           >
             {/* ── Header ──────────────────────────────────────────────────── */}
             <div className="bg-[#70e5ea]/10 p-6 flex items-center gap-4 border-b border-[#3d4949]/20">
@@ -394,7 +394,7 @@ export function ChatWidget() {
             )}
 
             {/* ── Messages ────────────────────────────────────────────────── */}
-            <div className="p-6 h-[340px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
+            <div className="p-6 h-[240px] sm:h-[340px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
 
               {/* Powitanie typing */}
               <AnimatePresence>
