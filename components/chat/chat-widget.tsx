@@ -16,7 +16,7 @@ import { useVoiceCall } from '@/components/voice/use-voice-call'
 // Odrzuca losowe ciągi z @, wymaga sensownej struktury
 const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
-const GREETING = `Cześć! Jestem Automatek — asystent AI Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert. W czym mogę pomóc?`
+const GREETING = `Cześć! Jestem Klara — asystent AI Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert. W czym mogę pomóc?`
 
 // Limit dogrywek danych leada — chroni przed serią wywołań Gemini w długiej rozmowie
 const MAX_LEAD_ENRICHMENTS = 3
@@ -326,14 +326,14 @@ export function ChatWidget() {
               <div className="relative w-10 h-10 rounded-full bg-[#50c9ce] flex items-center justify-center overflow-hidden flex-shrink-0">
                 <Image
                   src="/logo.png"
-                  alt="Automatek"
+                  alt="Klara"
                   width={40}
                   height={40}
                   className="w-full h-full object-cover rounded-full p-1"
                 />
               </div>
               <div className="flex-1">
-                <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Automatek</h5>
+                <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Klara</h5>
                 <p className="text-[10px] text-[#70e5ea] uppercase font-label tracking-widest">
                   Asystent AI &middot; odpowiedzi automatyczne
                 </p>
@@ -381,14 +381,14 @@ export function ChatWidget() {
 
                 <p
                   className={cn(
-                    'mt-2 text-center text-[11px] font-label',
+                    'mt-2.5 text-center text-xs font-label',
                     voice.status === 'denied' || voice.status === 'error'
                       ? 'text-red-400'
-                      : 'text-[#3d4949]',
+                      : 'text-[#e2e3df]',
                   )}
                   aria-live="polite"
                 >
-                  {VOICE_STATUS_TEXT[voice.status] ?? 'Wolisz mówić niż pisać? Klara odbierze od razu.'}
+                  {VOICE_STATUS_TEXT[voice.status] ?? 'Wolisz mówić niż pisać? Odbiorę od razu.'}
                 </p>
               </div>
             )}
