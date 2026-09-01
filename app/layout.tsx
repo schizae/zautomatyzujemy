@@ -3,7 +3,6 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
-import { VoiceWidget } from '@/components/voice/voice-widget'
 import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
@@ -27,8 +26,6 @@ const inter = Inter({
 // Oba klucze są publiczne z definicji — trafiają do kodu strony.
 // Renderujemy widget tylko wtedy, gdy są ustawione, żeby brak konfiguracji
 // dawał brak przycisku, a nie przycisk, który po kliknięciu wyrzuca błąd.
-// ADR-24: żadnego klucza Vapi w kodzie strony — widget prosi GŁOS o token.
-const GLOS_TOKEN_URL = process.env['NEXT_PUBLIC_GLOS_TOKEN_URL']
 
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
@@ -132,14 +129,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Przejdź do treści
         </a>
         <Providers>{children}</Providers>
-        {GLOS_TOKEN_URL ? (
-          <VoiceWidget
-            tokenEndpoint={GLOS_TOKEN_URL}
-            side='left'
-            fallbackHref='/kontakt'
-            buttonClassName='bg-[#70e5ea] text-[#003739] hover:bg-[#50c9ce]'
-          />
-        ) : null}
         <CookieBanner />
         <Analytics />
       </body>

@@ -4,10 +4,11 @@ import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, isTextUIPart } from 'ai'
 import { useRef, useEffect, useState, useTransition } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle } from 'lucide-react'
+import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle, Mic, PhoneOff } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
+import { useVoiceCall } from '@/components/voice/use-voice-call'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,17 @@ const QUICK_REPLIES = [
 ]
 
 const LS_GREETING = 'zaut_chat_greeting_seen'
+
+// Adres endpointu GŁOSu, który wydaje krótko żyjące tokeny rozmowy (ADR-24).
+// Brak zmiennej = brak przycisku głosowego; czat działa jak działał.
+const GLOS_TOKEN_URL = process.env['NEXT_PUBLIC_GLOS_TOKEN_URL']
+
+const VOICE_STATUS_TEXT: Record<string, string> = {
+  connecting: 'Łączę z asystentem…',
+  active: 'Trwa rozmowa głosowa',
+  denied: 'Zezwól na mikrofon w ustawieniach przeglądarki (kłódka przy adresie) i spróbuj ponownie.',
+  error: 'Nie udało się połączyć. Spróbuj ponownie za chwilę.',
+}
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
@@ -119,6 +131,7 @@ function MarkdownMessage({ text }: { text: string }) {
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
+  const voice = useVoiceCall(GLOS_TOKEN_URL)
   const [input, setInput] = useState('')
   const [greetingStep, setGreetingStep] = useState<'hidden' | 'typing' | 'shown'>(() => {
     if (typeof window === 'undefined') return 'hidden'
@@ -333,8 +346,55 @@ export function ChatWidget() {
               </button>
             </div>
 
+            {/* ── Rozmowa głosowa (ADR-24) ────────────────────────────────── */}
+            {GLOS_TOKEN_URL && (
+              <div className="border-b border-[#3d4949]/20 bg-[#121412]/40 px-6 py-4">
+                <button
+                  type="button"
+                  onClick={voice.status === 'idle' ? voice.start : voice.stop}
+                  disabled={voice.status === 'connecting'}
+                  aria-label={
+                    voice.status === 'active'
+                      ? 'Zakończ rozmowę głosową'
+                      : 'Porozmawiaj z asystentem głosowym AI'
+                  }
+                  className={cn(
+                    'flex w-full items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-medium transition-all font-label disabled:opacity-60',
+                    voice.status === 'active'
+                      ? 'bg-red-500/90 text-white hover:bg-red-500'
+                      : 'bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] hover:brightness-110',
+                  )}
+                >
+                  {voice.status === 'connecting' ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : voice.status === 'active' ? (
+                    <PhoneOff className="size-4" />
+                  ) : (
+                    <Mic className="size-4" />
+                  )}
+                  {voice.status === 'active'
+                    ? 'Zakończ rozmowę'
+                    : voice.status === 'connecting'
+                      ? 'Łączę…'
+                      : 'Porozmawiaj z asystentem głosowym AI'}
+                </button>
+
+                <p
+                  className={cn(
+                    'mt-2 text-center text-[11px] font-label',
+                    voice.status === 'denied' || voice.status === 'error'
+                      ? 'text-red-400'
+                      : 'text-[#3d4949]',
+                  )}
+                  aria-live="polite"
+                >
+                  {VOICE_STATUS_TEXT[voice.status] ?? 'Wolisz mówić niż pisać? Klara odbierze od razu.'}
+                </p>
+              </div>
+            )}
+
             {/* ── Messages ────────────────────────────────────────────────── */}
-            <div className="p-6 h-[308px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
+            <div className="p-6 h-[340px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
 
               {/* Powitanie typing */}
               <AnimatePresence>
