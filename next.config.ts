@@ -26,7 +26,8 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://i.ibb.co",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://o4511235084910592.ingest.de.sentry.io https://api.vapi.ai https://*.daily.co wss://*.daily.co",
+      // https://glos-voicebot.vercel.app — widget pobiera stamtąd token rozmowy (ADR-24)
+      "connect-src 'self' https://glos-voicebot.vercel.app https://*.supabase.co https://generativelanguage.googleapis.com https://o4511235084910592.ingest.de.sentry.io https://api.vapi.ai https://*.daily.co wss://*.daily.co",
       // Widget głosowy: Vapi opakowuje Daily, które ładuje 'call machine'
       // w ramce z c.daily.co i sygnalizuje przez gs.daily.co.
       // 'self' powtórzone celowo — podanie frame-src wyłącza fallback do default-src.
