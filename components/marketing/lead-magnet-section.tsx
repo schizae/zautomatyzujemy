@@ -1,68 +1,37 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useActionState } from 'react'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
 import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
-import { Shield, CheckCircle2, Loader2 } from 'lucide-react'
+import { CheckCircle2, Loader2 } from 'lucide-react'
 import type { ActionResult } from '@/types'
 
 const initialState: ActionResult = { success: false, error: '' }
-
-const checklistItems = [
-  'Klasyfikacja systemów AI według poziomu ryzyka',
-  'Obowiązki dla firm korzystających z AI (nawet ChatGPT)',
-  'Lista wymaganych dokumentów i polityk',
-  'Wymagania szkoleniowe dla pracowników (AI literacy)',
-  'Terminy wejścia w życie poszczególnych przepisów',
-  'Plan działania krok po kroku dla MŚP',
-]
 
 export function LeadMagnetSection() {
   const [state, formAction, isPending] = useActionState(subscribeLeadMagnetAction, initialState)
 
   return (
-    <section id="checklista" className="py-24 px-6 md:px-8 bg-gradient-to-b from-[#f5f2ed] to-[#f5f2ed]">
-      <div className="max-w-7xl mx-auto">
-        <div className="rounded-2xl border border-[#c93820]/20 bg-gradient-to-br from-[#eeebe5] via-[#ffffff] to-[#f5f2ed] overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-
-            {/* LEFT — info */}
-            <div className="p-10 md:p-14 border-b lg:border-b-0 lg:border-r border-[#c93820]/10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c93820]/10 border border-[#c93820]/20 mb-8">
-                <Shield size={13} className="text-[#c93820]" />
-                <span className="text-xs font-label uppercase tracking-widest text-[#c93820]">Bezpłatny PDF</span>
-              </div>
-
-              <h2 className="text-3xl md:text-4xl font-headline font-bold text-[#151719] mb-4 leading-tight">
-                Checklista:{' '}
-                <span className="text-[#c93820]">Zgodność z AI Act</span>
-                {' '}dla MŚP
-              </h2>
-              <p className="text-[#686862] font-body text-base leading-relaxed mb-10">
-                Zacznij od uporządkowania wiedzy. Praktyczna checklista pomoże Ci przyjrzeć się wykorzystaniu AI w Twojej firmie.
-              </p>
-
-              <ul className="space-y-3">
-                {checklistItems.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="text-[#c93820] shrink-0 mt-0.5" size={16} />
-                    <span className="text-[#686862] text-sm font-body">{item}</span>
-                  </li>
-                ))}
-              </ul><div className="mt-8 flex flex-wrap gap-4 text-sm text-[#c93820]"><Link href="/#uslugi" className="underline underline-offset-4">Szkolenia AI</Link><Link href="/#kontakt" className="underline underline-offset-4">Porozmawiaj o audycie</Link></div>
-            </div>
-
-            {/* RIGHT — form */}
-            <div className="p-10 md:p-14 flex flex-col justify-center">
+    <section id="checklista" className="mx-auto grid max-w-[1600px] items-center gap-10 px-6 py-20 md:px-8 lg:min-h-[820px] lg:grid-cols-[1fr_0.95fr_1fr]">
+      <div>
+        <p className="mb-10 text-xs uppercase tracking-[0.2em]"><span className="text-[#f34c30]">03 /</span> Wiedza i przygotowanie</p>
+        <h2 className="font-body text-4xl font-extrabold leading-[1.04] tracking-[-0.05em] xl:text-6xl">Dobre decyzje<br />zaczynają się<br />od <span className="font-editorial text-[#f34c30] font-normal italic">wiedzy.</span></h2>
+        <p className="my-8 text-xl leading-relaxed">Szkolenia z AI, audyty procesów i konkretne wskazówki dla Twojej firmy.</p>
+        <div className="mt-10 border-t border-[#c7c3bb] pt-5 text-lg"><Link href="/#uslugi" className="block border-b border-[#c7c3bb] py-4">Poznaj szkolenia →</Link><Link href="/#kontakt" className="block border-b border-[#c7c3bb] py-4">Sprawdź zakres audytu →</Link></div>
+      </div>
+      <Image src="/redesign/checklist-book.webp" alt="AI Act — checklista dla MŚP, bezpłatny materiał" width={700} height={1050} sizes="(min-width: 1024px) 30vw, 70vw" className="mx-auto w-full max-w-sm rounded-md mix-blend-multiply" />
+      <div className="min-w-0">
+        <span className="mb-6 inline-block bg-[#e84324] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white">Bezpłatny PDF</span>
               {state.success ? (
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full bg-[#c93820]/10 border border-[#c93820]/30 flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="text-[#c93820]" size={28} />
                   </div>
-                  <h3 className="text-2xl font-headline font-bold text-[#151719] mb-3">
+                  <h3 className="text-3xl xl:text-4xl font-body font-bold tracking-tight text-[#151719] mb-3">
                     Sprawdź skrzynkę!
                   </h3>
                   <p className="text-[#686862] font-body text-base leading-relaxed mb-4">
@@ -83,12 +52,11 @@ export function LeadMagnetSection() {
                 </div>
               ) : (
                 <>
-                  <h3 className="text-2xl font-headline font-bold text-[#151719] mb-3">
-                    Pobierz bezpłatnie
+                  <h3 className="text-3xl xl:text-4xl font-body font-bold tracking-tight text-[#151719] mb-3">
+                    Zacznij od checklisty.
                   </h3>
-                  <p className="text-[#686862] font-body text-sm mb-8">
-                    Podaj swój adres email — link do checklisty dostaniesz natychmiast.
-                    Sama checklista jest bezwarunkowa, newsletter to osobna decyzja.
+                  <p className="text-[#686862] font-body text-lg mb-8">
+                    Otrzymaj checklistę AI Act na swój adres e-mail.
                   </p>
 
                   <form action={formAction} className="space-y-4">
@@ -108,7 +76,7 @@ export function LeadMagnetSection() {
                         required
                         autoComplete="email"
                         placeholder="twoj@email.pl"
-                        className="w-full bg-[#ffffff] border border-[#c7c3bb]/30 rounded-xl px-4 py-3 text-[#151719] text-sm font-body placeholder:text-[#686862] outline-none focus:border-[#c93820]/50 focus:ring-2 focus:ring-[#c93820]/10 transition-colors"
+                        className="h-14 w-full bg-transparent border border-[#c7c3bb]/30 rounded-xl px-4 py-3 text-[#151719] text-sm font-body placeholder:text-[#686862] outline-none focus:border-[#c93820]/50 focus:ring-2 focus:ring-[#c93820]/10 transition-colors"
                       />
                     </div>
 
@@ -119,7 +87,7 @@ export function LeadMagnetSection() {
                         value="true"
                         className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#c7c3bb] bg-[#ffffff] accent-[#c93820] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820]/40"
                       />
-                      <span className="text-[#686862] text-xs font-body leading-relaxed group-hover:text-[#151719] transition-colors">
+                      <span className="text-[#686862] text-sm font-body leading-relaxed group-hover:text-[#151719] transition-colors">
                         {NEWSLETTER_CONSENT_TEXT}
                       </span>
                     </label>
@@ -131,7 +99,7 @@ export function LeadMagnetSection() {
                     <Button
                       type="submit"
                       disabled={isPending}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#c93820] text-[#ffffff] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
+                      className="w-full flex items-center justify-center gap-2 h-auto px-6 py-5 rounded-md bg-[#e84324] text-[#ffffff] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
                     >
                       {isPending ? (
                         <>
@@ -153,10 +121,6 @@ export function LeadMagnetSection() {
                   </form>
                 </>
               )}
-            </div>
-
-          </div>
-        </div>
       </div>
     </section>
   )

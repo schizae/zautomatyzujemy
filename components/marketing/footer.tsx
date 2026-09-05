@@ -19,10 +19,10 @@ export function Footer() {
   return (
     <footer className="bg-[#151719] border-t border-white/5">
       {/* Main grid */}
-      <div className="mx-auto max-w-7xl px-6 md:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="mx-auto max-w-[1600px] px-6 md:px-8 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Brand */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <span className="text-xl font-headline font-black text-[#e2e3df] tracking-tight">
             zautomatyzujemy<span className="text-[#ffab98]">.pl</span>
           </span>
@@ -47,11 +47,11 @@ export function Footer() {
         </div>
 
         {/* Navigation */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-xs font-label uppercase tracking-widest text-[#a6a6a0]">
             Nawigacja
           </p>
-          <ul className="space-y-3">
+          <ul className="flex flex-wrap gap-4">
             {navLinks.map((link) => (
               <li key={link.label}>
                 <Link
@@ -66,11 +66,11 @@ export function Footer() {
         </div>
 
         {/* Legal */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-xs font-label uppercase tracking-widest text-[#a6a6a0]">
             Dokumenty
           </p>
-          <ul className="space-y-3">
+          <ul className="flex flex-wrap gap-4">
             {legalLinks.map((link) => (
               <li key={link.label}>
                 <Link
@@ -88,7 +88,7 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-6 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs font-body text-[#a6a6a0]">
             © {year} Zautomatyzujemy.pl — wszelkie prawa zastrzeżone.
           </p>

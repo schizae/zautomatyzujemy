@@ -72,3 +72,16 @@ Przed oznaczeniem PR jako gotowy:
 Dostęp GitHub do zapisu został potwierdzony po instalacji aplikacji na koncie schizae.
 Branch codex/redesign-premium utworzono z tej samej bazy; ponowny fetch potwierdził,
 że main nie zmienił się podczas pracy. PR pozostaje wersją roboczą do pełnego QA.
+
+## Korekta zgodności z makietami (kolejna iteracja)
+
+Na wyraźne żądanie właściciela przywrócono kompozycję makiet: duży hero z
+metaliczną grafiką Klary, szersze sekcje, Instrument Serif, poziomy panel usług,
+kalkulator obok nagłówka, trzykolumnowy PDF z okładką, editorial blog i kompaktowy
+kontakt z rozwijanym formularzem. Grafiki są osobnymi zoptymalizowanymi WebP,
+nie obrazami całej strony. Prompty: metaliczna wstęga Möbiusa na grafitowym tle;
+czarna okładka AI ACT z pomarańczowym grzbietem; grafitowe wnętrze z pomarańczowym
+światłem drzwi. Wygenerowane wbudowanym imagegen, zapisane w public/redesign.
+Nagłówek i opis hero są teraz zgodne z zatwierdzoną makietą; poprzednie wpisy CMS
+nie nadpisują tych dwóch elementów. CMS nadal steruje podpisami CTA. Formularze,
+zgody, zakresy kalkulatora i integracje pozostają prawdziwe i niezmienione.

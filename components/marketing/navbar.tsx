@@ -22,7 +22,7 @@ export function Navbar() {
 
   return (
     <nav className="bg-[#f5f2ed]/70 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-white/5">
-      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-[1600px] mx-auto">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
@@ -33,7 +33,7 @@ export function Navbar() {
             height={36}
             className="rounded-full brightness-110"
           />
-          <span className="text-base sm:text-xl font-bold tracking-tighter text-[#c93820] font-headline group-hover:brightness-110 transition-all">
+          <span className="text-base sm:text-xl font-bold tracking-tighter text-[#151719] font-headline group-hover:brightness-110 transition-all">
             zautomatyzujemy.pl
           </span>
         </Link>
@@ -88,14 +88,14 @@ export function Navbar() {
           {isLoggedIn ? (
             <Link
               href="/account/settings"
-              className="ml-2 bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-2 rounded-lg font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-2 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
               Moje konto
             </Link>
           ) : (
             <Link
               href="/#kontakt"
-              className="ml-2 bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-2 rounded-lg font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-2 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
               Porozmawiajmy
             </Link>
@@ -157,7 +157,7 @@ export function Navbar() {
             <Link
               href="/account/settings"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-3 rounded-lg font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+              className="block w-full text-center bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-3 rounded-md font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
             >
               Moje konto
             </Link>
@@ -165,7 +165,7 @@ export function Navbar() {
             <Link
               href="/#kontakt"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-3 rounded-lg font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+              className="block w-full text-center bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-3 rounded-md font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
             >
               Porozmawiajmy
             </Link>

@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
+import { Space_Grotesk, Manrope, Inter, Instrument_Serif } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
 import { Analytics } from '@vercel/analytics/next'
+
+const editorial = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-editorial', display: 'swap' })
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -119,7 +121,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="pl"
-      className={`dark motion-reduce:!scroll-auto ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
+      className={`dark motion-reduce:!scroll-auto ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable} ${editorial.variable}`}
     >
       <body className="font-body antialiased">
         <a
