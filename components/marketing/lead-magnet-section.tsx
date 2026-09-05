@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useActionState } from 'react'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
 import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
@@ -22,70 +24,69 @@ export function LeadMagnetSection() {
   const [state, formAction, isPending] = useActionState(subscribeLeadMagnetAction, initialState)
 
   return (
-    <section className="py-24 px-6 md:px-8 bg-gradient-to-b from-[#0d0f0d] to-[#121412]">
-      <div className="max-w-screen-2xl mx-auto">
-        <div className="rounded-[2.5rem] border border-[#ffa07b]/20 bg-gradient-to-br from-[#1a1208] via-[#1a1c1a] to-[#121412] overflow-hidden">
+    <section id="checklista" className="py-24 px-6 md:px-8 bg-gradient-to-b from-[#f5f2ed] to-[#f5f2ed]">
+      <div className="max-w-7xl mx-auto">
+        <div className="rounded-2xl border border-[#c93820]/20 bg-gradient-to-br from-[#eeebe5] via-[#ffffff] to-[#f5f2ed] overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
 
             {/* LEFT — info */}
-            <div className="p-10 md:p-14 border-b lg:border-b-0 lg:border-r border-[#ffa07b]/10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/20 mb-8">
-                <Shield size={13} className="text-[#ffa07b]" />
-                <span className="text-xs font-label uppercase tracking-widest text-[#ffa07b]">Bezpłatny PDF</span>
+            <div className="p-10 md:p-14 border-b lg:border-b-0 lg:border-r border-[#c93820]/10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c93820]/10 border border-[#c93820]/20 mb-8">
+                <Shield size={13} className="text-[#c93820]" />
+                <span className="text-xs font-label uppercase tracking-widest text-[#c93820]">Bezpłatny PDF</span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-headline font-bold text-[#e2e3df] mb-4 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-headline font-bold text-[#151719] mb-4 leading-tight">
                 Checklista:{' '}
-                <span className="text-[#ffa07b]">Zgodność z AI Act</span>
+                <span className="text-[#c93820]">Zgodność z AI Act</span>
                 {' '}dla MŚP
               </h2>
-              <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
-                Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu —
-                obowiązki, które już obowiązują, i terminy, które dopiero nadejdą.
+              <p className="text-[#686862] font-body text-base leading-relaxed mb-10">
+                Zacznij od uporządkowania wiedzy. Praktyczna checklista pomoże Ci przyjrzeć się wykorzystaniu AI w Twojej firmie.
               </p>
 
               <ul className="space-y-3">
                 {checklistItems.map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="text-[#ffa07b] shrink-0 mt-0.5" size={16} />
-                    <span className="text-[#bcc9c9] text-sm font-body">{item}</span>
+                    <CheckCircle2 className="text-[#c93820] shrink-0 mt-0.5" size={16} />
+                    <span className="text-[#686862] text-sm font-body">{item}</span>
                   </li>
                 ))}
-              </ul>
+              </ul><div className="mt-8 flex flex-wrap gap-4 text-sm text-[#c93820]"><Link href="/#uslugi" className="underline underline-offset-4">Szkolenia AI</Link><Link href="/#kontakt" className="underline underline-offset-4">Porozmawiaj o audycie</Link></div>
             </div>
 
             {/* RIGHT — form */}
             <div className="p-10 md:p-14 flex flex-col justify-center">
               {state.success ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/30 flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="text-[#ffa07b]" size={28} />
+                  <div className="w-16 h-16 rounded-full bg-[#c93820]/10 border border-[#c93820]/30 flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="text-[#c93820]" size={28} />
                   </div>
-                  <h3 className="text-2xl font-headline font-bold text-[#e2e3df] mb-3">
+                  <h3 className="text-2xl font-headline font-bold text-[#151719] mb-3">
                     Sprawdź skrzynkę!
                   </h3>
-                  <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-4">
+                  <p className="text-[#686862] font-body text-base leading-relaxed mb-4">
                     Wysłałem Ci email z linkiem do checklisty. Możesz też otworzyć ją od razu:
                   </p>
                   <Link
                     href="/ai-act-checklist"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#ffa07b]/30 text-[#ffa07b] text-sm font-label hover:bg-[#ffa07b]/10 transition-colors mb-6"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#c93820]/30 text-[#c93820] text-sm font-label hover:bg-[#c93820]/10 transition-colors mb-6"
                   >
                     Otwórz checklistę →
                   </Link>
-                  <p className="text-[#5a6464] font-body text-sm">
+                  <p className="text-[#686862] font-body text-sm">
                     Możesz też od razu umówić{' '}
-                    <Link href="/#kontakt" className="text-[#70e5ea] hover:underline">
+                    <Link href="/#kontakt" className="text-[#c93820] hover:underline">
                       bezpłatną konsultację
                     </Link>.
                   </p>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-2xl font-headline font-bold text-[#e2e3df] mb-3">
+                  <h3 className="text-2xl font-headline font-bold text-[#151719] mb-3">
                     Pobierz bezpłatnie
                   </h3>
-                  <p className="text-[#bcc9c9] font-body text-sm mb-8">
+                  <p className="text-[#686862] font-body text-sm mb-8">
                     Podaj swój adres email — link do checklisty dostaniesz natychmiast.
                     Sama checklista jest bezwarunkowa, newsletter to osobna decyzja.
                   </p>
@@ -97,16 +98,17 @@ export function LeadMagnetSection() {
                     </div>
 
                     <div>
-                      <label htmlFor="lm-email" className="block text-xs font-label uppercase tracking-wider text-[#bcc9c9] mb-2">
+                      <label htmlFor="lm-email" className="block text-xs font-label uppercase tracking-wider text-[#686862] mb-2">
                         Adres e-mail
                       </label>
-                      <input
+                      <Input
                         id="lm-email"
                         name="email"
                         type="email"
                         required
+                        autoComplete="email"
                         placeholder="twoj@email.pl"
-                        className="w-full bg-[#1a1c1a] border border-[#3d4949]/30 rounded-xl px-4 py-3 text-[#e2e3df] text-sm font-body placeholder:text-[#5a6464] outline-none focus:border-[#ffa07b]/50 focus:ring-2 focus:ring-[#ffa07b]/10 transition-colors"
+                        className="w-full bg-[#ffffff] border border-[#c7c3bb]/30 rounded-xl px-4 py-3 text-[#151719] text-sm font-body placeholder:text-[#686862] outline-none focus:border-[#c93820]/50 focus:ring-2 focus:ring-[#c93820]/10 transition-colors"
                       />
                     </div>
 
@@ -115,9 +117,9 @@ export function LeadMagnetSection() {
                         type="checkbox"
                         name="newsletterConsent"
                         value="true"
-                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#3d4949] bg-[#1a1c1a] accent-[#ffa07b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa07b]/40"
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#c7c3bb] bg-[#ffffff] accent-[#c93820] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820]/40"
                       />
-                      <span className="text-[#bcc9c9] text-xs font-body leading-relaxed group-hover:text-[#e2e3df] transition-colors">
+                      <span className="text-[#686862] text-xs font-body leading-relaxed group-hover:text-[#151719] transition-colors">
                         {NEWSLETTER_CONSENT_TEXT}
                       </span>
                     </label>
@@ -126,10 +128,10 @@ export function LeadMagnetSection() {
                       <p className="text-red-400 text-sm font-body">{state.error}</p>
                     )}
 
-                    <button
+                    <Button
                       type="submit"
                       disabled={isPending}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#ffa07b] text-[#1a0a00] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#c93820] text-[#ffffff] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
                     >
                       {isPending ? (
                         <>
@@ -139,12 +141,12 @@ export function LeadMagnetSection() {
                       ) : (
                         'Wyślij mi checklistę →'
                       )}
-                    </button>
+                    </Button>
 
-                    <p className="text-[#5a6464] text-xs font-body text-center leading-relaxed">
+                    <p className="text-[#686862] text-xs font-body text-center leading-relaxed">
                       Bez zaznaczonej zgody użyjemy Twojego adresu wyłącznie do wysłania
                       checklisty. Zasady opisuje{' '}
-                      <Link href="/privacy-policy" className="text-[#70e5ea] hover:underline">
+                      <Link href="/privacy-policy" className="text-[#c93820] hover:underline">
                         polityka prywatności
                       </Link>.
                     </p>

@@ -21,14 +21,14 @@ export async function FaqSection() {
   if (faqs.length === 0) return null
 
   return (
-    <section className="py-24 px-6 border-t border-[#3d4949]/30" id="faq">
+    <section className="py-24 px-6 border-t border-[#c7c3bb]/30" id="faq">
       <div className="max-w-4xl mx-auto">
 
         <FadeInUp className="text-center mb-16">
-          <p className="text-xs font-bold text-[#70e5ea] tracking-widest uppercase mb-4 font-label">
+          <p className="text-xs font-bold text-[#c93820] tracking-widest uppercase mb-4 font-label">
             FAQ
           </p>
-          <h2 className="text-4xl font-headline font-bold tracking-tight text-[#e2e3df]">
+          <h2 className="text-4xl font-headline font-bold tracking-tight text-[#151719]">
             Często zadawane pytania
           </h2>
         </FadeInUp>
@@ -39,12 +39,12 @@ export async function FaqSection() {
               <Accordion defaultValue={idx === 0 ? ['item-0'] : []}>
                 <AccordionItem
                   value={`item-${idx}`}
-                  className="border border-[#3d4949]/40 bg-[#1e201e] rounded-2xl px-2 overflow-hidden hover:border-[#70e5ea]/30 transition-colors"
+                  className="border border-[#c7c3bb]/40 bg-[#ebe7df] rounded-2xl px-2 overflow-hidden hover:border-[#c93820]/30 transition-colors"
                 >
-                  <AccordionTrigger className="px-4 py-5 font-headline font-bold text-lg text-[#e2e3df] hover:no-underline hover:bg-[#282a28] rounded-2xl transition-colors">
+                  <AccordionTrigger className="px-4 py-5 font-headline font-bold text-lg text-[#151719] hover:no-underline hover:bg-[#e7e2da] rounded-2xl transition-colors">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 text-[#bcc9c9] leading-relaxed font-body">
+                  <AccordionContent className="px-4 pb-5 text-[#686862] leading-relaxed font-body">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>

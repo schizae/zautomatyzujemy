@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -9,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const navLinks = [
   { label: 'Rozwiązania', href: '/#uslugi' },
-  { label: 'Case Studies', href: '/#case-study' },
+  { label: 'Demo Klary', href: '/#klara' },
   { label: 'Blog', href: '/blog' },
   { label: 'O nas', href: '/#o-nas' },
   { label: 'Kontakt', href: '/#kontakt' },
@@ -20,8 +21,8 @@ export function Navbar() {
   const { isLoggedIn, isLoading, user } = useAuth()
 
   return (
-    <nav className="bg-[#121412]/70 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-white/5">
-      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-screen-2xl mx-auto">
+    <nav className="bg-[#f5f2ed]/70 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-white/5">
+      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-7xl mx-auto">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
@@ -32,18 +33,18 @@ export function Navbar() {
             height={36}
             className="rounded-full brightness-110"
           />
-          <span className="text-xl md:text-2xl font-bold tracking-tighter text-[#70e5ea] font-headline group-hover:brightness-110 transition-all">
+          <span className="text-base sm:text-xl font-bold tracking-tighter text-[#c93820] font-headline group-hover:brightness-110 transition-all">
             zautomatyzujemy.pl
           </span>
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-8 font-headline font-bold tracking-tight">
+        <div className="hidden lg:flex items-center gap-8 font-headline font-bold tracking-tight">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="text-[#bcc9c9] hover:text-white transition-colors text-sm"
+              className="text-[#51534e] hover:text-[#c93820] transition-colors text-sm"
             >
               {link.label}
             </Link>
@@ -51,7 +52,7 @@ export function Navbar() {
         </div>
 
         {/* Desktop right: icons + CTA */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           {/* Zębatka — tylko gdy zalogowany */}
           {!isLoading && isLoggedIn && (
             <Link
@@ -61,7 +62,7 @@ export function Navbar() {
             >
               <Settings
                 size={22}
-                className="text-[#bcc9c9] hover:text-white transition-colors"
+                className="text-[#51534e] hover:text-[#c93820] transition-colors"
               />
             </Link>
           )}
@@ -77,8 +78,8 @@ export function Navbar() {
               className={cn(
                 'transition-all duration-300',
                 isLoggedIn
-                  ? 'text-[#70e5ea] drop-shadow-[0_0_8px_rgba(112,229,234,0.85)]'
-                  : 'text-[#bcc9c9] hover:text-white'
+                  ? 'text-[#c93820] drop-shadow-[0_0_8px_rgba(112,229,234,0.85)]'
+                  : 'text-[#51534e] hover:text-[#c93820]'
               )}
               aria-label={isLoggedIn ? 'Konto użytkownika' : 'Zaloguj się'}
             />
@@ -87,38 +88,40 @@ export function Navbar() {
           {isLoggedIn ? (
             <Link
               href="/account/settings"
-              className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              className="ml-2 bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-2 rounded-lg font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
               Moje konto
             </Link>
           ) : (
             <Link
-              href="/account/register"
-              className="ml-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-2 rounded-full font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              href="/#kontakt"
+              className="ml-2 bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-2 rounded-lg font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
-              Dołącz
+              Porozmawiajmy
             </Link>
           )}
         </div>
 
         {/* Mobile toggle */}
-        <button
-          className="md:hidden p-2 text-[#bcc9c9] hover:text-white transition-colors"
+        <Button
+          className="lg:hidden p-2 text-[#51534e] hover:text-[#c93820] transition-colors"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Menu"
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
         >
           {isOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
-        </button>
+        </Button>
       </div>
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden border-t border-white/5 bg-[#1a1c1a] px-6 py-4 space-y-3">
+        <div id="mobile-menu" className="lg:hidden border-t border-white/5 bg-[#f5f2ed] px-6 py-4 space-y-3">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="block text-[#bcc9c9] hover:text-white py-2 text-sm font-headline font-bold transition-colors"
+              className="block text-[#51534e] hover:text-[#c93820] py-2 text-sm font-headline font-bold transition-colors"
               onClick={() => setIsOpen(false)}
             >
               {link.label}
@@ -131,7 +134,7 @@ export function Navbar() {
             onClick={() => setIsOpen(false)}
             className={cn(
               'flex items-center gap-2 py-2 text-sm font-headline font-bold transition-colors',
-              isLoggedIn ? 'text-[#70e5ea]' : 'text-[#bcc9c9] hover:text-white'
+              isLoggedIn ? 'text-[#c93820]' : 'text-[#51534e] hover:text-[#c93820]'
             )}
           >
             <CircleUser size={18} />
@@ -143,7 +146,7 @@ export function Navbar() {
             <Link
               href="/account/settings"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2 py-2 text-sm font-headline font-bold text-[#bcc9c9] hover:text-white transition-colors"
+              className="flex items-center gap-2 py-2 text-sm font-headline font-bold text-[#51534e] hover:text-[#c93820] transition-colors"
             >
               <Settings size={18} />
               Ustawienia
@@ -154,17 +157,17 @@ export function Navbar() {
             <Link
               href="/account/settings"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+              className="block w-full text-center bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-3 rounded-lg font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
             >
               Moje konto
             </Link>
           ) : (
             <Link
-              href="/account/register"
+              href="/#kontakt"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] px-6 py-3 rounded-full font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
+              className="block w-full text-center bg-gradient-to-br from-[#c93820] to-[#c93820] text-[#ffffff] px-6 py-3 rounded-lg font-headline font-bold text-sm mt-4 transition-all hover:brightness-110"
             >
-              Dołącz
+              Porozmawiajmy
             </Link>
           )}
         </div>

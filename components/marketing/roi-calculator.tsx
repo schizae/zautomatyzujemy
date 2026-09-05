@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Calculator } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 type FrequencyUnit = 'per_day' | 'per_week' | 'per_month'
 
@@ -47,18 +48,17 @@ function SliderInput({
   minLabel: string
   maxLabel: string
 }) {
-  const pct = ((value - min) / (max - min)) * 100
 
   return (
     <div>
       <div className="flex justify-between items-center mb-3">
-        <span className="text-xs font-label uppercase tracking-wider text-[#bcc9c9]">{label}</span>
+        <span className="text-xs font-label uppercase tracking-wider text-[#686862]">{label}</span>
         <motion.span
           key={displayValue}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.15 }}
-          className="text-xl font-headline font-bold text-[#70e5ea]"
+          className="text-xl font-headline font-bold text-[#c93820]"
         >
           {displayValue}
         </motion.span>
@@ -66,20 +66,18 @@ function SliderInput({
       <div className="relative">
         <input
           type="range"
+          aria-label={label}
           min={min}
           max={max}
           step={step}
           value={value}
           onChange={e => onChange(Number(e.target.value))}
-          className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#70e5ea]"
-          style={{
-            background: `linear-gradient(to right, #70e5ea ${pct}%, #2a3333 ${pct}%)`,
-          }}
+          className="w-full h-1.5 rounded-full cursor-pointer accent-[#c93820]"
         />
       </div>
       <div className="flex justify-between mt-1.5">
-        <span className="text-xs text-[#5a6464] font-body">{minLabel}</span>
-        <span className="text-xs text-[#5a6464] font-body">{maxLabel}</span>
+        <span className="text-xs text-[#686862] font-body">{minLabel}</span>
+        <span className="text-xs text-[#686862] font-body">{maxLabel}</span>
       </div>
     </div>
   )
@@ -97,8 +95,8 @@ function ResultCard({
   accent: string
 }) {
   return (
-    <div className={`rounded-2xl border bg-[#111311] p-5 ${accent}`}>
-      <p className="text-xs font-label uppercase tracking-wider text-[#bcc9c9] mb-2">{label}</p>
+    <div className={`rounded-2xl border bg-[#ffffff] p-5 ${accent}`}>
+      <p className="text-xs font-label uppercase tracking-wider text-[#686862] mb-2">{label}</p>
       <motion.p
         key={value}
         initial={{ opacity: 0, y: 6 }}
@@ -108,7 +106,7 @@ function ResultCard({
       >
         {value}
       </motion.p>
-      <p className="text-[#5a6464] text-xs font-body">{description}</p>
+      <p className="text-[#686862] text-xs font-body">{description}</p>
     </div>
   )
 }
@@ -124,7 +122,7 @@ export function RoiCalculator() {
     const executionsPerMonth = frequencyCount * MONTHLY_MULTIPLIER[frequencyUnit]
     const hoursPerMonth = (taskMinutes / 60) * executionsPerMonth * people
     const costPerMonth = hoursPerMonth * hourlyRate
-    // 70% time savings — industry benchmark (McKinsey Global Institute, 2023)
+    // Scenario assumption; not a guaranteed saving or benchmark.
     const savingsPerMonth = costPerMonth * 0.7
     return {
       hoursPerMonth: Math.round(hoursPerMonth * 10) / 10,
@@ -141,20 +139,20 @@ export function RoiCalculator() {
   ]
 
   return (
-    <section className="py-24 px-6 md:px-8 bg-[#0d0f0d]">
-      <div className="max-w-screen-2xl mx-auto">
+    <section id="kalkulator" className="py-24 px-6 md:px-8 bg-[#f5f2ed]">
+      <div className="max-w-7xl mx-auto">
 
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#70e5ea]/10 border border-[#70e5ea]/20 mb-6">
-            <Calculator size={13} className="text-[#70e5ea]" />
-            <span className="text-xs font-label uppercase tracking-widest text-[#70e5ea]">Kalkulator ROI</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c93820]/10 border border-[#c93820]/20 mb-6">
+            <Calculator size={13} className="text-[#c93820]" />
+            <span className="text-xs font-label uppercase tracking-widest text-[#c93820]">Kalkulator ROI</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-headline font-bold text-[#e2e3df] mb-4">
-            Ile kosztuje Cię{' '}
-            <span className="text-[#70e5ea]">ręczna robota?</span>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold text-[#151719] mb-4">
+            Ile kosztuje{' '}
+            <span className="text-[#c93820]">Twoja rutyna?</span>
           </h2>
-          <p className="text-[#bcc9c9] font-body text-lg max-w-2xl mx-auto">
+          <p className="text-[#686862] font-body text-lg max-w-2xl mx-auto">
             Wpisz dane o jednym powtarzalnym zadaniu w Twojej firmie i sprawdź,
             ile możesz zaoszczędzić dzięki automatyzacji.
           </p>
@@ -163,7 +161,7 @@ export function RoiCalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           {/* LEFT — sliders */}
-          <div className="rounded-3xl border border-[#3d4949]/30 bg-[#111311] p-8 md:p-10 space-y-10">
+          <div className="rounded-3xl border border-[#c7c3bb]/30 bg-[#ffffff] p-8 md:p-10 space-y-10">
 
             {/* 1. Czas trwania */}
             <SliderInput
@@ -181,7 +179,7 @@ export function RoiCalculator() {
             {/* 2. Częstotliwość */}
             <div>
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-label uppercase tracking-wider text-[#bcc9c9]">
+                <span className="text-xs font-label uppercase tracking-wider text-[#686862]">
                   Jak często to zadanie jest wykonywane?
                 </span>
                 <motion.span
@@ -189,26 +187,26 @@ export function RoiCalculator() {
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.15 }}
-                  className="text-xl font-headline font-bold text-[#70e5ea]"
+                  className="text-xl font-headline font-bold text-[#c93820]"
                 >
                   {frequencyCount}× {unitTabs.find(u => u.value === frequencyUnit)?.label}
                 </motion.span>
               </div>
 
               {/* Unit tabs */}
-              <div className="flex rounded-xl bg-[#0d0f0d] border border-[#3d4949]/30 p-1 mb-4">
+              <div className="flex rounded-xl bg-[#f5f2ed] border border-[#c7c3bb]/30 p-1 mb-4">
                 {unitTabs.map(tab => (
-                  <button
+                  <Button
                     key={tab.value}
                     onClick={() => setFrequencyUnit(tab.value)}
                     className={`flex-1 py-2 text-xs font-label rounded-lg transition-all ${
                       frequencyUnit === tab.value
-                        ? 'bg-[#70e5ea]/10 text-[#70e5ea] border border-[#70e5ea]/30'
-                        : 'text-[#5a6464] hover:text-[#bcc9c9]'
+                        ? 'bg-[#c93820]/10 text-[#c93820] border border-[#c93820]/30'
+                        : 'text-[#686862] hover:text-[#686862]'
                     }`}
                   >
                     {tab.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -216,20 +214,18 @@ export function RoiCalculator() {
               <div className="relative">
                 <input
                   type="range"
+                  aria-label="Liczba wykonań zadania"
                   min={1}
                   max={30}
                   step={1}
                   value={frequencyCount}
                   onChange={e => setFrequencyCount(Number(e.target.value))}
-                  className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#70e5ea]"
-                  style={{
-                    background: `linear-gradient(to right, #70e5ea ${((frequencyCount - 1) / 29) * 100}%, #2a3333 ${((frequencyCount - 1) / 29) * 100}%)`,
-                  }}
+                  className="w-full h-1.5 rounded-full cursor-pointer accent-[#c93820]"
                 />
               </div>
               <div className="flex justify-between mt-1.5">
-                <span className="text-xs text-[#5a6464] font-body">1×</span>
-                <span className="text-xs text-[#5a6464] font-body">30×</span>
+                <span className="text-xs text-[#686862] font-body">1×</span>
+                <span className="text-xs text-[#686862] font-body">30×</span>
               </div>
             </div>
 
@@ -264,57 +260,56 @@ export function RoiCalculator() {
           <div className="flex flex-col gap-4">
 
             {/* 3 metric cards */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <ResultCard
                 label="Czas/miesiąc"
                 value={`${results.hoursPerMonth} h`}
                 description="tracisz na to zadanie"
-                accent="text-[#70e5ea] border-[#70e5ea]/20"
+                accent="text-[#c93820] border-[#c93820]/20"
               />
               <ResultCard
                 label="Koszt/miesiąc"
                 value={`${results.costPerMonth.toLocaleString('pl-PL')} zł`}
                 description="przy obecnym sposobie"
-                accent="text-[#ffa07b] border-[#ffa07b]/20"
+                accent="text-[#c93820] border-[#c93820]/20"
               />
               <ResultCard
                 label="Oszcz./rok"
                 value={`${results.annualSavings.toLocaleString('pl-PL')} zł`}
                 description="po automatyzacji"
-                accent="text-[#7bc87b] border-[#7bc87b]/20"
+                accent="text-[#315e49] border-[#315e49]/20"
               />
             </div>
 
             {/* Big savings highlight */}
-            <div className="flex-1 rounded-3xl border border-[#70e5ea]/20 bg-gradient-to-br from-[#0d1f1f] to-[#111311] p-8 flex flex-col justify-between">
+            <div className="flex-1 rounded-2xl border border-[#151719] bg-[#151719] [&_p]:text-[#c0bfba] [&_p.text-5xl]:text-[#f5f2ed] [&_span]:text-[#ffab98] p-8 flex flex-col justify-between">
               <div>
-                <p className="text-xs font-label uppercase tracking-widest text-[#70e5ea] mb-3">
-                  Miesięczna oszczędność po automatyzacji
+                <p className="text-xs font-label uppercase tracking-widest text-[#c93820] mb-3">
+                  Szacowana wartość odzyskanego czasu / miesiąc
                 </p>
                 <motion.p
                   key={results.savingsPerMonth}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="text-5xl md:text-6xl font-headline font-bold text-[#e2e3df] mb-3"
+                  className="text-5xl md:text-6xl font-headline font-bold text-[#151719] mb-3"
                 >
                   {results.savingsPerMonth.toLocaleString('pl-PL')}{' '}
-                  <span className="text-[#70e5ea]">zł</span>
+                  <span className="text-[#c93820]">zł</span>
                 </motion.p>
-                <p className="text-[#bcc9c9] text-sm font-body leading-relaxed">
-                  Szacunek dla jednego zadania przy 70% redukcji czasu — tyle typowo osiągają firmy
-                  wdrażające automatyzację procesów biurowych (McKinsey, 2023).
+                <p className="text-[#686862] text-sm font-body leading-relaxed">
+                  Założenie: 70% redukcji czasu. Wynik orientacyjny — nie uwzględnia kosztu wdrożenia, utrzymania i nadzoru.
                 </p>
               </div>
 
               <div className="mt-8">
                 <Link
                   href="/#kontakt"
-                  className="flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#70e5ea] text-[#003739] font-headline font-bold text-base hover:brightness-110 transition-all shadow-lg hover:shadow-[#70e5ea]/20 hover:-translate-y-0.5"
+                  className="flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#c93820] text-[#ffffff] font-headline font-bold text-base hover:brightness-110 transition-all shadow-lg hover:shadow-[#c93820]/20 hover:-translate-y-0.5"
                 >
                   Zautomatyzujmy to →
                 </Link>
-                <p className="text-[#5a6464] text-xs font-body text-center mt-3">
+                <p className="text-[#686862] text-xs font-body text-center mt-3">
                   Bezpłatna konsultacja · bez zobowiązań
                 </p>
               </div>
@@ -322,9 +317,9 @@ export function RoiCalculator() {
           </div>
         </div>
 
-        <p className="text-center text-[#5a6464] text-xs font-body mt-8">
+        <p className="text-center text-[#686862] text-xs font-body mt-8">
           * Obliczenia bazują na rzeczywistym czasie pracy (22 dni robocze/miesiąc, 4,33 tygodnie/miesiąc).
-          Wskaźnik 70% oszczędności to konserwatywne minimum wg McKinsey Global Institute (2023).
+          70% to założenie scenariusza, nie gwarancja oszczędności finansowych.
         </p>
       </div>
     </section>

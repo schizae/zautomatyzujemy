@@ -17,14 +17,14 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[#0d0f0d] border-t border-white/5">
+    <footer className="bg-[#151719] border-t border-white/5">
       {/* Main grid */}
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="mx-auto max-w-7xl px-6 md:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
 
         {/* Brand */}
         <div className="space-y-4">
           <span className="text-xl font-headline font-black text-[#e2e3df] tracking-tight">
-            zautomatyzujemy<span className="text-[#70e5ea]">.pl</span>
+            zautomatyzujemy<span className="text-[#ffab98]">.pl</span>
           </span>
           <p className="text-sm font-body text-[#bcc9c9] leading-relaxed max-w-xs">
             Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty
@@ -33,13 +33,13 @@ export function Footer() {
           <div className="space-y-1.5">
             <a
               href="mailto:n.chojnacki1993@gmail.com"
-              className="block text-sm font-body text-[#70e5ea] hover:underline"
+              className="block text-sm font-body text-[#ffab98] hover:underline"
             >
               n.chojnacki1993@gmail.com
             </a>
             <a
               href="tel:+48730094465"
-              className="block text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
+              className="block text-sm font-body text-[#bcc9c9] hover:text-[#ffab98] transition-colors"
             >
               +48 730 094 465
             </a>
@@ -48,7 +48,7 @@ export function Footer() {
 
         {/* Navigation */}
         <div className="space-y-4">
-          <p className="text-xs font-label uppercase tracking-widest text-[#5a6464]">
+          <p className="text-xs font-label uppercase tracking-widest text-[#a6a6a0]">
             Nawigacja
           </p>
           <ul className="space-y-3">
@@ -56,7 +56,7 @@ export function Footer() {
               <li key={link.label}>
                 <Link
                   href={link.href}
-                  className="text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
+                  className="text-sm font-body text-[#bcc9c9] hover:text-[#ffab98] transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -67,7 +67,7 @@ export function Footer() {
 
         {/* Legal */}
         <div className="space-y-4">
-          <p className="text-xs font-label uppercase tracking-widest text-[#5a6464]">
+          <p className="text-xs font-label uppercase tracking-widest text-[#a6a6a0]">
             Dokumenty
           </p>
           <ul className="space-y-3">
@@ -75,7 +75,7 @@ export function Footer() {
               <li key={link.label}>
                 <Link
                   href={link.href}
-                  className="text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
+                  className="text-sm font-body text-[#bcc9c9] hover:text-[#ffab98] transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -88,8 +88,8 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/5">
-        <div className="mx-auto max-w-screen-2xl px-6 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs font-body text-[#5a6464]">
+        <div className="mx-auto max-w-7xl px-6 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs font-body text-[#a6a6a0]">
             © {year} Zautomatyzujemy.pl — wszelkie prawa zastrzeżone.
           </p>
         </div>

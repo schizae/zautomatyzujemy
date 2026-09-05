@@ -1,6 +1,9 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, CheckCircle } from 'lucide-react'
 import { submitContactAction } from '@/lib/actions/contact.actions'
 import type { ActionResult } from '@/types'
@@ -9,13 +12,13 @@ const initialState: ActionResult<string> = { success: true }
 
 const labelClass = 'text-xs font-label uppercase tracking-widest text-[#bcc9c9]'
 const fieldClass =
-  'w-full bg-[#1e201e] border-b border-[#3d4949] focus:border-[#70e5ea] outline-none py-3 px-1 transition-all text-[#e2e3df] placeholder-[#bcc9c9]/30 font-body text-sm'
+  'w-full bg-[#1e201e] border-b border-[#3d4949] focus:border-[#ffab98] outline-none py-3 px-1 transition-all text-[#e2e3df] placeholder-[#bcc9c9]/30 font-body text-sm'
 
 const GOAL_OPTIONS = [
-  { value: 'llm', label: 'Implementacja LLM' },
-  { value: 'automation', label: 'Automatyzacja Workflow' },
-  { value: 'strategy', label: 'Strategia Enterprise' },
-  { value: 'custom', label: 'Własne Rozwiązanie' },
+  { value: 'llm', label: 'Asystent AI dla firmy' },
+  { value: 'automation', label: 'Automatyzacja codziennej pracy' },
+  { value: 'strategy', label: 'Szkolenie lub audyt AI' },
+  { value: 'custom', label: 'Strona internetowa lub aplikacja' },
 ]
 
 export function ContactForm() {
@@ -59,7 +62,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label htmlFor="contact-name" className={labelClass}>Imię i nazwisko</label>
-          <input
+          <Input
             id="contact-name"
             type="text"
             value={name}
@@ -71,7 +74,7 @@ export function ContactForm() {
         </div>
         <div className="space-y-2">
           <label htmlFor="contact-email" className={labelClass}>E-mail</label>
-          <input
+          <Input
             id="contact-email"
             type="email"
             value={email}
@@ -101,7 +104,7 @@ export function ContactForm() {
 
       <div className="space-y-2">
         <label htmlFor="contact-message" className={labelClass}>Wiadomość</label>
-        <textarea
+        <Textarea
           id="contact-message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -119,14 +122,14 @@ export function ContactForm() {
           checked={gdprConsent}
           onChange={(e) => setGdprConsent(e.target.checked)}
           required
-          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#1e201e] accent-[#70e5ea] cursor-pointer"
+          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#1e201e] accent-[#ffab98] cursor-pointer"
         />
         <span className="text-xs font-body text-[#bcc9c9] leading-relaxed">
           Wyrażam zgodę na przetwarzanie moich danych osobowych przez Zautomatyzujemy.pl
           w celu udzielenia odpowiedzi na zapytanie, zgodnie z{' '}
           <a
             href="/privacy-policy"
-            className="text-[#70e5ea] hover:underline"
+            className="text-[#ffab98] hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -144,20 +147,20 @@ export function ContactForm() {
       )}
 
       {showSuccess && (
-        <div className="flex items-center gap-2 rounded-lg bg-[#70e5ea]/10 border border-[#70e5ea]/20 px-4 py-2.5 text-sm font-medium text-[#70e5ea] font-body">
+        <div className="flex items-center gap-2 rounded-lg bg-[#ffab98]/10 border border-[#ffab98]/20 px-4 py-2.5 text-sm font-medium text-[#ffab98] font-body">
           <CheckCircle className="size-4 shrink-0" />
           Wiadomość wysłana! Odezwiemy się w ciągu 24 godzin.
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={isPending || !gdprConsent}
-        className="w-full bg-[#70e5ea] text-[#003739] font-headline font-bold py-5 rounded-full text-lg hover:shadow-[0_0_30px_rgba(112,229,234,0.3)] transition-all hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
+        className="w-full bg-[#ffab98] text-[#151719] font-headline font-bold py-5 rounded-lg text-lg hover:shadow-[0_0_30px_rgba(112,229,234,0.3)] transition-all hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
       >
         {isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
         {isPending ? 'Wysyłanie...' : 'Wyślij Zapytanie'}
-      </button>
+      </Button>
     </form>
   )
 }

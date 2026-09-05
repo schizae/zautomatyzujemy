@@ -8,7 +8,7 @@ import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle, Mic, PhoneOf
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
-import { useVoiceCall } from '@/components/voice/use-voice-call'
+import { useKlara } from '@/components/voice/klara-provider'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ function InlineText({ text }: { text: string }) {
         if (/^\*[^*]+\*$/.test(token))
           return <em key={i}>{token.slice(1, -1)}</em>
         if (/^`[^`]+`$/.test(token))
-          return <code key={i} className="rounded bg-[#333533] px-1 font-mono text-xs text-[#70e5ea]">{token.slice(1, -1)}</code>
+          return <code key={i} className="rounded bg-[#333533] px-1 font-mono text-xs text-[#ffab98]">{token.slice(1, -1)}</code>
         return <span key={i}>{token}</span>
       })}
     </>
@@ -130,8 +130,9 @@ function MarkdownMessage({ text }: { text: string }) {
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
 export function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
-  const voice = useVoiceCall(GLOS_TOKEN_URL)
+  const { isOpen, setIsOpen, voice } = useKlara()
+  const stopVoice = voice.stop
+  useEffect(() => () => stopVoice(), [stopVoice])
   const [input, setInput] = useState('')
   const [greetingStep, setGreetingStep] = useState<'hidden' | 'typing' | 'shown'>(() => {
     if (typeof window === 'undefined') return 'hidden'
@@ -322,8 +323,8 @@ export function ChatWidget() {
             className="w-[calc(100vw-4rem)] max-w-[416px] md:max-w-[500px] glass-card rounded-3xl border border-[#3d4949]/30 shadow-2xl overflow-hidden flex flex-col mb-2"
           >
             {/* ── Header ──────────────────────────────────────────────────── */}
-            <div className="bg-[#70e5ea]/10 p-6 flex items-center gap-4 border-b border-[#3d4949]/20">
-              <div className="relative w-10 h-10 rounded-full bg-[#50c9ce] flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="bg-[#ffab98]/10 p-6 flex items-center gap-4 border-b border-[#3d4949]/20">
+              <div className="relative w-10 h-10 rounded-full bg-[#f34c30] flex items-center justify-center overflow-hidden flex-shrink-0">
                 <Image
                   src="/logo.png"
                   alt="Klara"
@@ -334,12 +335,13 @@ export function ChatWidget() {
               </div>
               <div className="flex-1">
                 <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Klara</h5>
-                <p className="text-[10px] text-[#70e5ea] uppercase font-label tracking-widest">
+                <p className="text-[10px] text-[#ffab98] uppercase font-label tracking-widest">
                   Asystent AI &middot; odpowiedzi automatyczne
                 </p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
+                aria-label="Zamknij czat"
                 className="flex size-7 items-center justify-center rounded-lg text-[#bcc9c9] transition-colors hover:bg-[#282a28] hover:text-white"
               >
                 <X className="size-4" />
@@ -351,7 +353,7 @@ export function ChatWidget() {
               <div className="border-b border-[#3d4949]/20 bg-[#121412]/40 px-6 py-4">
                 <button
                   type="button"
-                  onClick={voice.status === 'idle' ? voice.start : voice.stop}
+                  onClick={voice.status === 'active' ? voice.stop : voice.start}
                   disabled={voice.status === 'connecting'}
                   aria-label={
                     voice.status === 'active'
@@ -362,11 +364,11 @@ export function ChatWidget() {
                     'flex w-full items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-medium transition-all font-label disabled:opacity-60',
                     voice.status === 'active'
                       ? 'bg-red-500/90 text-white hover:bg-red-500'
-                      : 'bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] hover:brightness-110',
+                      : 'bg-gradient-to-br from-[#ffab98] to-[#f34c30] text-[#151719] hover:brightness-110',
                   )}
                 >
                   {voice.status === 'connecting' ? (
-                    <Loader2 className="size-4 animate-spin" />
+                    <Loader2 className="size-4 motion-safe:animate-spin" />
                   ) : voice.status === 'active' ? (
                     <PhoneOff className="size-4" />
                   ) : (
@@ -407,9 +409,9 @@ export function ChatWidget() {
                     className="flex justify-start"
                   >
                     <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -444,7 +446,7 @@ export function ChatWidget() {
                       <button
                         key={reply}
                         onClick={() => sendMessage({ text: reply })}
-                        className="rounded-full border border-[#3d4949]/50 bg-[#1e201e] px-3 py-1.5 text-sm text-[#bcc9c9] hover:border-[#70e5ea]/50 hover:text-[#70e5ea] transition-all font-label"
+                        className="rounded-full border border-[#3d4949]/50 bg-[#1e201e] px-3 py-1.5 text-sm text-[#bcc9c9] hover:border-[#ffab98]/50 hover:text-[#ffab98] transition-all font-label"
                       >
                         {reply}
                       </button>
@@ -473,7 +475,7 @@ export function ChatWidget() {
                           className={cn(
                             'px-4 py-2 rounded-2xl text-sm',
                             isUser
-                              ? 'bg-[#70e5ea]/20 text-[#70e5ea] rounded-tr-none'
+                              ? 'bg-[#ffab98]/20 text-[#ffab98] rounded-tr-none'
                               : 'bg-[#282a28] text-[#bcc9c9] rounded-tl-none',
                           )}
                         >
@@ -489,7 +491,7 @@ export function ChatWidget() {
                             className="flex items-center gap-0.5 text-[10px] text-[#3d4949] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[#bcc9c9]"
                           >
                             {copiedId === message.id
-                              ? <><Check className="size-2.5 text-[#70e5ea]" /><span className="text-[#70e5ea]">Skopiowano</span></>
+                              ? <><Check className="size-2.5 text-[#ffab98]" /><span className="text-[#ffab98]">Skopiowano</span></>
                               : <><Copy className="size-2.5" /><span>Kopiuj</span></>
                             }
                           </button>
@@ -511,9 +513,9 @@ export function ChatWidget() {
                     className="flex justify-start"
                   >
                     <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -542,7 +544,7 @@ export function ChatWidget() {
                     key="lead-saved"
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl bg-[#70e5ea]/10 border border-[#70e5ea]/20 px-3.5 py-2 text-center text-xs font-medium text-[#70e5ea] font-label"
+                    className="rounded-xl bg-[#ffab98]/10 border border-[#ffab98]/20 px-3.5 py-2 text-center text-xs font-medium text-[#ffab98] font-label"
                   >
                     ✓ Twój kontakt został zapisany. Odezwiemy się wkrótce!
                   </motion.div>
@@ -560,18 +562,20 @@ export function ChatWidget() {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  aria-label="Wiadomość do Klary"
                   placeholder="Napisz swoją wiadomość..."
                   disabled={isLoading}
                   rows={1}
-                  className="w-full bg-[#1e201e] py-3 pl-4 pr-12 rounded-full border-none focus:ring-1 focus:ring-[#70e5ea]/50 text-base text-[#e2e3df] outline-none resize-none overflow-hidden placeholder-[#3d4949] font-body disabled:opacity-50"
+                  className="w-full bg-[#1e201e] py-3 pl-4 pr-12 rounded-full border-none focus:ring-1 focus:ring-[#ffab98]/50 text-base text-[#e2e3df] outline-none resize-none overflow-hidden placeholder-[#3d4949] font-body disabled:opacity-50"
                 />
                 <button
                   type="submit"
+                  aria-label="Wyślij wiadomość"
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#70e5ea] disabled:opacity-40 hover:brightness-125 transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#ffab98] disabled:opacity-40 hover:brightness-125 transition-all"
                 >
                   {isLoading
-                    ? <Loader2 className="size-5 animate-spin" />
+                    ? <Loader2 className="size-5 motion-safe:animate-spin" />
                     : <Send className="size-5" />
                   }
                 </button>
@@ -608,7 +612,7 @@ export function ChatWidget() {
             'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
             isOpen
               ? 'bg-[#282a28] text-[#bcc9c9]'
-              : 'bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] shadow-[0_8px_32px_rgba(112,229,234,0.4)]',
+              : 'bg-gradient-to-br from-[#ffab98] to-[#f34c30] text-[#151719] shadow-[0_8px_32px_rgba(112,229,234,0.4)]',
           )}
           aria-label={isOpen ? 'Zamknij czat' : 'Otwórz czat'}
         >

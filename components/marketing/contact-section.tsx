@@ -1,74 +1,19 @@
 import { ContactForm } from './contact-form'
-import { Clock, Target, Lightbulb, ShieldCheck } from 'lucide-react'
-
-const benefits = [
-  {
-    icon: Clock,
-    title: '45 minut, które coś zmienią',
-    desc: 'Bez small talku — od razu analizujemy Twoje procesy i szukamy gdzie automatyzacja da największy zwrot.',
-  },
-  {
-    icon: Target,
-    title: 'Konkretny plan, nie ogólniki',
-    desc: 'Na koniec rozmowy wiesz dokładnie co, jak i za ile możemy zautomatyzować w Twojej firmie.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Zidentyfikujemy "quick wins"',
-    desc: 'Pokażemy co można wdrożyć w 2 tygodnie i ile to zaoszczędzi — zanim podpiszesz cokolwiek.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Bez zobowiązań',
-    desc: 'Konsultacja jest bezpłatna. Nie musisz nic kupować — zabierasz wartościową wiedzę niezależnie od decyzji.',
-  },
-]
-
 export function ContactSection() {
-  return (
-    <section
-      className="py-32 bg-[#1a1c1a] border-y border-white/5"
-      id="kontakt"
-    >
-      <div className="max-w-screen-2xl mx-auto px-6 md:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-
-          {/* Left: benefits */}
-          <div>
-            <h2 className="text-4xl font-headline font-bold mb-4 text-[#e2e3df]">
-              Umów{' '}
-              <span className="text-[#70e5ea]">bezpłatną</span>{' '}
-              konsultację
-            </h2>
-            <p className="text-[#bcc9c9] mb-12 text-lg font-body leading-relaxed">
-              Przeanalizujemy Twój obecny sposób pracy i wskażemy gdzie automatyzacja
-              przyniesie największy zwrot — bez żargonu, bez ściemy.
-            </p>
-
-            <ul className="space-y-6">
-              {benefits.map((item) => {
-                const Icon = item.icon
-                return (
-                  <li key={item.title} className="flex gap-4">
-                    <div className="shrink-0 w-10 h-10 rounded-xl bg-[#70e5ea]/10 border border-[#70e5ea]/20 flex items-center justify-center">
-                      <Icon size={16} className="text-[#70e5ea]" />
-                    </div>
-                    <div>
-                      <p className="font-headline font-semibold text-[#e2e3df] mb-1">{item.title}</p>
-                      <p className="text-[#bcc9c9] text-sm font-body leading-relaxed">{item.desc}</p>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-
-          {/* Right: Contact form */}
-          <div className="flex flex-col justify-center">
-            <ContactForm />
-          </div>
-        </div>
+  return <section id="kontakt" className="scroll-mt-20 bg-[#151719] px-6 py-20 text-[#f5f2ed] md:px-8">
+    <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
+      <div>
+        <p className="mb-6 text-xs uppercase tracking-[0.2em] text-[#c0bfba]">06 / Twój kolejny krok</p>
+        <h2 className="font-headline text-5xl font-medium leading-tight tracking-tight md:text-6xl">Zróbmy miejsce<br />na <span className="font-serif italic">rozwój.</span>
+        </h2>
+        <p className="my-8 max-w-md text-lg leading-relaxed text-[#c0bfba]">Opowiedz, co zajmuje Ci za dużo czasu lub co chcesz zbudować. Podczas bezpłatnej konsultacji ustalimy, od czego warto zacząć.</p>
+        <p className="text-sm text-[#ffab98]">Bez zobowiązań. Bez technicznego żargonu.</p>
+        <a href="mailto:n.chojnacki1993@gmail.com" className="mt-10 inline-block break-all underline underline-offset-4">n.chojnacki1993@gmail.com</a>
+        <p className="mt-4">
+          <a href="tel:+48730094465">+48 730 094 465</a>
+        </p>
       </div>
-    </section>
-  )
+      <ContactForm />
+    </div>
+  </section>
 }
