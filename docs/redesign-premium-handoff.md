@@ -85,3 +85,58 @@ czarna okładka AI ACT z pomarańczowym grzbietem; grafitowe wnętrze z pomarań
 Nagłówek i opis hero są teraz zgodne z zatwierdzoną makietą; poprzednie wpisy CMS
 nie nadpisują tych dwóch elementów. CMS nadal steruje podpisami CTA. Formularze,
 zgody, zakresy kalkulatora i integracje pozostają prawdziwe i niezmienione.
+
+## Korekta po screenshotach właściciela — 2026-09-06
+
+Ta sekcja opisuje aktualny stan i zastępuje wcześniejsze uwagi o wyglądzie.
+
+- Poprawiono tokeny kolorów: wartości RGB podawane wcześniej do hsl() zastąpiono
+  poprawnymi HSL. Marketing ma lokalny jasny zestaw tokenów i color-scheme: light;
+  zachowano ciemny motyw pozostałych ekranów. Usunięto importy dyrektyw Tailwind v4
+  z projektu używającego Tailwind v3. Input/Textarea nie wymuszają już ciemnego tła.
+- Georgia italic zastępuje zbyt wąski Instrument Serif. Manrope i Space Grotesk
+  pozostają. Główne CTA hero jest zgodne z makietą, nie jest nadpisywane przez CMS.
+  CMS nadal zasila pomocniczy link przewijania. Nie zmieniono danych w CMS.
+- Nowa ilustracja Klary: public/redesign/klara-metal-v2.webp; dekoracje:
+  public/redesign/domino.webp i public/redesign/service-ribbon.webp. To osobne
+  zoptymalizowane bitmapy bez tekstów/UI. Wygenerowane wbudowanym imagegen:
+  pionowa srebrna wstęga z pomarańczowymi refleksami wg makiety hero;
+  rząd metalowych kostek z jedną pomarańczową przechyloną wg makiety kalkulatora;
+  falujący pas szczotkowanego aluminium na ciepłej bieli dla sekcji usług.
+- Przy braku NEXT_PUBLIC_GLOS_TOKEN_URL hero pokazuje nieaktywny przycisk
+  „Rozmowa głosowa niedostępna”. Nie dodano fallbacku do innego endpointu ani
+  symulacji rozmowy. Tokeny, stan SDK i ograniczenia originów bez zmian.
+- Usługi mają otwarte wiersze z separatorami i czytelne karty przykładowego procesu.
+  Przykład nie jest oznaczony jako działająca integracja; CTA prowadzi do Klary.
+- Kalkulator zachowuje wszystkie zakresy i wzór. Dodano domino, czytelne tory
+  suwaków, większe wyniki i ciaśniejszy układ podsumowania.
+- PDF zachowuje Server Action, honeypot i niezależny opcjonalny newsletter.
+  Nowe obramowania pól, kontrast zgody, ciepłe tło książki.
+- Blog zachowuje prawdziwe posty, okładki i URL. Monochromatyczna oprawa obrazów
+  oraz pomarańczowa krawędź porządkują ich różne style. Nie dodano przykładowych postów.
+- FAQ pokazuje pierwsze trzy pytania; reszta pozostaje w „Zobacz wszystkie
+  odpowiedzi”. Wszystkie odpowiedzi i JSON-LD zachowano. Stopka jest kompaktowa.
+- Formularz kontaktowy, chatbot, cookie banner i znak nawigacji dopasowano do
+  nowej palety. Zachowano dostęp do konta, kontakt telefoniczny i e-mailowy.
+
+### Weryfikacja tej iteracji
+
+TypeScript i ESLint przechodzą; git diff --check bez problemów.
+Uruchomiono Next.js w oddzielnym lokalnym środowisku do kontroli komponentów.
+Używa ono kopii tych samych komponentów, bez AuthProvider i zapytań do Supabase.
+Nie jest częścią PR, nie jest wdrażane i nie zastępuje integracji strony.
+Sprawdzono wizualnie hero, ofertę, kalkulator oraz rozwinięty formularz; widoki
+telefonu i tabletu w ramkach 375/768 px oraz pulpit ok. 1348 px. Szerokość
+scrollWidth równa clientWidth w obu ramkach, również po otwarciu kontaktu.
+Sprawdzono zmianę kategorii usług, zamykanie cookie banneru, otwieranie kontaktu
+oraz czatu na telefonie. Kalkulator: 30 min / 3 dziennie / 60 zł / 2 osoby =
+2772 zł; 35 min = 3234 zł; 30 min / 3 miesięcznie = 126 zł. Przycisk kontaktu
+nieaktywny bez zgody; email checklisty required, newsletter nie jest required.
+Pauza oraz prefers-reduced-motion pozostają obsługiwane w kodzie.
+
+Nie potwierdzono E2E wysyłki PDF/kontaktu, rozmowy VAPI, logowania i danych
+blog/FAQ w tym środowisku: brak jego zmiennych Supabase/GŁOS/Resend. Vercel Preview
+w przeglądarce agenta nadal przekierowuje do logowania. Pełne testy integracyjne
+oraz wizualna kontrola stron z danymi wymagają dostępu do skonfigurowanego Preview.
+Nie zmieniono produkcyjnych zabezpieczeń, konfiguracji wdrożeń ani workflow.
+PR #6 nadal roboczy; nie scalać do main przed pełnym QA i oceną właściciela.

@@ -5,7 +5,8 @@ import { DefaultChatTransport, isTextUIPart } from 'ai'
 import { useRef, useEffect, useState, useTransition } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle, Mic, PhoneOff } from 'lucide-react'
-import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
 import { useKlara } from '@/components/voice/klara-provider'
@@ -71,11 +72,11 @@ function InlineText({ text }: { text: string }) {
     <>
       {tokens.map((token, i) => {
         if (/^\*\*[^*]+\*\*$/.test(token))
-          return <strong key={i} className="font-semibold text-[#e2e3df]">{token.slice(2, -2)}</strong>
+          return <strong key={i} className="font-semibold text-[#f5f2ed]">{token.slice(2, -2)}</strong>
         if (/^\*[^*]+\*$/.test(token))
           return <em key={i}>{token.slice(1, -1)}</em>
         if (/^`[^`]+`$/.test(token))
-          return <code key={i} className="rounded bg-[#333533] px-1 font-mono text-xs text-[#ffab98]">{token.slice(1, -1)}</code>
+          return <code key={i} className="rounded bg-[#303337] px-1 font-mono text-xs text-[#ffb49f]">{token.slice(1, -1)}</code>
         return <span key={i}>{token}</span>
       })}
     </>
@@ -110,7 +111,7 @@ function MarkdownMessage({ text }: { text: string }) {
       elements.push(<div key={key} className="h-1.5" />)
     } else if (/^#{2,3}\s/.test(line)) {
       elements.push(
-        <p key={key} className="mt-1.5 font-semibold text-[#e2e3df]">
+        <p key={key} className="mt-1.5 font-semibold text-[#f5f2ed]">
           <InlineText text={line.replace(/^#{2,3}\s/, '')} />
         </p>
       )
@@ -124,7 +125,7 @@ function MarkdownMessage({ text }: { text: string }) {
   })
   flushList('list-end')
 
-  return <div className="space-y-0.5 text-[15px] text-[#bcc9c9]">{elements}</div>
+  return <div className="space-y-0.5 text-[15px] text-[#dedbd5]">{elements}</div>
 }
 
 // ─── Widget ───────────────────────────────────────────────────────────────────
@@ -190,7 +191,7 @@ export function ChatWidget() {
 
   // Scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
   }, [messages, greetingStep, isLoading])
 
   // Greeting animation
@@ -312,7 +313,7 @@ export function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-4">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end gap-4">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -320,38 +321,32 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="w-[calc(100vw-4rem)] max-w-[416px] md:max-w-[500px] glass-card rounded-3xl border border-[#3d4949]/30 shadow-2xl overflow-hidden flex flex-col mb-2"
+            className="w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100dvh-112px)] rounded-xl bg-[#151719] border border-[#56595c] shadow-2xl overflow-hidden flex flex-col mb-2"
           >
             {/* ── Header ──────────────────────────────────────────────────── */}
-            <div className="bg-[#ffab98]/10 p-6 flex items-center gap-4 border-b border-[#3d4949]/20">
+            <div className="shrink-0 bg-[#212326] p-4 flex items-center gap-4 border-b border-[#8b8d8f]/20">
               <div className="relative w-10 h-10 rounded-full bg-[#f34c30] flex items-center justify-center overflow-hidden flex-shrink-0">
-                <Image
-                  src="/logo.png"
-                  alt="Klara"
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover rounded-full p-1"
-                />
+                <Mic aria-hidden="true" className="size-5 text-white" />
               </div>
               <div className="flex-1">
-                <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Klara</h5>
-                <p className="text-[10px] text-[#ffab98] uppercase font-label tracking-widest">
+                <h5 className="text-sm font-bold font-headline text-[#f5f2ed]">Klara</h5>
+                <p className="text-[10px] text-[#ffb49f] uppercase font-label tracking-widest">
                   Asystent AI &middot; odpowiedzi automatyczne
                 </p>
               </div>
-              <button
+              <Button variant="ghost"
                 onClick={() => setIsOpen(false)}
                 aria-label="Zamknij czat"
-                className="flex size-7 items-center justify-center rounded-lg text-[#bcc9c9] transition-colors hover:bg-[#282a28] hover:text-white"
+                className="flex size-7 items-center justify-center rounded-lg text-[#dedbd5] transition-colors hover:bg-[#282b2f] hover:text-white"
               >
                 <X className="size-4" />
-              </button>
+              </Button>
             </div>
 
             {/* ── Rozmowa głosowa (ADR-24) ────────────────────────────────── */}
             {GLOS_TOKEN_URL && (
-              <div className="border-b border-[#3d4949]/20 bg-[#121412]/40 px-6 py-4">
-                <button
+              <div className="border-b border-[#8b8d8f]/20 bg-[#151719]/40 px-6 py-4">
+                <Button variant="ghost"
                   type="button"
                   onClick={voice.status === 'active' ? voice.stop : voice.start}
                   disabled={voice.status === 'connecting'}
@@ -364,7 +359,7 @@ export function ChatWidget() {
                     'flex w-full items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-medium transition-all font-label disabled:opacity-60',
                     voice.status === 'active'
                       ? 'bg-red-500/90 text-white hover:bg-red-500'
-                      : 'bg-gradient-to-br from-[#ffab98] to-[#f34c30] text-[#151719] hover:brightness-110',
+                      : 'bg-gradient-to-br from-[#e84324] to-[#c93820] text-white hover:brightness-110',
                   )}
                 >
                   {voice.status === 'connecting' ? (
@@ -379,14 +374,14 @@ export function ChatWidget() {
                     : voice.status === 'connecting'
                       ? 'Łączę…'
                       : 'Porozmawiaj z asystentem głosowym AI'}
-                </button>
+                </Button>
 
                 <p
                   className={cn(
                     'mt-2.5 text-center text-xs font-label',
                     voice.status === 'denied' || voice.status === 'error'
                       ? 'text-red-400'
-                      : 'text-[#e2e3df]',
+                      : 'text-[#f5f2ed]',
                   )}
                   aria-live="polite"
                 >
@@ -396,7 +391,7 @@ export function ChatWidget() {
             )}
 
             {/* ── Messages ────────────────────────────────────────────────── */}
-            <div className="p-6 h-[240px] sm:h-[340px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
+            <div className="p-4 min-h-0 h-[280px] sm:h-[340px] flex-auto overflow-y-auto space-y-4 bg-[#151719]/60" aria-live="polite" aria-label="Historia rozmowy">
 
               {/* Powitanie typing */}
               <AnimatePresence>
@@ -408,10 +403,10 @@ export function ChatWidget() {
                     exit={{ opacity: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                    <div className="bg-[#282b2f] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -424,7 +419,7 @@ export function ChatWidget() {
                     transition={{ duration: 0.25 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-2 rounded-2xl rounded-tl-none text-sm text-[#bcc9c9] max-w-[80%] font-body">
+                    <div className="bg-[#282b2f] px-4 py-2 rounded-2xl rounded-tl-none text-sm text-[#dedbd5] max-w-[90%] font-body">
                       {GREETING}
                     </div>
                   </motion.div>
@@ -443,13 +438,13 @@ export function ChatWidget() {
                     className="flex flex-wrap gap-2"
                   >
                     {QUICK_REPLIES.map(reply => (
-                      <button
+                      <Button variant="ghost"
                         key={reply}
                         onClick={() => sendMessage({ text: reply })}
-                        className="rounded-full border border-[#3d4949]/50 bg-[#1e201e] px-3 py-1.5 text-sm text-[#bcc9c9] hover:border-[#ffab98]/50 hover:text-[#ffab98] transition-all font-label"
+                        className="rounded-full border border-[#8b8d8f]/50 bg-[#212326] px-3 py-1.5 text-sm text-[#dedbd5] hover:border-[#ffb49f]/50 hover:text-[#ffb49f] transition-all font-label"
                       >
                         {reply}
-                      </button>
+                      </Button>
                     ))}
                   </motion.div>
                 )}
@@ -470,13 +465,13 @@ export function ChatWidget() {
                       transition={{ duration: 0.2 }}
                       className={cn('group flex w-full', isUser ? 'justify-end' : 'justify-start')}
                     >
-                      <div className={cn('flex max-w-[80%] flex-col gap-0.5', isUser ? 'items-end' : 'items-start')}>
+                      <div className={cn('flex max-w-[90%] flex-col gap-0.5', isUser ? 'items-end' : 'items-start')}>
                         <div
                           className={cn(
                             'px-4 py-2 rounded-2xl text-sm',
                             isUser
-                              ? 'bg-[#ffab98]/20 text-[#ffab98] rounded-tr-none'
-                              : 'bg-[#282a28] text-[#bcc9c9] rounded-tl-none',
+                              ? 'bg-[#ffb49f]/20 text-[#ffb49f] rounded-tr-none'
+                              : 'bg-[#282b2f] text-[#dedbd5] rounded-tl-none',
                           )}
                         >
                           {!isUser ? <MarkdownMessage text={text} /> : <span className="font-body">{text}</span>}
@@ -484,17 +479,17 @@ export function ChatWidget() {
                         {/* Meta row */}
                         <div className={cn('flex items-center gap-1 px-1', isUser ? 'flex-row-reverse' : 'flex-row')}>
                           {timestamp && (
-                            <span className="text-[10px] text-[#3d4949]">{formatTime(timestamp)}</span>
+                            <span className="text-[10px] text-[#b9b7b2]">{formatTime(timestamp)}</span>
                           )}
-                          <button
+                          <Button variant="ghost"
                             onClick={() => copyMessageText(text, message.id)}
-                            className="flex items-center gap-0.5 text-[10px] text-[#3d4949] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[#bcc9c9]"
+                            className="flex items-center gap-0.5 text-[10px] text-[#b9b7b2] opacity-100 transition-opacity group-hover:opacity-100 hover:text-[#dedbd5]"
                           >
                             {copiedId === message.id
-                              ? <><Check className="size-2.5 text-[#ffab98]" /><span className="text-[#ffab98]">Skopiowano</span></>
+                              ? <><Check className="size-2.5 text-[#ffb49f]" /><span className="text-[#ffb49f]">Skopiowano</span></>
                               : <><Copy className="size-2.5" /><span>Kopiuj</span></>
                             }
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </motion.div>
@@ -512,10 +507,10 @@ export function ChatWidget() {
                     exit={{ opacity: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                    <div className="bg-[#282b2f] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -544,7 +539,7 @@ export function ChatWidget() {
                     key="lead-saved"
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl bg-[#ffab98]/10 border border-[#ffab98]/20 px-3.5 py-2 text-center text-xs font-medium text-[#ffab98] font-label"
+                    className="rounded-xl bg-[#ffb49f]/10 border border-[#ffb49f]/20 px-3.5 py-2 text-center text-xs font-medium text-[#ffb49f] font-label"
                   >
                     ✓ Twój kontakt został zapisany. Odezwiemy się wkrótce!
                   </motion.div>
@@ -555,9 +550,9 @@ export function ChatWidget() {
             </div>
 
             {/* ── Input ───────────────────────────────────────────────────── */}
-            <div className="p-4 bg-[#0d0f0d] border-t border-[#3d4949]/10">
+            <div className="shrink-0 p-4 bg-[#101214] border-t border-[#8b8d8f]/10">
               <form onSubmit={handleSubmit} className="relative">
-                <textarea
+                <Textarea
                   ref={textareaRef}
                   value={input}
                   onChange={e => setInput(e.target.value)}
@@ -566,21 +561,21 @@ export function ChatWidget() {
                   placeholder="Napisz swoją wiadomość..."
                   disabled={isLoading}
                   rows={1}
-                  className="w-full bg-[#1e201e] py-3 pl-4 pr-12 rounded-full border-none focus:ring-1 focus:ring-[#ffab98]/50 text-base text-[#e2e3df] outline-none resize-none overflow-hidden placeholder-[#3d4949] font-body disabled:opacity-50"
+                  className="w-full bg-[#212326] py-3 pl-4 pr-12 rounded-lg border border-[#66696c] focus:ring-2 focus:ring-[#ffb49f]/50 text-base text-[#f5f2ed] outline-none resize-none overflow-hidden placeholder:text-[#b9b7b2] font-body disabled:opacity-50"
                 />
-                <button
+                <Button variant="ghost"
                   type="submit"
                   aria-label="Wyślij wiadomość"
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#ffab98] disabled:opacity-40 hover:brightness-125 transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#ffb49f] disabled:opacity-40 hover:brightness-125 transition-all"
                 >
                   {isLoading
                     ? <Loader2 className="size-5 motion-safe:animate-spin" />
                     : <Send className="size-5" />
                   }
-                </button>
+                </Button>
               </form>
-              <p className="mt-2 text-center text-[9px] text-[#3d4949] font-label">
+              <p className="mt-2 text-center text-[9px] text-[#b9b7b2] font-label">
                 Enter — wyślij · Shift+Enter — nowy wiersz
               </p>
             </div>
@@ -597,7 +592,7 @@ export function ChatWidget() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -right-1 -top-1 z-10 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-[#121412]"
+              className="absolute -right-1 -top-1 z-10 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-[#151719]"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
             </motion.div>
@@ -611,8 +606,8 @@ export function ChatWidget() {
           className={cn(
             'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
             isOpen
-              ? 'bg-[#282a28] text-[#bcc9c9]'
-              : 'bg-gradient-to-br from-[#ffab98] to-[#f34c30] text-[#151719] shadow-[0_8px_32px_rgba(112,229,234,0.4)]',
+              ? 'bg-[#282b2f] text-[#dedbd5]'
+              : 'bg-gradient-to-br from-[#e84324] to-[#c93820] text-white shadow-[0_8px_32px_rgba(21,23,25,0.25)]',
           )}
           aria-label={isOpen ? 'Zamknij czat' : 'Otwórz czat'}
         >

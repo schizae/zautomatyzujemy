@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState } from 'react'
 import { Menu, X, Settings, CircleUser } from 'lucide-react'
 import { useAuth } from '@/lib/contexts/auth-context'
@@ -21,25 +20,19 @@ export function Navbar() {
   const { isLoggedIn, isLoading, user } = useAuth()
 
   return (
-    <nav className="bg-[#f5f2ed]/70 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-white/5">
-      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-[1600px] mx-auto">
+    <nav className="marketing-theme bg-[#f5f2ed]/95 backdrop-blur-xl sticky top-0 z-50 w-full border-b border-[#c7c3bb]">
+      <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-[1680px] mx-auto">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <Image
-            src="/logo.png"
-            alt="Zautomatyzujemy.pl logo"
-            width={36}
-            height={36}
-            className="rounded-full brightness-110"
-          />
+          <svg aria-hidden="true" viewBox="0 0 24 36" className="h-8 w-6 shrink-0 text-[#e84324]" fill="currentColor"><path d="M8 0h16v23h-7V7H8zM0 13h7v16h9v7H0z" /></svg>
           <span className="text-base sm:text-xl font-bold tracking-tighter text-[#151719] font-headline group-hover:brightness-110 transition-all">
             zautomatyzujemy.pl
           </span>
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden lg:flex items-center gap-8 font-headline font-bold tracking-tight">
+        <div className="hidden lg:flex items-center gap-8 font-body font-medium tracking-tight">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -88,14 +81,14 @@ export function Navbar() {
           {isLoggedIn ? (
             <Link
               href="/account/settings"
-              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-2 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-3.5 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
               Moje konto
             </Link>
           ) : (
             <Link
               href="/#kontakt"
-              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-2 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
+              className="ml-2 bg-gradient-to-br from-[#151719] to-[#151719] text-[#ffffff] px-6 py-3.5 rounded-md font-headline font-bold text-sm transition-all hover:brightness-110 active:scale-95 duration-200"
             >
               Porozmawiajmy
             </Link>
@@ -104,7 +97,7 @@ export function Navbar() {
 
         {/* Mobile toggle */}
         <Button
-          className="lg:hidden p-2 text-[#51534e] hover:text-[#c93820] transition-colors"
+          className="lg:hidden bg-transparent p-2 text-[#51534e] hover:text-[#c93820] transition-colors"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Menu"
           aria-expanded={isOpen}
@@ -116,7 +109,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div id="mobile-menu" className="lg:hidden border-t border-white/5 bg-[#f5f2ed] px-6 py-4 space-y-3">
+        <div id="mobile-menu" className="lg:hidden border-t border-[#c7c3bb] bg-[#f5f2ed] px-6 py-4 space-y-3">
           {navLinks.map((link) => (
             <Link
               key={link.label}

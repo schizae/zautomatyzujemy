@@ -47,7 +47,7 @@ export async function BlogPreview() {
   const posts = toDisplayPosts((data ?? []) as PostPreview[])
 
   return (
-    <section className="py-16 max-w-[1600px] mx-auto px-6 md:px-8" id="blog">
+    <section className="py-16 max-w-[1680px] mx-auto px-6 md:px-8" id="blog">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-baseline mb-8">
         <h2 className="text-3xl font-headline font-bold text-[#151719]">Z naszego bloga.</h2>
@@ -62,7 +62,7 @@ export async function BlogPreview() {
         </Link>
       </div>
 
-      {posts.length === 0 && <p className="mb-8 text-[#686862]">Artykuły o praktycznym wykorzystaniu AI znajdziesz na naszym blogu.</p>}
+      {posts.length === 0 && <p className="mb-8 text-[#62625d]">Artykuły o praktycznym wykorzystaniu AI znajdziesz na naszym blogu.</p>}
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {posts.map((post) => (
@@ -71,13 +71,13 @@ export async function BlogPreview() {
               <div className="mb-6">
                 {/* Image */}
                 {post.cover_image ? (
-                  <div className="relative w-full aspect-[1.8/1] mb-6">
+                  <div className="relative w-full aspect-[1.8/1] mb-6 overflow-hidden rounded-lg border-b-4 border-[#e84324] bg-[#e7e2da]">
                     <Image
                       src={post.cover_image}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover rounded-2xl"
+                      className="object-cover grayscale contrast-[0.9] transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
                     />
                   </div>
                 ) : (
@@ -87,12 +87,12 @@ export async function BlogPreview() {
                 )}
 
                 {/* Category + date */}
-                <div className="font-label text-xs text-[#c93820] tracking-widest uppercase mb-3">
+                <div className="font-label text-xs font-medium text-[#9c301b] tracking-wider uppercase mb-3">
                   {post.category} — {post.date}
                 </div>
 
                 {/* Title */}
-                <h4 className="text-2xl font-body font-semibold leading-tight text-[#151719] group-hover:text-[#c93820] transition-colors">
+                <h4 className="text-xl xl:text-2xl font-body font-semibold leading-tight text-[#151719] group-hover:text-[#c93820] transition-colors">
                   {post.title}
                 </h4>
               </div>

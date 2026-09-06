@@ -10,9 +10,9 @@ import type { ActionResult } from '@/types'
 
 const initialState: ActionResult<string> = { success: true }
 
-const labelClass = 'text-xs font-label uppercase tracking-widest text-[#bcc9c9]'
+const labelClass = 'block text-xs font-label font-semibold uppercase tracking-widest text-[#dedbd5]'
 const fieldClass =
-  'w-full bg-[#1e201e] border-b border-[#3d4949] focus:border-[#ffab98] outline-none py-3 px-1 transition-all text-[#e2e3df] placeholder-[#bcc9c9]/30 font-body text-sm'
+  'min-h-12 w-full rounded-md bg-[#212326] border border-[#66696c] focus-visible:border-[#f34c30] focus-visible:ring-2 focus-visible:ring-[#f34c30]/30 py-3 px-4 text-[#f5f2ed] placeholder:text-[#b9b7b2] font-body text-base [color-scheme:dark]'
 
 const GOAL_OPTIONS = [
   { value: 'llm', label: 'Asystent AI dla firmy' },
@@ -95,7 +95,7 @@ export function ContactForm() {
           className={`${fieldClass} cursor-pointer`}
         >
           {GOAL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-[#1e201e]">
+            <option key={opt.value} value={opt.value} className="bg-[#212326]">
               {opt.label}
             </option>
           ))}
@@ -110,7 +110,7 @@ export function ContactForm() {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Opisz problem, który rozwiązujemy..."
           rows={4}
-          className={`${fieldClass} resize-none`}
+          className={`${fieldClass} min-h-32 resize-y`}
           required
         />
       </div>
@@ -122,14 +122,14 @@ export function ContactForm() {
           checked={gdprConsent}
           onChange={(e) => setGdprConsent(e.target.checked)}
           required
-          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#1e201e] accent-[#ffab98] cursor-pointer"
+          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#212326] accent-[#e84324] cursor-pointer"
         />
-        <span className="text-xs font-body text-[#bcc9c9] leading-relaxed">
+        <span className="text-xs font-body text-[#dedbd5] leading-relaxed">
           Wyrażam zgodę na przetwarzanie moich danych osobowych przez Zautomatyzujemy.pl
           w celu udzielenia odpowiedzi na zapytanie, zgodnie z{' '}
           <a
             href="/privacy-policy"
-            className="text-[#ffab98] hover:underline"
+            className="text-[#ffb49f] hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -147,7 +147,7 @@ export function ContactForm() {
       )}
 
       {showSuccess && (
-        <div className="flex items-center gap-2 rounded-lg bg-[#ffab98]/10 border border-[#ffab98]/20 px-4 py-2.5 text-sm font-medium text-[#ffab98] font-body">
+        <div className="flex items-center gap-2 rounded-lg bg-[#ffab98]/10 border border-[#ffab98]/20 px-4 py-2.5 text-sm font-medium text-[#ffb49f] font-body">
           <CheckCircle className="size-4 shrink-0" />
           Wiadomość wysłana! Odezwiemy się w ciągu 24 godzin.
         </div>
@@ -156,7 +156,7 @@ export function ContactForm() {
       <Button
         type="submit"
         disabled={isPending || !gdprConsent}
-        className="w-full bg-[#ffab98] text-[#151719] font-headline font-bold py-5 rounded-lg text-lg hover:shadow-[0_0_30px_rgba(112,229,234,0.3)] transition-all hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
+        className="min-h-14 h-auto w-full rounded-md bg-[#c93820] px-6 py-4 text-base font-semibold text-white hover:bg-[#a82e19] disabled:opacity-60 flex items-center justify-center gap-3"
       >
         {isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
         {isPending ? 'Wysyłanie...' : 'Wyślij Zapytanie'}

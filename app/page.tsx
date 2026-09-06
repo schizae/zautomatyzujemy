@@ -148,7 +148,7 @@ export default async function HomePage() {
         />
       )}
       <Navbar />
-      <main id="main" className="bg-[#f5f2ed] text-[#151719]">
+      <main id="main" className="marketing-theme bg-[#f5f2ed] text-[#151719] [color-scheme:light]">
         <HeroSection content={heroContent} />
         <ServicesSection />
         <RoiCalculator />
