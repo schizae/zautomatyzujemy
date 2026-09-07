@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BrandLogo } from '@/components/brand-logo'
@@ -6,7 +5,16 @@ import { AccountLoginForm } from './_components/account-login-form'
 
 export const metadata: Metadata = { title: 'Logowanie — Zautomatyzujemy.pl' }
 
-export default function AccountLoginPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function AccountLoginPage({ searchParams }: PageProps) {
+  // Czytamy parametr na serwerze — useSearchParams w formularzu wypychalo
+  // caly komponent do klienta, przez co karta byla pusta az do hydracji.
+  const params = await searchParams
+  const linkError = params['error'] === 'link'
+
   return (
     <div className="marketing-theme text-[#151719] [color-scheme:light] flex min-h-screen items-center justify-center bg-[#f5f2ed] px-4 py-12">
       <div className="w-full max-w-md">
@@ -26,9 +34,7 @@ export default function AccountLoginPage() {
 
         {/* Card */}
         <div className="rounded-2xl border border-[#d9d6d0] bg-[#faf8f5] p-6 sm:p-8 shadow-sm">
-          <Suspense fallback={null}>
-            <AccountLoginForm />
-          </Suspense>
+          <AccountLoginForm linkError={linkError} />
         </div>
       </div>
     </div>

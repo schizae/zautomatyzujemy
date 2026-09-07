@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/contexts/auth-context'
@@ -19,7 +19,7 @@ const inputClass =
 
 const INITIAL_STATE: ActionResult = { success: false, error: '' }
 
-export function AccountLoginForm() {
+export function AccountLoginForm({ linkError }: { linkError: boolean }) {
   const [tab, setTab] = useState<Tab>('client')
   const [state, formAction, isPending] = useActionState(clientLoginAction, INITIAL_STATE)
   const [adminPending, setAdminPending] = useState(false)
@@ -28,10 +28,7 @@ export function AccountLoginForm() {
   const [resendPending, setResendPending] = useState(false)
   const { refreshProfile } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  // /auth/callback odsyla tu z ?error=link, gdy link z maila wygasl lub byl juz uzyty.
-  const linkError = searchParams.get('error') === 'link'
   const needsConfirmation = !state.success && state.error === EMAIL_NOT_CONFIRMED
 
   useEffect(() => {
