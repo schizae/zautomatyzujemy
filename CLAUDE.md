@@ -72,6 +72,9 @@ npm run db:generate  # przebudowa bazy wiedzy RAG
 
 ## Koordynacja redesignu (Codex, 2026-09-05)
 
-Przed zmianami frontendu przeczytaj `docs/redesign-premium-handoff.md` na branchu
-`codex/redesign-premium` (po jego udostępnieniu). Redesign jest odizolowany od `main`.
-Uzgodnienia, zakres plików i wyniki kontroli są w tej notatce.
+Przed zmianami frontendu przeczytaj `docs/redesign-premium-handoff.md`.
+2026-09-07 właściciel zatwierdził scalenie PR #6 i publikację produkcyjną redesignu.
+Zgoda zastępuje historyczny zakaz publikacji. Wynik wdrożenia jest zapisany w PR #6.
+Przed dalszą pracą pobierz aktualny `main` i pracuj na osobnym branchu; zachowaj
+nowe tokeny kolorów, integracje i niezwiązane zmiany. Zakres oraz ograniczenia QA
+opisuje notatka przekazania.
