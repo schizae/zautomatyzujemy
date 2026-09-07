@@ -68,3 +68,13 @@ npm run db:generate  # przebudowa bazy wiedzy RAG
 - Nigdy nie twórz pliku bez wcześniejszego przeczytania jego sąsiadów
 - Nigdy nie dodawaj nowej zależności bez pytania użytkownika
 - Nigdy nie umieszczaj sekretów w plikach śledzonych przez git
+
+
+## Koordynacja redesignu (Codex, 2026-09-05)
+
+Przed zmianami frontendu przeczytaj `docs/redesign-premium-handoff.md`.
+2026-09-07 właściciel zatwierdził scalenie PR #6 i publikację produkcyjną redesignu.
+Zgoda zastępuje historyczny zakaz publikacji. Wynik wdrożenia jest zapisany w PR #6.
+Przed dalszą pracą pobierz aktualny `main` i pracuj na osobnym branchu; zachowaj
+nowe tokeny kolorów, integracje i niezwiązane zmiany. Zakres oraz ograniczenia QA
+opisuje notatka przekazania.

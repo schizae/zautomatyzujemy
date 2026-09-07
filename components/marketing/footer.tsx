@@ -17,82 +17,13 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[#0d0f0d] border-t border-white/5">
-      {/* Main grid */}
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
-
-        {/* Brand */}
-        <div className="space-y-4">
-          <span className="text-xl font-headline font-black text-[#e2e3df] tracking-tight">
-            zautomatyzujemy<span className="text-[#70e5ea]">.pl</span>
-          </span>
-          <p className="text-sm font-body text-[#bcc9c9] leading-relaxed max-w-xs">
-            Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty
-            i skalują Twój biznes.
-          </p>
-          <div className="space-y-1.5">
-            <a
-              href="mailto:n.chojnacki1993@gmail.com"
-              className="block text-sm font-body text-[#70e5ea] hover:underline"
-            >
-              n.chojnacki1993@gmail.com
-            </a>
-            <a
-              href="tel:+48730094465"
-              className="block text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
-            >
-              +48 730 094 465
-            </a>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="space-y-4">
-          <p className="text-xs font-label uppercase tracking-widest text-[#5a6464]">
-            Nawigacja
-          </p>
-          <ul className="space-y-3">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <Link
-                  href={link.href}
-                  className="text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Legal */}
-        <div className="space-y-4">
-          <p className="text-xs font-label uppercase tracking-widest text-[#5a6464]">
-            Dokumenty
-          </p>
-          <ul className="space-y-3">
-            {legalLinks.map((link) => (
-              <li key={link.label}>
-                <Link
-                  href={link.href}
-                  className="text-sm font-body text-[#bcc9c9] hover:text-[#70e5ea] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-      </div>
-
-      {/* Bottom bar */}
-      <div className="border-t border-white/5">
-        <div className="mx-auto max-w-screen-2xl px-6 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs font-body text-[#5a6464]">
-            © {year} Zautomatyzujemy.pl — wszelkie prawa zastrzeżone.
-          </p>
-        </div>
+    <footer className="border-t border-white/20 bg-[#101214] text-[#dedbd5]">
+      <div className="mx-auto flex max-w-[1680px] flex-col gap-6 px-6 py-8 md:px-8 lg:flex-row lg:items-center lg:justify-between">
+        <Link href="/" className="text-lg font-semibold tracking-tight text-[#f5f2ed]">zautomatyzujemy.pl</Link>
+        <nav aria-label="Nawigacja w stopce" className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          {[...navLinks, ...legalLinks].map(link => <Link key={link.href} href={link.href} className="hover:text-[#ffb49f] hover:underline underline-offset-4">{link.label}</Link>)}
+        </nav>
+        <p className="text-xs text-[#b9b7b2]">© {year} Zautomatyzujemy.pl</p>
       </div>
     </footer>
   )

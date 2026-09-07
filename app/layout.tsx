@@ -119,7 +119,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="pl"
-      className={`dark ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
+      className={`dark motion-reduce:!scroll-auto ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
     >
       <body className="font-body antialiased">
         <a

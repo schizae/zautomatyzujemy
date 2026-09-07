@@ -25,19 +25,19 @@ export function BlogCarousel({ posts }: { posts: PostPreview[] }) {
         {posts.map(post => (
           <CarouselItem key={post.slug} className="pl-4 md:basis-1/2 lg:basis-1/3">
             <Link href={`/blog/${post.slug}`} className="block h-full">
-              <article className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                <div className="relative aspect-video overflow-hidden bg-slate-100 shrink-0">
+              <article className="group bg-[#faf8f5] rounded-lg overflow-hidden shadow-sm border border-[#d9d6d0] hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                <div className="relative aspect-video overflow-hidden border-b-4 border-[#e84324] bg-[#e7e2da] shrink-0">
                   {post.cover_image ? (
                     <Image
                       src={post.cover_image}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="object-cover grayscale contrast-[0.9] motion-safe:group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                      <span className="text-primary/40 text-4xl font-black">AI</span>
+                      <span className="text-[#c93820]/40 text-4xl font-black">AI</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5">
@@ -53,21 +53,21 @@ export function BlogCarousel({ posts }: { posts: PostPreview[] }) {
                       {post.tags.slice(0, 3).map(tag => (
                         <span
                           key={tag}
-                          className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full"
+                          className="text-xs font-bold text-[#c93820] bg-[#c93820]/10 px-2.5 py-0.5 rounded-full"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <time className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                  <time className="text-xs font-bold text-[#62625d] uppercase tracking-widest block mb-2">
                     {formatDate(post.published_at ?? post.created_at)}
                   </time>
-                  <h2 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug">
+                  <h2 className="text-lg font-bold text-[#151719] mb-3 group-hover:text-[#c93820] transition-colors leading-snug">
                     {post.title}
                   </h2>
                   {post.excerpt && (
-                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mt-auto">
+                    <p className="text-[#62625d] text-sm leading-relaxed line-clamp-3 mt-auto">
                       {post.excerpt}
                     </p>
                   )}
@@ -77,8 +77,8 @@ export function BlogCarousel({ posts }: { posts: PostPreview[] }) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="left-0 -translate-x-1/2 shadow-md" />
-      <CarouselNext className="right-0 translate-x-1/2 shadow-md" />
+      <CarouselPrevious className="left-0 -translate-x-1/2 border-[#b4b0a9] bg-[#faf8f5] text-[#151719] shadow-md disabled:opacity-40" />
+      <CarouselNext className="right-0 translate-x-1/2 border-[#b4b0a9] bg-[#faf8f5] text-[#151719] shadow-md disabled:opacity-40" />
     </Carousel>
   )
 }

@@ -78,7 +78,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const post = data as Post
 
   return (
-    <main className="min-h-screen bg-white">
+    <main id="main" className="min-h-screen bg-white">
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -130,11 +130,11 @@ export default async function BlogPostPage({ params }: PageProps) {
         }}
       />
       {/* Header */}
-      <div className="bg-slate-950 pt-20 pb-16 px-6">
+      <div className="bg-[#151719] pt-20 pb-16 px-6">
         <div className="max-w-3xl mx-auto">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-8"
+            className="inline-flex items-center gap-2 text-[#96968f] hover:text-white transition-colors text-sm mb-8"
           >
             <ArrowLeft size={16} />
             Wróć do bloga
@@ -143,7 +143,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.tags.map(tag => (
-                <span key={tag} className="text-xs font-bold text-primary bg-primary/20 px-2.5 py-0.5 rounded-full">
+                <span key={tag} className="text-xs font-bold text-[#c93820] bg-[#c93820]/20 px-2.5 py-0.5 rounded-full">
                   {tag}
                 </span>
               ))}
@@ -154,7 +154,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.title}
           </h1>
 
-          <div className="flex items-center gap-4 text-slate-400 text-sm">
+          <div className="flex items-center gap-4 text-[#96968f] text-sm">
             {post.author && <span className="font-semibold text-slate-300">{post.author}</span>}
             <time>{formatDate(post.published_at ?? post.created_at)}</time>
           </div>
@@ -176,7 +176,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Content */}
-      <article className="max-w-3xl mx-auto px-6 py-16 text-slate-800 leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-slate-700 [&_strong]:font-bold [&_em]:italic [&_a]:text-primary [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_blockquote]:mb-5 [&_code]:bg-slate-100 [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_pre]:bg-slate-900 [&_pre]:text-slate-100 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-5 [&_hr]:border-slate-200 [&_hr]:my-8">
+      <article className="max-w-3xl mx-auto px-6 py-16 text-slate-800 leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-slate-700 [&_strong]:font-bold [&_em]:italic [&_a]:text-[#c93820] [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:border-l-4 [&_blockquote]:border-[#c93820] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[#686862] [&_blockquote]:mb-5 [&_code]:bg-slate-100 [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_pre]:bg-slate-900 [&_pre]:text-slate-100 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-5 [&_hr]:border-[#d9d6d0] [&_hr]:my-8">
         <MDXRemote source={post.content} components={safeMdxComponents} />
       </article>
     </main>

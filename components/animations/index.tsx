@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useInView, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import { useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +19,7 @@ export function FadeInUp({
   delay = 0,
   duration = 0.6,
 }: FadeInUpProps) {
+  const reduced = useReducedMotion()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
 
@@ -26,8 +27,8 @@ export function FadeInUp({
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      initial={false}
+      animate={isInView || reduced ? { opacity: 1, y: 0 } : { opacity: 1, y: 12 }}
       transition={{ duration, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}
@@ -65,7 +66,6 @@ export function StaggerContainer({
   staggerDelay = 0.12,
 }: StaggerProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
 
   return (
     <motion.div
@@ -73,8 +73,8 @@ export function StaggerContainer({
       className={className}
       variants={staggerContainer}
       custom={staggerDelay}
-      initial="hidden"
-      animate={isInView ? 'show' : 'hidden'}
+      initial={false}
+      animate='show'
     >
       {children}
     </motion.div>
@@ -110,6 +110,7 @@ export function SlideIn({
   direction = 'left',
   delay = 0,
 }: SlideInProps) {
+  const reduced = useReducedMotion()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const x = direction === 'left' ? -60 : 60
@@ -118,8 +119,8 @@ export function SlideIn({
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, x }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      initial={false}
+      animate={isInView || reduced ? { opacity: 1, x: 0 } : { opacity: 1, x: x / 4 }}
       transition={{ duration: 0.7, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}

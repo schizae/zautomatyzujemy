@@ -21,36 +21,38 @@ export async function FaqSection() {
   if (faqs.length === 0) return null
 
   return (
-    <section className="py-24 px-6 border-t border-[#3d4949]/30" id="faq">
-      <div className="max-w-4xl mx-auto">
+    <section className="py-16 px-6 md:px-8 border-t border-[#c7c3bb]" id="faq">
+      <div className="max-w-[1616px] mx-auto grid gap-12 lg:grid-cols-2">
 
-        <FadeInUp className="text-center mb-16">
-          <p className="text-xs font-bold text-[#70e5ea] tracking-widest uppercase mb-4 font-label">
-            FAQ
+        <FadeInUp className="">
+          <p className="text-xs font-bold text-[#c93820] tracking-widest uppercase mb-4 font-label">
+            05 / FAQ
           </p>
-          <h2 className="text-4xl font-headline font-bold tracking-tight text-[#e2e3df]">
-            Często zadawane pytania
+          <h2 className="text-6xl xl:text-[88px] font-body font-extrabold tracking-[-0.05em] text-[#151719]">
+            Warto<br /><span className="font-editorial font-normal italic tracking-[-0.065em] text-[#f34c30]">wiedzieć.</span>
           </h2>
         </FadeInUp>
 
-        <StaggerContainer className="space-y-4">
-          {faqs.map((faq, idx) => (
-            <StaggerItem key={faq.id}>
-              <Accordion defaultValue={idx === 0 ? ['item-0'] : []}>
-                <AccordionItem
-                  value={`item-${idx}`}
-                  className="border border-[#3d4949]/40 bg-[#1e201e] rounded-2xl px-2 overflow-hidden hover:border-[#70e5ea]/30 transition-colors"
-                >
-                  <AccordionTrigger className="px-4 py-5 font-headline font-bold text-lg text-[#e2e3df] hover:no-underline hover:bg-[#282a28] rounded-2xl transition-colors">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 text-[#bcc9c9] leading-relaxed font-body">
-                    {faq.answer}
-                  </AccordionContent>
+        <StaggerContainer className="space-y-0">
+          {faqs.slice(0, 3).map((faq, idx) => (<StaggerItem key={faq.id}>
+              <Accordion defaultValue={[]}>
+                <AccordionItem value={`item-${idx}`} className="border-b border-[#b4b0a9] rounded-none">
+                  <AccordionTrigger className="px-0 py-5 font-body font-medium text-lg text-[#151719] hover:no-underline">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="px-0 pb-5 text-[#62625d] leading-relaxed font-body">{faq.answer}</AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </StaggerItem>
-          ))}
+            </StaggerItem>))}
+          {faqs.length > 3 && <details className="mt-6">
+            <summary className="cursor-pointer py-3 text-sm font-medium text-[#62625d] underline underline-offset-4">Zobacz wszystkie odpowiedzi →</summary>
+            {faqs.slice(3).map((faq, idx) => (<StaggerItem key={faq.id}>
+              <Accordion defaultValue={[]}>
+                <AccordionItem value={`item-${idx}`} className="border-b border-[#b4b0a9] rounded-none">
+                  <AccordionTrigger className="px-0 py-5 font-body font-medium text-lg text-[#151719] hover:no-underline">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="px-0 pb-5 text-[#62625d] leading-relaxed font-body">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </StaggerItem>))}
+          </details>}
         </StaggerContainer>
 
       </div>

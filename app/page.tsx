@@ -3,9 +3,7 @@ import { ChatWidget } from '@/components/chat/chat-widget'
 import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
 import { ServicesSection } from '@/components/marketing/services-section'
-import { CaseStudySection } from '@/components/marketing/case-study-section'
 import { AboutSection } from '@/components/marketing/about-section'
-import { AiActBanner } from '@/components/marketing/ai-act-banner'
 import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { RoiCalculator } from '@/components/marketing/roi-calculator'
@@ -150,15 +148,13 @@ export default async function HomePage() {
         />
       )}
       <Navbar />
-      <main id="main">
+      <main id="main" className="marketing-theme bg-[#f5f2ed] text-[#151719] [color-scheme:light]">
         <HeroSection content={heroContent} />
-        <AiActBanner />
         <ServicesSection />
-        <CaseStudySection />
+        <RoiCalculator />
         <LeadMagnetSection />
         <AboutSection />
         <BlogPreview />
-        <RoiCalculator />
         <FaqSection />
         <ContactSection />
       </main>
