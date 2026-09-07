@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BrandLogo } from '@/components/brand-logo'
@@ -25,7 +26,9 @@ export default function AccountLoginPage() {
 
         {/* Card */}
         <div className="rounded-2xl border border-[#d9d6d0] bg-[#faf8f5] p-6 sm:p-8 shadow-sm">
-          <AccountLoginForm />
+          <Suspense fallback={null}>
+            <AccountLoginForm />
+          </Suspense>
         </div>
       </div>
     </div>
