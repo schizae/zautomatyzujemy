@@ -50,6 +50,13 @@ next-env.d.ts
 # Skille instalowane narzędziami (impeccable ~3,3 MB) — odtwarzalne przez
 # `npx impeccable install`, nie ma po co trzymać ich w historii repo
 .claude/skills/
+.agents/
+
+# Ustawienia osobiste tej maszyny — lista uprawnień z historii sesji
+.claude/settings.json
+
+# Codex CLI — konfiguracja lokalna
+.codex/
 
 # Playwright Agent CLI — migawki stron, ślady, nagrania z sesji przeglądarki
 .playwright-cli/
