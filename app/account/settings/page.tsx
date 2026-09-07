@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
+import { BrandLogo } from '@/components/brand-logo'
 import { createClient } from '@/lib/supabase/server'
 import type { Profile } from '@/types'
 import { ProfileForm } from './_components/profile-form'
@@ -35,18 +34,7 @@ export default async function AccountSettingsPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <Link href="/" className="flex items-center gap-3 group">
-            <Image
-              src="/logo.png"
-              alt="Zautomatyzujemy.pl logo"
-              width={40}
-              height={40}
-              className="rounded-full brightness-110"
-            />
-            <span className="font-headline text-xl font-bold text-primary group-hover:brightness-110 transition-all">
-              zautomatyzujemy.pl
-            </span>
-          </Link>
+          <BrandLogo inverse />
           <div className="mt-2">
             <h1 className="font-headline text-2xl font-bold text-on-surface">Ustawienia konta</h1>
             <p className="mt-1 text-sm text-on-surface-variant">

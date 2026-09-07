@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { BrandLogo } from '@/components/brand-logo'
 import { ArrowLeft } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { PostPreview } from '@/types'
-import { BlogCarousel } from './_components/BlogCarousel'
+import { BlogGrid } from './_components/BlogCarousel'
 
 // Zawsze pobiera świeże dane — usunięcie posta w Supabase natychmiast
 // odzwierciedla się na stronie bez konieczności ręcznej rewalidacji.
@@ -32,6 +33,7 @@ export default async function BlogPage() {
       {/* Header */}
       <div className="bg-[#151719] pt-20 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-8"><BrandLogo inverse /></div>
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-[#dedbd5] hover:text-white transition-colors text-sm mb-8"
@@ -51,12 +53,12 @@ export default async function BlogPage() {
         </div>
       </div>
 
-      {/* Posts carousel */}
-      <div className="max-w-7xl mx-auto px-10 py-16">
+      {/* Posts grid */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
         {posts.length === 0 ? (
-          <p className="text-center text-[#dedbd5] py-16">Brak opublikowanych artykułów.</p>
+          <p className="text-center text-[#62625d] py-16">Brak opublikowanych artykułów.</p>
         ) : (
-          <BlogCarousel posts={posts} />
+          <BlogGrid posts={posts} />
         )}
       </div>
     </main>

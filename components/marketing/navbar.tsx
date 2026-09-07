@@ -1,5 +1,6 @@
 'use client'
 
+import { BrandLogo } from '@/components/brand-logo'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -24,12 +25,7 @@ export function Navbar() {
       <div className="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-[1680px] mx-auto">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <svg aria-hidden="true" viewBox="0 0 24 36" className="h-8 w-6 shrink-0 text-[#e84324]" fill="currentColor"><path d="M8 0h16v23h-7V7H8zM0 13h7v16h9v7H0z" /></svg>
-          <span className="text-base sm:text-xl font-bold tracking-tighter text-[#151719] font-headline group-hover:brightness-110 transition-all">
-            zautomatyzujemy.pl
-          </span>
-        </Link>
+        <BrandLogo />
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8 font-body font-medium tracking-tight">
@@ -71,7 +67,7 @@ export function Navbar() {
               className={cn(
                 'transition-all duration-300',
                 isLoggedIn
-                  ? 'text-[#c93820] drop-shadow-[0_0_8px_rgba(112,229,234,0.85)]'
+                  ? 'text-[#c93820] '
                   : 'text-[#51534e] hover:text-[#c93820]'
               )}
               aria-label={isLoggedIn ? 'Konto użytkownika' : 'Zaloguj się'}

@@ -10,7 +10,7 @@ import { CheckCircle, Loader2, UserPlus } from 'lucide-react'
 import type { ActionResult } from '@/types'
 
 const inputClass =
-  'bg-surface-container-low border-outline-variant text-on-surface placeholder:text-outline-color focus-visible:border-[#70e5ea] focus-visible:ring-[#70e5ea]/20'
+  'h-12 bg-white border-[#c7c3bb] text-[#151719] placeholder:text-[#74746d] focus-visible:border-[#c93820] focus-visible:ring-[#c93820]/20'
 
 const INITIAL_STATE: ActionResult = { success: false, error: '' }
 
@@ -30,17 +30,17 @@ export function RegisterForm() {
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center gap-4 py-4 text-center">
-        <div className="flex size-14 items-center justify-center rounded-full bg-[#70e5ea]/15">
-          <CheckCircle className="size-7 text-[#70e5ea]" />
+        <div className="flex size-14 items-center justify-center rounded-full bg-[#c93820]/15">
+          <CheckCircle className="size-7 text-[#c93820]" />
         </div>
         <div>
-          <h2 className="font-headline text-lg font-bold text-on-surface">Konto utworzone!</h2>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <h2 className="font-headline text-lg font-bold text-[#151719]">Konto utworzone!</h2>
+          <p className="mt-1 text-sm text-[#62625d]">
             Jesteś teraz zalogowany.
           </p>
         </div>
         <Button
-          className="mt-2 w-full gap-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] font-bold hover:brightness-110 hover:-translate-y-0.5 shadow-lg shadow-[#70e5ea]/20 transition-all"
+          className="mt-2 w-full gap-2 h-12 bg-[#c93820] text-white font-semibold hover:bg-[#ab2f1c] transition-colors"
           onClick={() => router.push('/')}
         >
           Przejdź do strony głównej
@@ -53,7 +53,7 @@ export function RegisterForm() {
     <form action={formAction} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label htmlFor="firstName" className="block text-sm font-medium text-on-surface-variant">
+          <label htmlFor="firstName" className="block text-sm font-medium text-[#62625d]">
             Imię
           </label>
           <Input
@@ -66,7 +66,7 @@ export function RegisterForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="lastName" className="block text-sm font-medium text-on-surface-variant">
+          <label htmlFor="lastName" className="block text-sm font-medium text-[#62625d]">
             Nazwisko
           </label>
           <Input
@@ -80,7 +80,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="email" className="block text-sm font-medium text-on-surface-variant">
+        <label htmlFor="email" className="block text-sm font-medium text-[#62625d]">
           Adres e-mail
         </label>
         <Input
@@ -94,7 +94,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="phone" className="block text-sm font-medium text-on-surface-variant">
+        <label htmlFor="phone" className="block text-sm font-medium text-[#62625d]">
           Numer telefonu
         </label>
         <Input
@@ -108,7 +108,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="password" className="block text-sm font-medium text-on-surface-variant">
+        <label htmlFor="password" className="block text-sm font-medium text-[#62625d]">
           Hasło
         </label>
         <Input
@@ -123,7 +123,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-on-surface-variant">
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#62625d]">
           Potwierdź hasło
         </label>
         <Input
@@ -138,7 +138,7 @@ export function RegisterForm() {
       </div>
 
       {!state.success && state.error && (
-        <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
+        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
           {state.error}
         </p>
       )}
@@ -146,7 +146,7 @@ export function RegisterForm() {
       <Button
         type="submit"
         disabled={isPending}
-        className="w-full gap-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] font-bold hover:brightness-110 hover:-translate-y-0.5 shadow-lg shadow-[#70e5ea]/20 transition-all"
+        className="w-full gap-2 h-12 bg-[#c93820] text-white font-semibold hover:bg-[#ab2f1c] transition-colors"
       >
         {isPending ? (
           <Loader2 className="size-4 animate-spin" />

@@ -54,8 +54,8 @@ export const metadata: Metadata = {
   creator: 'Zautomatyzujemy.pl',
   publisher: 'Zautomatyzujemy.pl',
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [{ url: '/brand-icon.svg', type: 'image/svg+xml' }],
+    apple: '/brand-apple-icon.png',
   },
   openGraph: {
     type: 'website',
@@ -104,8 +104,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#121412' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f2ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#151719' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -124,7 +124,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className="font-body antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:bg-[#70e5ea] focus:px-4 focus:py-2 focus:text-[#003739] focus:font-bold focus:text-sm"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:bg-[#c93820] focus:px-4 focus:py-2 focus:text-white focus:font-bold focus:text-sm"
         >
           Przejdź do treści
         </a>
