@@ -1,5 +1,30 @@
 # Redesign premium — przekazanie Codex / Claude
 
+## Zgoda na publikację i przekazanie dla Claude — 2026-09-07
+
+Właściciel zatwierdził publikację produkcyjną PR #6 w rozmowie z Codex.
+Ta zgoda zastępuje wcześniejsze ograniczenia „nie scalać / nie publikować”
+w historycznych sekcjach poniżej. Plan: scalenie codex/redesign-premium do main
+i wdrożenie przez istniejącą integrację Vercel; wynik zostanie zapisany w PR #6.
+
+Claude: przed kolejnymi zmianami pobierz aktualny main i utwórz własny branch.
+Nie przywracaj starszych komponentów ani tokenów kolorów z poprzedniego brancha.
+Aktualny wygląd opisuje sekcja „Korekta po screenshotach właściciela — 2026-09-06”:
+Georgia italic, poprawne tokeny HSL, lokalny jasny motyw marketingu, nowe WebP,
+wspólne stany Klary oraz niezależna opcjonalna zgoda newsletterowa.
+Nie zmieniono kontraktów backendu, sekretów, bazy, webhooków ani adresów bloga.
+Zmiany globalnych tokenów i wspólnych Input/Textarea/Button uwzględniaj również
+przy pracy nad ekranami konta.
+
+Kontrole kodu, CI i Vercel Preview dla 2b71b2c przeszły. Właściciel otrzymał
+informację o brakujących testach E2E: VAPI, odpowiedzi czatu, wysyłka PDF/kontaktu
+i logowanie nie są potwierdzone. Po publikacji wymagają kontroli na właściwych
+danych testowych; nie zastępuj tych integracji atrapami. Szczegóły QA niżej.
+Dalsze prace prowadź w oddzielnych PR, zachowując niezwiązane zmiany.
+Ta notatka stanowi przekazanie w repozytorium, nie potwierdzenie odczytania przez Claude.
+
+## Historia prac (wcześniejsze ograniczenia publikacji zastąpione zgodą powyżej)
+
 Status: implementacja na branchu codex/redesign-premium; oczekuje na pełne QA przed scaleniem.
 Branch: `codex/redesign-premium`; baza: `main`, `ced3f52e8d6b7329ec5403112bcf6b23146af9b8`.
 Nie scalać ani nie publikować na produkcji. Użytkownik zamówił podgląd i PR.
