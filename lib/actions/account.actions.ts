@@ -1,9 +1,27 @@
 'use server'
 
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { EMAIL_NOT_CONFIRMED } from '@/lib/auth-messages'
 import type { ActionResult } from '@/types'
+
+// Linki w mailach Supabase muszą wracać na publiczny adres aplikacji.
+const SITE_URL = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+const CALLBACK_URL = `${SITE_URL}/auth/callback`
+
+// Wysyłka maili auth kosztuje limity Supabase — ograniczamy per IP.
+const emailLimiter = createRateLimiter('account-email', {
+  maxRequests: 5,     // 5 maili
+  windowMs: 900_000,  // na 15 minut
+})
+
+async function clientIp(): Promise<string> {
+  const headerStore = await headers()
+  return headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+}
 
 // ─── Schemas ─────────────────────────────────────────────────────────────────
 
@@ -41,9 +59,9 @@ const ChangePasswordSchema = z.object({
 // ─── Rejestracja ─────────────────────────────────────────────────────────────
 
 export async function registerAction(
-  _prev: ActionResult,
+  _prev: ActionResult<{ needsConfirmation: boolean }>,
   formData: FormData
-): Promise<ActionResult> {
+): Promise<ActionResult<{ needsConfirmation: boolean }>> {
   const parsed = RegisterSchema.safeParse({
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
@@ -59,12 +77,18 @@ export async function registerAction(
   }
 
   const { firstName, lastName, email, phone, password } = parsed.data
+
+  if (!emailLimiter.check(await clientIp()).success) {
+    return { success: false, error: 'Zbyt wiele prób. Spróbuj ponownie za 15 minut.' }
+  }
+
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: CALLBACK_URL,
       data: {
         first_name: firstName,
         last_name: lastName,
@@ -78,6 +102,34 @@ export async function registerAction(
       return { success: false, error: 'Ten adres e-mail jest już zarejestrowany.' }
     }
     return { success: false, error: error.message }
+  }
+
+  // Brak sesji = Supabase wymaga potwierdzenia adresu e-mail przed logowaniem.
+  return { success: true, data: { needsConfirmation: data.session === null } }
+}
+
+// ─── Ponowna wysyłka linku aktywacyjnego ─────────────────────────────────────
+
+export async function resendConfirmationAction(email: string): Promise<ActionResult> {
+  const parsed = z.string().email().safeParse(email)
+  if (!parsed.success) {
+    return { success: false, error: 'Podaj poprawny adres e-mail.' }
+  }
+
+  if (!emailLimiter.check(await clientIp()).success) {
+    return { success: false, error: 'Zbyt wiele prób. Spróbuj ponownie za 15 minut.' }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: parsed.data,
+    options: { emailRedirectTo: CALLBACK_URL },
+  })
+
+  if (error) {
+    console.error('[resendConfirmationAction]', error.message)
+    return { success: false, error: 'Nie udało się wysłać linku. Spróbuj za chwilę.' }
   }
 
   return { success: true }
@@ -105,9 +157,45 @@ export async function clientLoginAction(
   const { error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
+    // Bez tego rozróżnienia niepotwierdzone konto wygląda jak błędne hasło.
+    if (error.code === 'email_not_confirmed') {
+      return { success: false, error: EMAIL_NOT_CONFIRMED }
+    }
     return { success: false, error: 'Nieprawidłowy e-mail lub hasło.' }
   }
 
+  return { success: true }
+}
+
+// ─── Reset hasła — wysyłka linku ─────────────────────────────────────────────
+
+export async function requestPasswordResetAction(
+  _prev: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  const parsed = z
+    .string()
+    .email('Podaj poprawny adres e-mail.')
+    .safeParse(formData.get('email'))
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Nieprawidłowe dane.' }
+  }
+
+  if (!emailLimiter.check(await clientIp()).success) {
+    return { success: false, error: 'Zbyt wiele prób. Spróbuj ponownie za 15 minut.' }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
+    redirectTo: `${CALLBACK_URL}?next=/account/update-password`,
+  })
+
+  if (error) {
+    console.error('[requestPasswordResetAction]', error.message)
+  }
+
+  // Zawsze ten sam wynik — inaczej formularz zdradzałby, które adresy mają konto.
   return { success: true }
 }
 

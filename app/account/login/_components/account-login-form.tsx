@@ -1,12 +1,14 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/contexts/auth-context'
-import { clientLoginAction } from '@/lib/actions/account.actions'
-import { Loader2, Lock, ShieldCheck, User } from 'lucide-react'
+import { clientLoginAction, resendConfirmationAction } from '@/lib/actions/account.actions'
+import { EMAIL_NOT_CONFIRMED } from '@/lib/auth-messages'
+import { Loader2, Lock, MailCheck, ShieldCheck, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ActionResult } from '@/types'
 
@@ -21,8 +23,16 @@ export function AccountLoginForm() {
   const [tab, setTab] = useState<Tab>('client')
   const [state, formAction, isPending] = useActionState(clientLoginAction, INITIAL_STATE)
   const [adminPending, setAdminPending] = useState(false)
+  const [email, setEmail] = useState('')
+  const [resend, setResend] = useState<ActionResult | null>(null)
+  const [resendPending, setResendPending] = useState(false)
   const { refreshProfile } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // /auth/callback odsyla tu z ?error=link, gdy link z maila wygasl lub byl juz uzyty.
+  const linkError = searchParams.get('error') === 'link'
+  const needsConfirmation = !state.success && state.error === EMAIL_NOT_CONFIRMED
 
   useEffect(() => {
     if (state.success) {
@@ -35,6 +45,12 @@ export function AccountLoginForm() {
   function handleAdminRedirect() {
     setAdminPending(true)
     router.push('/admin/login')
+  }
+
+  async function handleResend() {
+    setResendPending(true)
+    setResend(await resendConfirmationAction(email))
+    setResendPending(false)
   }
 
   return (
@@ -68,13 +84,23 @@ export function AccountLoginForm() {
               placeholder="jan@firma.pl"
               required
               autoFocus
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               className={inputClass}
             />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-[#62625d]">
-              Hasło
-            </label>
+            <div className="flex items-baseline justify-between gap-2">
+              <label htmlFor="password" className="block text-sm font-medium text-[#62625d]">
+                Hasło
+              </label>
+              <Link
+                href="/account/reset-password"
+                className="text-xs font-medium text-[#c93820] hover:brightness-110 transition-all"
+              >
+                Nie pamiętasz hasła?
+              </Link>
+            </div>
             <Input
               id="password"
               name="password"
@@ -85,9 +111,42 @@ export function AccountLoginForm() {
             />
           </div>
 
-          {!state.success && state.error && (
+          {linkError && (
             <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
-              {state.error}
+              Link z maila wygasł lub został już użyty. Zaloguj się lub poproś o nowy.
+            </p>
+          )}
+
+          {!state.success && state.error && (
+            <div className="space-y-2 rounded-lg bg-red-50 px-4 py-2.5">
+              <p className="text-sm font-medium text-red-700">{state.error}</p>
+
+              {needsConfirmation && !resend?.success && (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendPending || !email}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[#c93820] hover:brightness-110 disabled:opacity-50 transition-all"
+                >
+                  {resendPending ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <MailCheck className="size-3.5" />
+                  )}
+                  Wyślij link aktywacyjny ponownie
+                </button>
+              )}
+
+              {resend && !resend.success && (
+                <p className="text-xs text-red-700">{resend.error}</p>
+              )}
+            </div>
+          )}
+
+          {resend?.success && (
+            <p className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-2.5 text-sm font-medium text-green-800">
+              <MailCheck className="size-4" />
+              Link aktywacyjny wysłany — sprawdź skrzynkę.
             </p>
           )}
 

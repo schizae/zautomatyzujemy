@@ -6,44 +6,55 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { registerAction } from '@/lib/actions/account.actions'
-import { CheckCircle, Loader2, UserPlus } from 'lucide-react'
+import { CheckCircle, Loader2, MailCheck, UserPlus } from 'lucide-react'
 import type { ActionResult } from '@/types'
 
 const inputClass =
   'h-12 bg-white border-[#c7c3bb] text-[#151719] placeholder:text-[#74746d] focus-visible:border-[#c93820] focus-visible:ring-[#c93820]/20'
 
-const INITIAL_STATE: ActionResult = { success: false, error: '' }
+type RegisterState = ActionResult<{ needsConfirmation: boolean }>
+
+const INITIAL_STATE: RegisterState = { success: false, error: '' }
 
 export function RegisterForm() {
   const [state, formAction, isPending] = useActionState(registerAction, INITIAL_STATE)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [needsConfirmation, setNeedsConfirmation] = useState<boolean | null>(null)
   const { refreshProfile } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (state.success) {
-      refreshProfile()
-      setIsSuccess(true)
-    }
+    if (!state.success) return
+    const pending = state.data?.needsConfirmation ?? true
+    setNeedsConfirmation(pending)
+    // Sesja istnieje tylko wtedy, gdy Supabase nie wymaga potwierdzenia maila.
+    if (!pending) refreshProfile()
   }, [state, refreshProfile])
 
-  if (isSuccess) {
+  if (needsConfirmation !== null) {
     return (
       <div className="flex flex-col items-center gap-4 py-4 text-center">
         <div className="flex size-14 items-center justify-center rounded-full bg-[#c93820]/15">
-          <CheckCircle className="size-7 text-[#c93820]" />
+          {needsConfirmation ? (
+            <MailCheck className="size-7 text-[#c93820]" />
+          ) : (
+            <CheckCircle className="size-7 text-[#c93820]" />
+          )}
         </div>
         <div>
-          <h2 className="font-headline text-lg font-bold text-[#151719]">Konto utworzone!</h2>
+          <h2 className="font-headline text-lg font-bold text-[#151719]">
+            {needsConfirmation ? 'Potwierdź adres e-mail' : 'Konto utworzone!'}
+          </h2>
           <p className="mt-1 text-sm text-[#62625d]">
-            Jesteś teraz zalogowany.
+            {needsConfirmation
+              ? 'Wysłaliśmy link aktywacyjny na podany adres. Kliknij go, aby dokończyć zakładanie konta — dopiero wtedy zalogujesz się na te dane. Jeśli maila nie ma, sprawdź folder spam.'
+              : 'Jesteś teraz zalogowany.'}
           </p>
         </div>
         <Button
           className="mt-2 w-full gap-2 h-12 bg-[#c93820] text-white font-semibold hover:bg-[#ab2f1c] transition-colors"
-          onClick={() => router.push('/')}
+          onClick={() => router.push(needsConfirmation ? '/account/login' : '/')}
         >
-          Przejdź do strony głównej
+          {needsConfirmation ? 'Przejdź do logowania' : 'Przejdź do strony głównej'}
         </Button>
       </div>
     )
