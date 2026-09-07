@@ -13,7 +13,7 @@ import type { ActionResult } from '@/types'
 type Tab = 'client' | 'admin'
 
 const inputClass =
-  'bg-surface-container-low border-outline-variant text-on-surface placeholder:text-outline-color focus-visible:border-[#70e5ea] focus-visible:ring-[#70e5ea]/20'
+  'h-12 bg-white border-[#c7c3bb] text-[#151719] placeholder:text-[#74746d] focus-visible:border-[#c93820] focus-visible:ring-[#c93820]/20'
 
 const INITIAL_STATE: ActionResult = { success: false, error: '' }
 
@@ -40,7 +40,7 @@ export function AccountLoginForm() {
   return (
     <div className="space-y-5">
       {/* Tabs */}
-      <div className="flex rounded-xl border border-outline-variant bg-surface-container-low p-1 gap-1">
+      <div className="flex rounded-xl border border-[#d9d6d0] bg-[#eeeae3] p-1 gap-1">
         <TabButton
           active={tab === 'client'}
           onClick={() => setTab('client')}
@@ -58,7 +58,7 @@ export function AccountLoginForm() {
       {tab === 'client' ? (
         <form action={formAction} className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="email" className="block text-sm font-medium text-on-surface-variant">
+            <label htmlFor="email" className="block text-sm font-medium text-[#62625d]">
               Adres e-mail
             </label>
             <Input
@@ -72,7 +72,7 @@ export function AccountLoginForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-on-surface-variant">
+            <label htmlFor="password" className="block text-sm font-medium text-[#62625d]">
               Hasło
             </label>
             <Input
@@ -86,7 +86,7 @@ export function AccountLoginForm() {
           </div>
 
           {!state.success && state.error && (
-            <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
+            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
               {state.error}
             </p>
           )}
@@ -94,7 +94,7 @@ export function AccountLoginForm() {
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full gap-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] font-bold hover:brightness-110 hover:-translate-y-0.5 shadow-lg shadow-[#70e5ea]/20 transition-all"
+            className="w-full gap-2 h-12 bg-[#c93820] text-white font-semibold hover:bg-[#ab2f1c] transition-colors"
           >
             {isPending ? (
               <Loader2 className="size-4 animate-spin" />
@@ -106,7 +106,7 @@ export function AccountLoginForm() {
         </form>
       ) : (
         <div className="space-y-4">
-          <div className="rounded-xl border border-[#70e5ea]/20 bg-[#70e5ea]/5 px-4 py-3 text-sm text-on-surface-variant">
+          <div className="rounded-xl border border-[#c93820]/20 bg-[#c93820]/5 px-4 py-3 text-sm text-[#62625d]">
             Zostaniesz przekierowany do panelu administratora, gdzie możesz zalogować się hasłem.
           </div>
 
@@ -114,7 +114,7 @@ export function AccountLoginForm() {
             type="button"
             disabled={adminPending}
             onClick={handleAdminRedirect}
-            className="w-full gap-2 bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] font-bold hover:brightness-110 hover:-translate-y-0.5 shadow-lg shadow-[#70e5ea]/20 transition-all"
+            className="w-full gap-2 h-12 bg-[#c93820] text-white font-semibold hover:bg-[#ab2f1c] transition-colors"
           >
             {adminPending ? (
               <Loader2 className="size-4 animate-spin" />
@@ -141,18 +141,20 @@ function TabButton({
   label: string
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
-        'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all',
+        'h-11 flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all',
         active
-          ? 'bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] shadow-sm font-bold'
-          : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
+          ? 'bg-[#151719] text-white hover:bg-[#292c2e] shadow-sm font-bold'
+          : 'text-[#62625d] hover:text-[#151719] hover:bg-[#e4dfd6]'
       )}
     >
       {icon}
       {label}
-    </button>
+    </Button>
   )
 }

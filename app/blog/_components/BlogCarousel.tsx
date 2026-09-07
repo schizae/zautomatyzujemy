@@ -3,13 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ExternalLink } from 'lucide-react'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
+import { useState, useRef } from 'react'
+import { Button } from '@/components/ui/button'
 import type { PostPreview } from '@/types'
 
 function formatDate(dateStr: string): string {
@@ -18,13 +13,23 @@ function formatDate(dateStr: string): string {
     .toUpperCase()
 }
 
-export function BlogCarousel({ posts }: { posts: PostPreview[] }) {
+export function BlogGrid({ posts }: { posts: PostPreview[] }) {
+  const [page, setPage] = useState(0)
+  const totalPages = Math.ceil(posts.length / 9)
+  const currentPage = Math.min(page, Math.max(0, totalPages - 1))
+  const heading = useRef<HTMLHeadingElement>(null)
+  function changePage(next: number) {
+    setPage(next)
+    heading.current?.focus({ preventScroll: true })
+    heading.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+  }
   return (
-    <Carousel opts={{ align: 'start', loop: posts.length > 3 }} className="w-full">
-      <CarouselContent className="-ml-4">
-        {posts.map(post => (
-          <CarouselItem key={post.slug} className="pl-4 md:basis-1/2 lg:basis-1/3">
-            <Link href={`/blog/${post.slug}`} className="block h-full">
+    <section aria-label="Artykuły na blogu">
+      <h2 ref={heading} tabIndex={-1} className="mb-8 scroll-mt-8 text-2xl font-semibold outline-none">Wiedza dla Twojej firmy</h2>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {posts.slice(currentPage * 9, currentPage * 9 + 9).map(post => (
+          <div key={post.slug}>
+            <Link href={`/blog/${post.slug}`} className="block h-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820]">
               <article className="group bg-[#faf8f5] rounded-lg overflow-hidden shadow-sm border border-[#d9d6d0] hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
                 <div className="relative aspect-video overflow-hidden border-b-4 border-[#e84324] bg-[#e7e2da] shrink-0">
                   {post.cover_image ? (
@@ -74,11 +79,16 @@ export function BlogCarousel({ posts }: { posts: PostPreview[] }) {
                 </div>
               </article>
             </Link>
-          </CarouselItem>
+          </div>
         ))}
-      </CarouselContent>
-      <CarouselPrevious className="left-0 -translate-x-1/2 border-[#b4b0a9] bg-[#faf8f5] text-[#151719] shadow-md disabled:opacity-40" />
-      <CarouselNext className="right-0 translate-x-1/2 border-[#b4b0a9] bg-[#faf8f5] text-[#151719] shadow-md disabled:opacity-40" />
-    </Carousel>
+      </div>
+      {totalPages > 1 && (
+        <nav aria-label="Strony bloga" className="mt-12 flex flex-wrap items-center justify-center gap-4">
+          <Button className="h-11 bg-[#151719] text-white hover:bg-[#292c2e]" disabled={currentPage === 0} onClick={() => changePage(currentPage - 1)}>← Poprzednia</Button>
+          <p role="status" className="text-sm text-[#62625d]">Strona {currentPage + 1} z {totalPages}</p>
+          <Button className="h-11 bg-[#151719] text-white hover:bg-[#292c2e]" disabled={currentPage >= totalPages - 1} onClick={() => changePage(currentPage + 1)}>Następna →</Button>
+        </nav>
+      )}
+    </section>
   )
 }
