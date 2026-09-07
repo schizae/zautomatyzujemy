@@ -16,6 +16,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type VoiceStatus = 'idle' | 'connecting' | 'active' | 'denied' | 'error'
 
+/** Po tylu sekundach bez połączenia mówimy, że się nie udało. */
+const CONNECT_TIMEOUT_MS = 20_000
+
 type VapiInstance = {
   start: (assistantId: string) => Promise<unknown>
   stop: () => void
@@ -36,10 +39,17 @@ export function useVoiceCall(tokenEndpoint: string | undefined) {
   const startingRef = useRef(false)
   const generationRef = useRef(0)
   const vapiRef = useRef<VapiInstance | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimer = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = null
+  }, [])
 
   useEffect(() => {
     return () => {
       generationRef.current += 1
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
       // Wyjście ze strony w trakcie rozmowy nie może zostawić otwartego mikrofonu.
       vapiRef.current?.stop()
       vapiRef.current?.removeAllListeners?.()
@@ -52,6 +62,19 @@ export function useVoiceCall(tokenEndpoint: string | undefined) {
     const generation = ++generationRef.current
     setStatus('connecting')
     try {
+      // O mikrofon pytamy sami, przed tokenem. SDK połyka odmowę — nie odrzuca
+      // obietnicy i nie wysyła zdarzenia `error` — więc przycisk zostawałby na
+      // „Łączę…" bez końca. Sprawdzone w przeglądarce 2026-09-06.
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      for (const track of stream.getTracks()) track.stop()
+      if (generation !== generationRef.current) return
+
+      // Druga osłona: SDK potrafi zamilknąć także z własnych powodów.
+      clearTimer()
+      timeoutRef.current = setTimeout(() => {
+        if (generation === generationRef.current) setStatus(current => (current === 'connecting' ? 'error' : current))
+      }, CONNECT_TIMEOUT_MS)
+
       // Świeży token za każdym razem: wygasa, a serwer liczy to żądanie do
       // obu sufitów, zanim go wyda.
       const response = await fetch(tokenEndpoint, { method: 'POST' })
@@ -59,6 +82,7 @@ export function useVoiceCall(tokenEndpoint: string | undefined) {
       if (!response.ok) {
         // 429 znaczy, że limit został osiągnięty, 403 — że ta domena nie jest
         // zarejestrowana. Żadne z tego nie jest warte tłumaczenia odwiedzającemu.
+        clearTimer()
         setStatus('error')
         return
       }
@@ -70,32 +94,36 @@ export function useVoiceCall(tokenEndpoint: string | undefined) {
       // Nowa instancja na rozmowę: poprzednia trzyma wygasły token.
       vapiRef.current?.removeAllListeners?.()
       const instance = new Vapi(ticket.token) as unknown as VapiInstance
-      instance.on('call-start', () => { setStatus('active'); setActivity('listening') })
+      instance.on('call-start', () => { clearTimer(); setStatus('active'); setActivity('listening') })
       instance.on('speech-start', () => setActivity('speaking'))
       instance.on('speech-end', () => setActivity('listening'))
       instance.on('message', payload => {
         if (typeof payload === 'object' && payload !== null && 'type' in payload && payload.type === 'transcript' && 'role' in payload && payload.role === 'user' && 'transcriptType' in payload && payload.transcriptType === 'final') setActivity('thinking')
       })
-      instance.on('call-end', () => setStatus('idle'))
-      instance.on('error', payload => setStatus(statusFromError(payload)))
+      instance.on('call-end', () => { clearTimer(); setStatus('idle') })
+      instance.on('error', payload => { clearTimer(); setStatus(statusFromError(payload)) })
       vapiRef.current = instance
 
       await instance.start(ticket.assistantId)
       if (generation !== generationRef.current) instance.stop()
     } catch (error) {
-      if (generation === generationRef.current) setStatus(statusFromError(String(error)))
+      if (generation === generationRef.current) {
+        clearTimer()
+        setStatus(statusFromError(String(error)))
+      }
     } finally {
       if (generation === generationRef.current) startingRef.current = false
     }
-  }, [tokenEndpoint, status])
+  }, [tokenEndpoint, status, clearTimer])
 
   const stop = useCallback(() => {
     generationRef.current += 1
     startingRef.current = false
+    clearTimer()
     vapiRef.current?.stop()
     vapiRef.current?.removeAllListeners?.()
     setStatus('idle')
-  }, [])
+  }, [clearTimer])
 
   return { status, activity, start, stop }
 }
