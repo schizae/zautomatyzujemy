@@ -3,13 +3,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion, useInView, useReducedMotion, useTransform } from 'framer-motion'
 import { ArrowUpRight, Mic, PhoneOff, Pause, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useKlara } from '@/components/voice/klara-provider'
 import { FadeInUp } from '@/components/animations'
 import { TypewriterHeading } from './typewriter-heading'
-import { NeuralTraces } from './neural-traces'
+import { NeuralTraces, type TraceMode } from './neural-traces'
+import { usePointerMotion } from './use-pointer-motion'
+import { MotionCta } from './motion-cta'
 
 export function HeroSection({ content }: { content: Record<string, string> }) {
   const { voice, voiceAvailable, setIsOpen } = useKlara()
@@ -26,6 +28,23 @@ export function HeroSection({ content }: { content: Record<string, string> }) {
   }, [])
   const moving = visible && pageVisible && reduced === false && !paused
   const active = voice.status === 'active'
+
+  // Pointer mierzy nieruchomą kartę; paralaksa siedzi na osobnych warstwach,
+  // żeby nie walczyć o `transform` z istniejącym spokojnym ruchem ilustracji.
+  const pointer = usePointerMotion<HTMLDivElement>(moving)
+  const metalX = useTransform(pointer.x, [-1, 1], [-10, 10])
+  const metalY = useTransform(pointer.y, [-1, 1], [-10, 10])
+  const metalRotate = useTransform(pointer.x, [-1, 1], [-2, 2])
+  const tracesX = useTransform(pointer.x, [-1, 1], [4, -4])
+  const tracesY = useTransform(pointer.y, [-1, 1], [4, -4])
+
+  const traceMode: TraceMode = !moving
+    ? 'still'
+    : voice.status === 'connecting'
+      ? 'connecting'
+      : active
+        ? voice.activity === 'speaking' ? 'speaking' : voice.activity === 'thinking' ? 'thinking' : 'listening'
+        : 'idle'
   const statusText = voice.status === 'connecting' ? 'Łączę z Klarą…' : voice.status === 'denied' ? 'Zezwól na mikrofon w ustawieniach przeglądarki.' : voice.status === 'error' ? 'Nie udało się połączyć. Spróbuj ponownie lub napisz.' : active ? voice.activity === 'speaking' ? 'Klara mówi' : voice.activity === 'thinking' ? 'Klara przygotowuje odpowiedź' : 'Klara słucha' : 'Asystent AI · rozmawiaj lub napisz'
   return (
     <section ref={ref} id="klara" className="mx-auto max-w-[1680px] scroll-mt-24 px-6 py-12 md:px-8 lg:py-8">
@@ -35,22 +54,25 @@ export function HeroSection({ content }: { content: Record<string, string> }) {
           <TypewriterHeading active={visible && pageVisible && !paused} />
           <FadeInUp delay={.3}>
           <p className="my-8 max-w-xl text-xl xl:text-[28px] leading-relaxed text-[#62625d]">Strony, aplikacje i AI, które usprawniają codzienną pracę.</p>
-          <Button asChild className="h-auto whitespace-normal bg-[#c93820] rounded-md px-7 py-5 text-base xl:text-lg text-white hover:bg-[#ac301c] duration-200 motion-safe:active:scale-[.98]">
-            <Link href="/#kontakt">Sprawdź możliwości dla swojej firmy<ArrowUpRight className="ml-3 transition-transform duration-200 motion-safe:group-hover/button:translate-x-1 motion-safe:group-hover/button:-translate-y-1 motion-safe:group-focus-visible/button:translate-x-1" />
-            </Link>
-          </Button>
+          <MotionCta href="/#kontakt" className="h-auto whitespace-normal bg-[#c93820] rounded-md px-7 py-5 text-base xl:text-lg text-white hover:bg-[#ac301c]">
+            Sprawdź możliwości dla swojej firmy<ArrowUpRight className="ml-3 transition-transform duration-200 motion-safe:group-hover/button:translate-x-1 motion-safe:group-hover/button:-translate-y-1 motion-safe:group-focus-visible/button:translate-x-1" />
+          </MotionCta>
           <p className="mt-4 text-sm text-[#62625d]">Zacznij od bezpłatnej rozmowy.</p>
           </FadeInUp>
         </div>
-        <div className="relative isolate flex min-h-[560px] flex-col justify-end overflow-hidden rounded-xl bg-[#101214] p-7 text-[#f5f2ed] lg:min-h-[620px] xl:min-h-[700px] md:p-9">
+        <div ref={pointer.ref} className="relative isolate flex min-h-[560px] flex-col justify-end overflow-hidden rounded-xl bg-[#101214] p-7 text-[#f5f2ed] lg:min-h-[620px] xl:min-h-[700px] md:p-9">
           <div className="absolute inset-x-7 top-6 z-20 flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.2em] text-[#dedbd5]"><span aria-hidden="true" className="mr-3 inline-block size-2.5 rounded-full bg-[#f34c30]" />KLARA / ASYSTENT AI</span>
             <Button variant="ghost" size="icon" className="text-[#dedbd5] hover:bg-white/10 hover:text-white motion-reduce:hidden" aria-label={paused ? 'Włącz animację' : 'Zatrzymaj animację'} aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? <Play /> : <Pause />}</Button>
           </div>
-          <motion.div aria-hidden="true" className="absolute inset-0 -z-20" animate={moving ? { rotate: [0, 2, 0], scale: active && voice.activity === 'speaking' ? [1, 1.06, 1] : [1, 1.02, 1] } : { rotate: 0, scale: 1 }} transition={{ duration: !moving ? 0 : active && voice.activity === 'speaking' ? 1.2 : 8, repeat: moving ? Infinity : 0, ease: 'easeInOut' }}>
-            <Image src="/redesign/klara-metal-v2.webp" alt="" fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-contain object-center" />
+          <motion.div aria-hidden="true" className="absolute inset-0 -z-20" style={{ x: metalX, y: metalY, rotate: metalRotate }}>
+            <motion.div className="absolute inset-0" animate={moving ? { rotate: [0, 2, 0], scale: active && voice.activity === 'speaking' ? [1, 1.06, 1] : [1, 1.02, 1] } : { rotate: 0, scale: 1 }} transition={{ duration: !moving ? 0 : active && voice.activity === 'speaking' ? 1.2 : 8, repeat: moving ? Infinity : 0, ease: 'easeInOut' }}>
+              <Image src="/redesign/klara-metal-v2.webp" alt="" fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-contain object-center" />
+            </motion.div>
           </motion.div>
-          <NeuralTraces moving={moving} />
+          <motion.div aria-hidden="true" className="absolute inset-0 -z-10" style={{ x: tracesX, y: tracesY }}>
+            <NeuralTraces mode={traceMode} />
+          </motion.div>
           <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/5 to-transparent" /><h2 className="font-body text-4xl xl:text-5xl font-semibold tracking-tight">Poznaj Klarę.</h2>
           <p className="mt-3 text-base leading-relaxed text-[#dedbd5]">Opowiedz, czego potrzebuje Twoja firma.</p>
           <p role="status" className="my-3 min-h-5 text-xs text-[#ffab98]">{statusText}</p>
