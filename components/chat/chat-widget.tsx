@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, isTextUIPart } from 'ai'
 import { useRef, useEffect, useState, useTransition } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle, Mic, PhoneOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -132,6 +132,7 @@ function MarkdownMessage({ text }: { text: string }) {
 
 export function ChatWidget() {
   const { isOpen, setIsOpen, voice } = useKlara()
+  const reduced = useReducedMotion()
   const stopVoice = voice.stop
   useEffect(() => () => stopVoice(), [stopVoice])
   const [input, setInput] = useState('')
@@ -145,6 +146,23 @@ export function ChatWidget() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const launcherRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (!isOpen) return
+    const opener = document.activeElement
+    const launcher = launcherRef.current
+    const focusTimer = window.setTimeout(() => textareaRef.current?.focus({ preventScroll: true }), 0)
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); setIsOpen(false) }
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      window.clearTimeout(focusTimer)
+      document.removeEventListener('keydown', closeOnEscape)
+      const target = opener instanceof HTMLElement && opener !== document.body && opener.isConnected ? opener : launcher
+      target?.focus({ preventScroll: true })
+    }
+  }, [isOpen, setIsOpen])
   const prevAssistantCount = useRef(0)
   const prevIsLoading = useRef(false)
   const greetingTimers = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -317,10 +335,12 @@ export function ChatWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            role="dialog"
+            aria-labelledby="klara-chat-title"
+            initial={{ opacity: reduced ? 1 : 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
+            exit={{ opacity: reduced ? 1 : 0, y: 12, scale: 0.98 }}
+            transition={{ duration: reduced ? 0 : 0.22, ease: [.16, 1, .3, 1] }}
             className="w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100dvh-112px)] rounded-xl bg-[#151719] border border-[#56595c] shadow-2xl overflow-hidden flex flex-col mb-2"
           >
             {/* ── Header ──────────────────────────────────────────────────── */}
@@ -329,7 +349,7 @@ export function ChatWidget() {
                 <Mic aria-hidden="true" className="size-5 text-white" />
               </div>
               <div className="flex-1">
-                <h5 className="text-sm font-bold font-headline text-[#f5f2ed]">Klara</h5>
+                <h5 id="klara-chat-title" className="text-sm font-bold font-headline text-[#f5f2ed]">Klara</h5>
                 <p className="text-[10px] text-[#ffb49f] uppercase font-label tracking-widest">
                   Asystent AI &middot; odpowiedzi automatyczne
                 </p>
@@ -600,6 +620,7 @@ export function ChatWidget() {
         </AnimatePresence>
 
         <motion.button
+          ref={launcherRef}
           onClick={() => setIsOpen(prev => !prev)}
           whileHover={{ scale: 1.07 }}
           whileTap={{ scale: 0.9 }}

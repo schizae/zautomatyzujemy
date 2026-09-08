@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FadeInUp } from '@/components/animations'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -57,7 +58,7 @@ export async function BlogPreview() {
         >
           Wszystkie artykuły <ArrowUpRight
             size={20}
-            className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+            className="motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5 transition-transform"
           />
         </Link>
       </div>
@@ -65,8 +66,8 @@ export async function BlogPreview() {
       {posts.length === 0 && <p className="mb-8 text-[#62625d]">Artykuły o praktycznym wykorzystaniu AI znajdziesz na naszym blogu.</p>}
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <div key={post.slug} className="group">
+        {posts.map((post, index) => (
+          <FadeInUp key={post.slug} delay={index * .1} className="group">
             <Link href={post.slug.startsWith('#') ? '#blog' : `/blog/${post.slug}`}>
               <div className="mb-6">
                 {/* Image */}
@@ -97,7 +98,7 @@ export async function BlogPreview() {
                 </h4>
               </div>
             </Link>
-          </div>
+          </FadeInUp>
         ))}
       </div>
     </section>
