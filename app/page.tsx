@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ChatWidget } from '@/components/chat/chat-widget'
 import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
+import { SmoothScroll } from '@/components/marketing/smooth-scroll'
 import { ServicesSection } from '@/components/marketing/services-section'
 import { AboutSection } from '@/components/marketing/about-section'
 import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
@@ -148,6 +149,7 @@ export default async function HomePage() {
         />
       )}
       <Navbar />
+      <SmoothScroll />
       <main id="main" className="marketing-theme bg-[#f5f2ed] text-[#151719] [color-scheme:light]">
         <HeroSection content={heroContent} />
         <ServicesSection />

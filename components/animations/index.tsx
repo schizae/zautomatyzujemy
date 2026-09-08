@@ -5,7 +5,7 @@ import { useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 // Start only after hydration: SSR and a failed script still leave readable content.
-function useEntrance<T extends HTMLElement>(delay: number, duration: number, line = false) {
+function useEntrance<T extends HTMLElement>(delay: number, duration: number) {
   const ref = useRef<T>(null)
   const entered = useRef(false)
   const isInView = useInView(ref, { once: true, margin: '0px 0px -40px 0px' })
@@ -15,27 +15,20 @@ function useEntrance<T extends HTMLElement>(delay: number, duration: number, lin
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
     if (preference.matches) return
     const animation = element.animate(
-      line
-        ? [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }]
-        : [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }],
-      { duration: duration * 1000, delay: Math.min(delay, .35) * 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' }
+      [{ opacity: 0, transform: 'translateY(40px)' }, { opacity: 1, transform: 'translateY(0)' }],
+      { duration: duration * 1000, delay: Math.min(delay, .35) * 1000, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' }
     )
     animation.onfinish = () => { entered.current = true }
     const stop = () => { if (preference.matches) { entered.current = true; animation.cancel() } }
     preference.addEventListener('change', stop)
     return () => { animation.cancel(); preference.removeEventListener('change', stop) }
-  }, [isInView, delay, duration, line])
+  }, [isInView, delay, duration])
   return ref
 }
 
 export function RevealText({ children, className, delay = 0 }: FadeInUpProps) {
-  const ref = useEntrance<HTMLSpanElement>(delay, .7)
+  const ref = useEntrance<HTMLSpanElement>(delay, 1.1)
   return <span ref={ref} className={cn('inline-block', className)}>{children}</span>
-}
-
-export function DrawLine() {
-  const ref = useEntrance<HTMLSpanElement>(.35, .7, true)
-  return <span ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-1 h-0.5 origin-left bg-[#f34c30]" />
 }
 
 // ─── Fade In Up — universal scroll-reveal wrapper ────────────────────────────
@@ -51,7 +44,7 @@ export function FadeInUp({
   children,
   className,
   delay = 0,
-  duration = 0.6,
+  duration = 1.15,
 }: FadeInUpProps) {
   const ref = useEntrance<HTMLDivElement>(delay, duration)
 

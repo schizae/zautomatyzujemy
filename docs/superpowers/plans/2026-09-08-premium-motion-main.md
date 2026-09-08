@@ -6,11 +6,13 @@ Przeczytano docs/animacje-main-handoff.md; schowka starego projektu nie aplikuje
 
 ## Kierunek
 
-Główny moment: frazy nagłówka pojawiają się w krótkiej sekwencji, zakończonej
-rysowaniem czerwonej linii. W rozwiązaniach ruch pokazuje zależność między
+Główny moment: nagłówek jest wpisywany litera po literze przez około 2,5 sekundy,
+z migającym czerwonym kursorem i rysowaniem linii po zakończeniu. W rozwiązaniach ruch pokazuje zależność między
 wiadomością, uporządkowanymi polami zgłoszenia i gotowym szkicem odpowiedzi.
 Pozostałe wejścia są jednorazowe, krótkie; przyciski reagują strzałką i naciskiem.
-Bez przejmowania scrolla, nowych zależności i zmian integracji.
+Na wyraźną prośbę właściciela z drugiej iteracji: łagodne wyhamowywanie scrolla
+kółkiem na urządzeniach z precyzyjnym wskaźnikiem i płynne przejścia do sekcji.
+Dotyk, formularze, czat i przewijalne kontenery pozostają natywne. Bez nowych zależności.
 
 ## Wykonanie
 
@@ -29,9 +31,10 @@ Bez przejmowania scrolla, nowych zależności i zmian integracji.
 - [x] Przegląd 1440×1000, 768×1024, 375×812: brak poziomego overflow,
   CTA, usługi, menu, czat bez wysyłania danych, reduced motion i wyłączony JS.
 
-Budżet: wejścia 500–700 ms, odstępy 80–120 ms (łącznie poniżej 350 ms),
-reakcje 150–250 ms. Pętla wyłącznie na istniejącej grafice Klary, z pauzą,
-zatrzymaniem poza widokiem i w ukrytej karcie. Animacje transform/opacity.
+Budżet drugiej iteracji: wejścia 1100–1300 ms, maszynopis około 2500 ms,
+demonstracja procesu 4800 ms z ręcznym powtórzeniem. Przy Klarze animowane ścieżki
+sygnałów SVG i migający kursor, zatrzymywane istniejącą pauzą, poza widokiem
+i w ukrytej karcie. Preferencja reduced motion pokazuje kompletną, statyczną treść.
 
 ## Wynik weryfikacji
 
@@ -45,3 +48,14 @@ zatrzymaniem poza widokiem i w ukrytej karcie. Animacje transform/opacity.
 - Istniejące ostrzeżenia builda dotyczą konfiguracji Sentry, wykrywania pluginu ESLint i wieku bazy Browserslist.
 
 Podgląd: http://localhost:3000. Scenariusz przeglądarkowy i zrzuty są lokalnie w .playwright-cli (katalog ignorowany przez Git).
+
+## Druga iteracja — więcej ruchu i charakter programistyczny
+
+- TypewriterHeading: stałe wymiary nagłówka, znaki odsłaniane co 85 ms, kursor i finalne podkreślenie.
+- NeuralTraces: sygnały poruszające się po ścieżkach przy metalowej formie Klary; wspólna pauza i ograniczenie ruchu.
+- AutomationFlow: wpisywana wiadomość, skan, przekazanie sygnału, wypełnianie pól i gotowy szkic; sekwencja jednorazowa z przyciskiem powtórzenia.
+- Usunięto service-ribbon.webp z karty: prostokątne tło zapisane w obrazie powodowało zgłoszony glitch.
+- SmoothScroll: wygaszenie kółka, animowane kotwice, respektowanie skrótów, touch i wewnętrznych obszarów scrolla; przerwanie klawiaturą, dotykiem i pointerdown.
+- Linki obsługiwane w fazie capture przed Next Link; fokus sekcji utrzymuje tabindex do blur. Pozycja kotwicy aktualizuje się podczas zamykania menu.
+
+Weryfikacja drugiej iteracji: Playwright potwierdził postęp i zakończenie maszynopisu bez zmiany wymiarów nagłówka, wyhamowanie kółka do dokładnego celu, zakończenie i replay procesu, brak grafiki z prostokątem, fokus kotwicy, brak overflow przy 768 i 375 px oraz kompletną statyczną treść przy reduced motion. Osobno sprawdzono menu mobilne (docelowy odstęp 79,7 px przy założeniu 80 px), nieprzechwytywanie kółka w czacie i natywne zachowanie na emulowanym urządzeniu dotykowym. TypeScript i ESLint bez błędów.
