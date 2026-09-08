@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ContactForm } from './contact-form'
 import { Button } from '@/components/ui/button'
+import { FadeInUp, RevealText } from '@/components/animations'
 export function ContactSection() {
   const formRef = useRef<HTMLDetailsElement>(null)
   function openForm() {
@@ -16,10 +17,10 @@ export function ContactSection() {
     <div className="absolute inset-0 -z-10 bg-black/30" />
     <div className="mx-auto grid max-w-[1616px] items-start gap-10 lg:grid-cols-[1.2fr_1fr]">
       <div>
-        <h2 className="font-body text-5xl font-semibold leading-[1.04] tracking-[-0.055em] xl:text-[88px]">Zróbmy miejsce<br />na <span className="font-editorial font-normal italic tracking-[-0.065em] text-[#f34c30]">rozwój.</span></h2>
+        <h2 className="font-body text-5xl font-semibold leading-[1.04] tracking-[-0.055em] xl:text-[88px]"><RevealText>Zróbmy miejsce</RevealText><br />na <RevealText delay={.2} className="font-editorial font-normal italic tracking-[-0.065em] text-[#f34c30]">rozwój.</RevealText></h2>
         <p className="mt-8 text-xs uppercase leading-loose tracking-[0.25em] text-[#dedbd5]">Sztuczna inteligencja.<br />Realne możliwości.</p>
       </div>
-      <div className="lg:pt-5">
+      <FadeInUp delay={.2} duration={1.3} className="lg:pt-5">
         <p className="mb-6 text-xl leading-relaxed xl:text-2xl">Opowiedz o swojej firmie.<br />Wybierzemy pierwszy krok.</p>
         <div className="flex flex-wrap gap-3">
           <Button onClick={openForm} className="min-h-14 h-auto whitespace-normal rounded-md bg-[#c93820] px-6 py-4 text-base text-white hover:bg-[#a82e19]">Umów bezpłatną konsultację ↗</Button>
@@ -33,7 +34,7 @@ export function ContactSection() {
           <a href="mailto:n.chojnacki1993@gmail.com" className="underline underline-offset-4">Napisz e-mail</a>
           <a href="tel:+48730094465" className="hover:underline">+48 730 094 465</a>
         </div>
-      </div>
+      </FadeInUp>
     </div>
   </section>
 }

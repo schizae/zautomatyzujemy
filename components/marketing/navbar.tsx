@@ -4,6 +4,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Menu, X, Settings, CircleUser } from 'lucide-react'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { cn } from '@/lib/utils'
@@ -18,6 +19,7 @@ const navLinks = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const reduced = useReducedMotion()
   const { isLoggedIn, isLoading, user } = useAuth()
 
   return (
@@ -33,7 +35,7 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-[#51534e] hover:text-[#c93820] transition-colors text-sm"
+              className="relative text-[#51534e] hover:text-[#c93820] transition-colors text-sm after:absolute after:inset-x-0 after:-bottom-1.5 after:h-px after:origin-left after:scale-x-0 after:bg-[#c93820] after:transition-transform after:duration-200 hover:after:scale-x-100 focus-visible:after:scale-x-100 motion-reduce:after:transition-none"
             >
               {link.label}
             </Link>
@@ -104,8 +106,9 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu */}
+      <AnimatePresence initial={false}>
       {isOpen && (
-        <div id="mobile-menu" className="lg:hidden border-t border-[#c7c3bb] bg-[#f5f2ed] px-6 py-4 space-y-3">
+        <motion.div id="mobile-menu" initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : .18, ease: 'easeOut' }} inert={!isOpen} className="lg:hidden border-t border-[#c7c3bb] bg-[#f5f2ed] px-6 py-4 space-y-3">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -159,8 +162,9 @@ export function Navbar() {
               Porozmawiajmy
             </Link>
           )}
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </nav>
   )
 }
