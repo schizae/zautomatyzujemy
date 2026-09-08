@@ -5,6 +5,14 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { AnimatedValue } from './animated-value'
+import { RoiTimeVisual } from './roi-time-visual'
+import { InteractiveSurface } from './interactive-surface'
+
+// Zapis liczb bez zmian względem poprzedniej wersji: 66 → „66", 46,2 → „46,2",
+// 3960 → „3 960". Kwoty i godziny są zaokrąglane raz, przy prezentacji.
+const asHours = (value: number): string => value.toLocaleString('pl-PL', { maximumFractionDigits: 1 })
+const asMoney = (value: number): string => value.toLocaleString('pl-PL', { maximumFractionDigits: 0 })
 
 type FrequencyUnit = 'per_day' | 'per_week' | 'per_month'
 
@@ -132,18 +140,22 @@ export function RoiCalculator() {
           <SliderInput label="Liczba osób" value={people} min={1} max={30} step={1} onChange={setPeople} displayValue={formatPeople(people)} minLabel="1 osoba" maxLabel="30 osób" />
         </div>
         <div className="my-6 grid gap-6 border-t border-[#c7c3bb] pt-6 sm:grid-cols-2">
-          <div><p className="font-editorial text-4xl xl:text-5xl tracking-[-0.055em]">{results.hoursPerMonth} h <span className="text-2xl">/ miesiąc</span></p><p className="mt-2 text-sm text-[#62625d]">Czas pracy</p></div>
-          <div><p className="font-editorial text-4xl xl:text-5xl tracking-[-0.055em]">{results.costPerMonth.toLocaleString('pl-PL')} zł</p><p className="mt-2 text-sm text-[#62625d]">Koszt pracy / miesiąc</p></div>
+          <div><p className="font-editorial text-4xl xl:text-5xl tracking-[-0.055em]"><AnimatedValue value={results.hoursPerMonth} format={asHours} label="Czas pracy miesięcznie w godzinach" className="tabular-nums" /> h <span className="text-2xl">/ miesiąc</span></p><p className="mt-2 text-sm text-[#62625d]">Czas pracy</p></div>
+          <div><p className="font-editorial text-4xl xl:text-5xl tracking-[-0.055em]"><AnimatedValue value={results.costPerMonth} format={asMoney} label="Koszt pracy miesięcznie w złotych" className="tabular-nums" /> zł</p><p className="mt-2 text-sm text-[#62625d]">Koszt pracy / miesiąc</p></div>
         </div>
-        <div className="rounded-lg bg-[#101214] p-5 text-[#f5f2ed] xl:p-7" aria-live="polite" aria-atomic="true">
+        <InteractiveSurface tone="onDark" className="rounded-lg bg-[#101214] p-5 text-[#f5f2ed] xl:p-7">
+          {/* Region na żywo bez `aria-atomic`: każda wartość niesie własną etykietę,
+              więc czytnik czyta tylko to, co się zmieniło, i dopiero po ustaniu ruchu suwaka. */}
+          <div aria-live="polite">
           <p className="text-sm text-[#d6d3cd]">Szacowana wartość odzyskanego czasu</p>
           <div className="my-4 flex flex-wrap items-end justify-between gap-5">
-            <p className="font-editorial text-5xl tracking-[-0.055em] xl:text-6xl">{results.savingsPerMonth.toLocaleString('pl-PL')} zł <span className="text-xl tracking-tight">/ miesiąc</span></p>
+            <p className="font-editorial text-5xl tracking-[-0.055em] xl:text-6xl"><AnimatedValue value={results.savingsPerMonth} format={asMoney} label="Szacowana wartość odzyskanego czasu miesięcznie w złotych" className="tabular-nums" /> zł <span className="text-xl tracking-tight">/ miesiąc</span></p>
             <Button asChild className="h-auto whitespace-normal rounded-md bg-[#c93820] px-5 py-4 text-white hover:bg-[#a82e19]"><Link href="/#kontakt">Omówmy ten proces ↗</Link></Button>
           </div>
-          <div className="mb-4 h-1 w-36 rounded-full bg-[#f34c30]" />
-          <p className="text-xs leading-relaxed text-[#d6d3cd]">{results.annualSavings.toLocaleString('pl-PL')} zł / rok · założenie: 70% redukcji czasu.</p>
-        </div>
+          <RoiTimeVisual totalHours={results.hoursPerMonth} />
+          <p className="text-xs leading-relaxed text-[#d6d3cd]"><AnimatedValue value={results.annualSavings} format={asMoney} label="Szacowana wartość odzyskanego czasu rocznie w złotych" className="tabular-nums" /> zł / rok · założenie: 70% redukcji czasu.</p>
+          </div>
+        </InteractiveSurface>
         <p className="mt-4 text-xs leading-relaxed text-[#62625d]">Wynik orientacyjny. 22 dni robocze lub 4,33 tygodnia w miesiącu. Nie uwzględnia kosztów wdrożenia, utrzymania i nadzoru; nie stanowi gwarancji oszczędności finansowych.</p>
       </div>
     </section>

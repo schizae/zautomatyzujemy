@@ -8,15 +8,28 @@ import { Button } from '@/components/ui/button'
 const message = 'Proszę o ofertę montażu klimatyzacji.'
 const fields = [['Temat', 'Montaż klimatyzacji'], ['Źródło', 'E-mail'], ['Status', 'Nowe']]
 
-export function AutomationFlow() {
+/** Moment na osi czasu odpowiadający każdemu węzłowi mapy usługi. */
+const STAGE_TIME = [1200, 2000, 3600, 4800]
+
+interface AutomationFlowProps {
+  /** Wybrany etap z mapy; `null` oznacza automatyczne odtwarzanie. */
+  stage?: number | null
+  /** Wywoływane przez „Powtórz animację" — parent zdejmuje wybór etapu. */
+  onReplay?: () => void
+}
+
+export function AutomationFlow({ stage = null, onReplay }: AutomationFlowProps) {
   const ref = useRef<HTMLDivElement>(null)
   const startedAt = useRef<number | null>(null)
   const visible = useInView(ref, { amount: .25 })
   const reduced = useReducedMotion()
   const [elapsed, setElapsed] = useState<number | null>(null)
   const [replay, setReplay] = useState(0)
+  const controlled = stage !== null && stage !== undefined
   useEffect(() => {
-    if (!visible || reduced !== false) return
+    // Wybór etapu z mapy zatrzymuje pętlę — inaczej dwa źródła prawdy walczyłyby
+    // o ten sam kadr sceny.
+    if (controlled || !visible || reduced !== false) return
     startedAt.current ??= performance.now()
     let frame = 0
     const tick = (now: number) => {
@@ -28,8 +41,8 @@ export function AutomationFlow() {
     resume()
     document.addEventListener('visibilitychange', resume)
     return () => { cancelAnimationFrame(frame); document.removeEventListener('visibilitychange', resume) }
-  }, [visible, reduced, replay])
-  const time = reduced || elapsed === null ? 4800 : elapsed
+  }, [controlled, visible, reduced, replay])
+  const time = controlled ? STAGE_TIME[stage] ?? 4800 : reduced || elapsed === null ? 4800 : elapsed
   const scanning = time >= 1500 && time < 2600
   const complete = time >= 4200
   return <div ref={ref}>
@@ -59,7 +72,7 @@ export function AutomationFlow() {
     </div>
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-[#62625d]">
       <div aria-hidden="true" className="flex gap-3 font-mono"><span className={time < 2400 ? 'text-[#c93820]' : ''}>01 / odczyt</span><span className={time >= 2400 && !complete ? 'text-[#c93820]' : ''}>02 / struktura</span><span className={complete ? 'text-[#c93820]' : ''}>03 / gotowe</span></div>
-      <Button variant="ghost" disabled={!complete} onClick={() => { startedAt.current = null; setElapsed(0); setReplay(previous => previous + 1) }} className="h-auto gap-2 p-1 text-xs text-[#62625d] hover:bg-black/5 hover:text-[#c93820] motion-reduce:hidden"><RotateCcw className="size-3" />Powtórz animację</Button>
+      <Button variant="ghost" disabled={!controlled && !complete} onClick={() => { startedAt.current = null; setElapsed(0); setReplay(previous => previous + 1); onReplay?.() }} className="h-auto gap-2 p-1 text-xs text-[#62625d] hover:bg-black/5 hover:text-[#c93820] motion-reduce:hidden"><RotateCcw className="size-3" />Powtórz animację</Button>
     </div>
   </div>
 }
