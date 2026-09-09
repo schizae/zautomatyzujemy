@@ -39,3 +39,17 @@ Nie dodawaj nowego narzędzia analityki. Sprawdź istniejący Vercel Analytics i
 Nie wykonano prawdziwego wysłania leada ani płatnego połączenia. Lokalna konfiguracja nie udostępnia głosu. Zgodność `send(add-message)` z zainstalowanym SDK i cykl sesji są przetestowane; przyjęcie kontekstu przez rzeczywistego asystenta GŁOS wymaga kontrolowanego testu integracyjnego. Nie deklarujemy jeszcze potwierdzenia całej ścieżki głosowej end-to-end.
 
 Implementacja pozostaje na `codex/contact-scenes`, w `.worktrees/contact-scenes`. Podgląd: `http://localhost:3001/#uslugi`. Nie opublikowano na produkcji.
+
+## Korekta kierunku po ocenie właściciela
+
+Właściciel odrzucił wysuwane karty i czerwone łączniki oraz brak wyraźnej różnicy między działaniem systemu i rezultatem. Zastąpiono je dziewięcioma pełnymi kompozycjami:
+
+- Strona: brief pracowni → projekt z autorską fotografią architektury → konkretne zapytanie o współpracę.
+- Obsługa: wiadomość klienta → wydobycie intencji, obiektu i terminu → zgłoszenie ze szkicem odpowiedzi do sprawdzenia.
+- Automatyzacja: trzy dokumenty → zestawienie odczytanych danych → lista przygotowanych działań.
+
+Każda historia ma 12 sekund, trzy wybieralne etapy oraz subtelne przejście ostrości i przenikanie. Odczytywane pola ujawniają się kolejno. Wszystkie efekty należą do jednej osi czasu, więc pauza zatrzymuje również detale. Reduced motion udostępnia ręcznie wybierane, statyczne kadry.
+
+Nowe pliki: `website-scenes.tsx`, `process-scenes.tsx`; zdjęcie `public/redesign/scenario-architecture.webp` wygenerowane dla fikcyjnej demonstracji (nie jest realizacją klienta). Zachowano wszystkie ścieżki kontaktu.
+
+Weryfikacja: `scenario-frames-browser.js.txt` potwierdza dopasowanie wszystkich 9 kadrów na 1440 i 375 px; `scenario-story-browser.js.txt` rozróżnialność projektu i zapytania; `scenario-motion-browser.js.txt` sterowanie, offscreen pause i zachowanie kontaktu. TypeScript i ESLint przechodzą. Istniejące ostrzeżenia hydracji dotyczą stylów ROI/kontaktu, poza przebudowanymi scenami.

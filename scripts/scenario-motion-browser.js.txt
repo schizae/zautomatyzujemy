@@ -15,7 +15,7 @@ async page => {
   await page.waitForTimeout(250)
   assert((await times())[0] > before[0], 'Resume must advance timeline')
   await page.getByRole('button', {name:'Pokaż rezultat',exact:true}).click()
-  assert((await times()).every(time => time === 7000), 'Skip must finish all scene layers')
+  assert((await times()).every(time => time === 12000), 'Skip must finish all scene layers')
   await page.getByRole('button', {name:'Powtórz pokaz',exact:true}).click()
   assert((await times()).every(time => time < 1500), 'Replay must reset all layers')
   await page.evaluate(() => scrollTo(0,0))

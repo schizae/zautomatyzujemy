@@ -1,0 +1,21 @@
+async page => {
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await page.goto('http://localhost:3001')
+  const findings=[]
+  const cases=[['Chcę więcej zapytań',['01 Pomysł','02 Projekt','03 Zapytanie']],['Chcę sprawniej obsługiwać klientów',['01 Wiadomość','02 Zrozumienie','03 Odpowiedź']],['Chcę odzyskać czas zespołu',['01 Dokumenty','02 Porządkowanie','03 Działanie']]]
+  for(const width of [1440,375]) {
+    await page.setViewportSize({width,height:1000})
+    for(let scenario=0;scenario<3;scenario++) {
+      await page.getByRole('button',{name:new RegExp(cases[scenario][0])}).click()
+      for(let stage=0;stage<3;stage++) {
+        await page.getByRole('button',{name:cases[scenario][1][stage],exact:true}).click()
+        await page.waitForFunction(s=>document.querySelector('[data-testid=scene-stage]')?.getAttribute('data-stage')===String(s),stage)
+        const frame=page.getByTestId('scene-stage')
+        await frame.screenshot({path:`.playwright-cli/story-${width}-${scenario}-${stage}.png`})
+        const overflow=await frame.evaluate(e=>{const rect=e.getBoundingClientRect();const act=e.querySelector('[aria-hidden=false]');return [...act.querySelectorAll('p,h4,td,dd')].filter(child=>{const r=child.getBoundingClientRect();return r.bottom>rect.bottom-4||r.right>rect.right-4}).map(child=>child.textContent)})
+        if(overflow.length) findings.push({width,scenario,stage,overflow})
+      }
+    }
+  }
+  return findings.length?findings:'PASS: all nine acts fit desktop and mobile'
+}
