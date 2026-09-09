@@ -67,6 +67,8 @@ const PostSchema = z.object({
   tags: z.string().optional(), // comma-separated, parsed below
   cover_image: z.string().url('Podaj poprawny URL obrazu.').optional().or(z.literal('')),
   is_published: z.boolean().optional(),
+  ai_generated: z.boolean(),
+  ai_model: z.string().max(100).optional(),
 })
 
 function parseTags(raw: string | undefined): string[] {
@@ -87,7 +89,18 @@ function parsePostFormData(formData: FormData) {
     tags: formData.get('tags') || undefined,
     cover_image: formData.get('cover_image') || undefined,
     is_published: formData.get('is_published') === 'true',
+    ai_generated: formData.get('ai_generated') === 'true',
+    ai_model: formData.get('ai_model') || undefined,
   })
+}
+
+/**
+ * Zapis wpisu z panelu jest decyzją człowieka: jeśli treść powstała maszynowo
+ * i redaktor publikuje ją świadomie, to właśnie jest kontrola redakcyjna.
+ * Szkic zostaje bez daty — nie ma czego poświadczać.
+ */
+function resolveReviewedAt(aiGenerated: boolean, isPublished: boolean, now: string): string | null {
+  return aiGenerated && isPublished ? now : null
 }
 
 // ─── Blog — CRUD ──────────────────────────────────────────────────────────────
@@ -102,14 +115,17 @@ export async function createPostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ...rest } = parsed.data
+  const { tags, cover_image, ai_model, ...rest } = parsed.data
   const supabase = createServiceClient()
+  const now = new Date().toISOString()
 
   const { error } = await supabase.from('posts').insert({
     ...rest,
     tags: parseTags(tags),
     cover_image: cover_image || null,
-    published_at: rest.is_published ? new Date().toISOString() : null,
+    ai_model: ai_model || null,
+    published_at: rest.is_published ? now : null,
+    reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
   })
 
   if (error) {
@@ -132,8 +148,9 @@ export async function updatePostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ...rest } = parsed.data
+  const { tags, cover_image, ai_model, ...rest } = parsed.data
   const supabase = createServiceClient()
+  const now = new Date().toISOString()
 
   const { error } = await supabase
     .from('posts')
@@ -141,7 +158,9 @@ export async function updatePostAction(
       ...rest,
       tags: parseTags(tags),
       cover_image: cover_image || null,
-      published_at: rest.is_published ? new Date().toISOString() : null,
+      ai_model: ai_model || null,
+      published_at: rest.is_published ? now : null,
+      reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
     })
     .eq('id', id)
 
@@ -226,6 +245,9 @@ const GeneratedPostSchema = z.object({
   tags: z.array(z.string()),
 })
 
+/** Model redaktora AI w panelu — ta sama wartość ląduje w kolumnie `ai_model`. */
+const EDITOR_MODEL = 'gemini-2.5-flash'
+
 /** Pola, które generator wypełnia w formularzu — celowo nie cały `Post`. */
 interface GeneratedPostDraft {
   title: string
@@ -234,6 +256,8 @@ interface GeneratedPostDraft {
   content: string
   tags: string[]
   author: string
+  /** Formularz zapisuje to w `ai_model`, zamiast powtarzać nazwę modelu u siebie. */
+  model: string
 }
 
 export async function generatePostAction(
@@ -246,7 +270,7 @@ export async function generatePostAction(
 
   try {
     const { object } = await generateObject({
-      model: google('gemini-2.5-flash'),
+      model: google(EDITOR_MODEL),
       schema: GeneratedPostSchema,
       prompt: `Napisz artykuł blogowy po polsku dla Zautomatyzujemy.pl (automatyzacja procesów z AI i n8n).
 
@@ -271,6 +295,7 @@ Styl: profesjonalny, praktyczny, przydatny dla właścicieli firm MŚP.`,
         content: object.content,
         tags: object.tags,
         author: 'Zautomatyzujemy',
+        model: EDITOR_MODEL,
       },
     }
   } catch (err) {
