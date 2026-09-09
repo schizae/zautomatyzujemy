@@ -131,11 +131,13 @@ function MarkdownMessage({ text }: { text: string }) {
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
 export function ChatWidget() {
-  const { isOpen, setIsOpen, voice } = useKlara()
+  const { isOpen, setIsOpen, voice, pendingDraft, clearPendingDraft } = useKlara()
   const reduced = useReducedMotion()
   const stopVoice = voice.stop
   useEffect(() => () => stopVoice(), [stopVoice])
   const [input, setInput] = useState('')
+  const [draftPreview, setDraftPreview] = useState<string | null>(null)
+  const consumedDraftId = useRef<number | null>(null)
   const [greetingStep, setGreetingStep] = useState<'hidden' | 'typing' | 'shown'>(() => {
     if (typeof window === 'undefined') return 'hidden'
     return localStorage.getItem(LS_GREETING) === 'true' ? 'shown' : 'hidden'
@@ -185,6 +187,18 @@ export function ChatWidget() {
   })
 
   const isLoading = status === 'streaming' || status === 'submitted'
+
+  useEffect(() => {
+    if (!isOpen || isLoading || !pendingDraft || consumedDraftId.current === pendingDraft.id) return
+    consumedDraftId.current = pendingDraft.id
+    if (input.trim() && input !== pendingDraft.text) {
+      setDraftPreview(pendingDraft.text)
+    } else {
+      setInput(pendingDraft.text)
+      setDraftPreview(null)
+    }
+    clearPendingDraft()
+  }, [isOpen, isLoading, pendingDraft, input, clearPendingDraft])
 
   // Obsługa błędów — status 'error' z SDK lub error z onError
   useEffect(() => {
@@ -368,7 +382,7 @@ export function ChatWidget() {
               <div className="border-b border-[#8b8d8f]/20 bg-[#151719]/40 px-6 py-4">
                 <Button variant="ghost"
                   type="button"
-                  onClick={voice.status === 'active' ? voice.stop : voice.start}
+                  onClick={voice.status === 'active' ? voice.stop : () => void voice.start()}
                   disabled={voice.status === 'connecting'}
                   aria-label={
                     voice.status === 'active'
@@ -571,6 +585,21 @@ export function ChatWidget() {
 
             {/* ── Input ───────────────────────────────────────────────────── */}
             <div className="shrink-0 p-4 bg-[#101214] border-t border-[#8b8d8f]/10">
+              {draftPreview !== null && (
+                <div className="mb-3 rounded-lg border border-[#ffb49f]/30 bg-[#ffb49f]/5 p-3 text-sm text-[#dedbd5]" role="status">
+                  <p className="font-semibold">Masz już niewysłaną wiadomość.</p>
+                  <p className="mt-1">Opis przekazany z sekcji usług:</p>
+                  <p className="mt-2 max-h-24 overflow-y-auto whitespace-pre-wrap break-words">{draftPreview}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button variant="ghost" type="button" disabled={isLoading} onClick={() => {
+                      setInput(draftPreview)
+                      setDraftPreview(null)
+                      textareaRef.current?.focus()
+                    }} className="text-[#ffb49f]">Zastąp obecny szkic</Button>
+                    <Button variant="ghost" type="button" onClick={() => setDraftPreview(null)}>Zachowaj obecny szkic</Button>
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="relative">
                 <Textarea
                   ref={textareaRef}

@@ -54,7 +54,7 @@ export function HeroSection({ content }: { content: Record<string, string> }) {
           <TypewriterHeading active={visible && pageVisible && !paused} />
           <FadeInUp delay={.3}>
           <p className="my-8 max-w-xl text-xl xl:text-[28px] leading-relaxed text-[#62625d]">Strony, aplikacje i AI, które usprawniają codzienną pracę.</p>
-          <MotionCta href="/#kontakt" className="h-auto whitespace-normal bg-[#c93820] rounded-md px-7 py-5 text-base xl:text-lg text-white hover:bg-[#ac301c]">
+          <MotionCta href="/#kontakt" className="h-auto max-w-full whitespace-normal bg-[#c93820] rounded-md px-7 py-5 text-base xl:text-lg text-white hover:bg-[#ac301c]">
             Sprawdź możliwości dla swojej firmy<ArrowUpRight className="ml-3 transition-transform duration-200 motion-safe:group-hover/button:translate-x-1 motion-safe:group-hover/button:-translate-y-1 motion-safe:group-focus-visible/button:translate-x-1" />
           </MotionCta>
           <p className="mt-4 text-sm text-[#62625d]">Zacznij od bezpłatnej rozmowy.</p>
@@ -77,7 +77,7 @@ export function HeroSection({ content }: { content: Record<string, string> }) {
           <p className="mt-3 text-base leading-relaxed text-[#dedbd5]">Opowiedz, czego potrzebuje Twoja firma.</p>
           <p role="status" className="my-3 min-h-5 text-xs text-[#ffab98]">{statusText}</p>
           <div className="flex flex-col items-start gap-4">
-            <Button disabled={!voiceAvailable || voice.status === 'connecting'} onClick={active ? voice.stop : voice.start} className="max-w-full min-h-14 h-auto whitespace-normal gap-3 rounded-md bg-[#c93820] px-6 py-4 text-base text-white hover:bg-[#a82e19] disabled:opacity-70">{active ? <PhoneOff /> : <Mic />}{!voiceAvailable ? 'Rozmowa głosowa niedostępna' : active ? 'Zakończ rozmowę' : voice.status === 'connecting' ? 'Łączę…' : 'Rozpocznij rozmowę'}</Button>
+            <Button disabled={!voiceAvailable || voice.status === 'connecting'} onClick={active ? voice.stop : () => void voice.start()} className="max-w-full min-h-14 h-auto whitespace-normal gap-3 rounded-md bg-[#c93820] px-6 py-4 text-base text-white hover:bg-[#a82e19] disabled:opacity-70">{active ? <PhoneOff /> : <Mic />}{!voiceAvailable ? 'Rozmowa głosowa niedostępna' : active ? 'Zakończ rozmowę' : voice.status === 'connecting' ? 'Łączę…' : 'Rozpocznij rozmowę'}</Button>
             <Button onClick={() => setIsOpen(true)} className="h-auto rounded-none border-0 border-b border-white/60 bg-transparent p-0 pb-1 text-base text-white hover:bg-white/10">Wolę napisać <ArrowUpRight className="ml-2" /></Button>
           </div>
         </div>

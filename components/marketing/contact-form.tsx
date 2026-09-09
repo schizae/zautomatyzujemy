@@ -21,12 +21,23 @@ const GOAL_OPTIONS = [
   { value: 'custom', label: 'Strona internetowa lub aplikacja' },
 ]
 
-export function ContactForm() {
+interface ContactFormProps {
+  message?: string
+  onMessageChange?: (message: string) => void
+  idPrefix?: string
+}
+
+export function ContactForm({ message: controlledMessage, onMessageChange, idPrefix = 'contact' }: ContactFormProps = {}) {
   const [state, formAction, isPending] = useActionState(submitContactAction, initialState)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [goal, setGoal] = useState(GOAL_OPTIONS[0]!.value)
-  const [message, setMessage] = useState('')
+  const [localMessage, setLocalMessage] = useState('')
+  const message = controlledMessage ?? localMessage
+  const setMessage = (nextMessage: string) => {
+    if (controlledMessage === undefined) setLocalMessage(nextMessage)
+    onMessageChange?.(nextMessage)
+  }
   const [gdprConsent, setGdprConsent] = useState(false)
 
   const isSuccess = state.success && 'data' in state && state.data === 'sent'
@@ -37,7 +48,7 @@ export function ContactForm() {
       setName('')
       setEmail('')
       setGoal(GOAL_OPTIONS[0]!.value)
-      setMessage('')
+      setLocalMessage('')
       setGdprConsent(false)
       setShowSuccess(true)
       const timer = setTimeout(() => setShowSuccess(false), 4000)
@@ -61,9 +72,9 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label htmlFor="contact-name" className={labelClass}>Imię i nazwisko</label>
+          <label htmlFor={`${idPrefix}-name`} className={labelClass}>Imię i nazwisko</label>
           <Input
-            id="contact-name"
+            id={`${idPrefix}-name`}
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -73,9 +84,9 @@ export function ContactForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="contact-email" className={labelClass}>E-mail</label>
+          <label htmlFor={`${idPrefix}-email`} className={labelClass}>E-mail</label>
           <Input
-            id="contact-email"
+            id={`${idPrefix}-email`}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -87,9 +98,9 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="contact-goal" className={labelClass}>Cele do osiągnięcia</label>
+        <label htmlFor={`${idPrefix}-goal`} className={labelClass}>Cele do osiągnięcia</label>
         <select
-          id="contact-goal"
+          id={`${idPrefix}-goal`}
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           className={`${fieldClass} cursor-pointer`}
@@ -103,9 +114,9 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="contact-message" className={labelClass}>Wiadomość</label>
+        <label htmlFor={`${idPrefix}-message`} className={labelClass}>Wiadomość</label>
         <Textarea
-          id="contact-message"
+          id={`${idPrefix}-message`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Opisz problem, który rozwiązujemy..."
