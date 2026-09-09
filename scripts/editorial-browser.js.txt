@@ -1,0 +1,38 @@
+async page => {
+  const checks = []
+  async function inspect(path, name, width) {
+    await page.setViewportSize({ width, height: 1000 })
+    await page.goto(`http://localhost:3001${path}`)
+    await page.locator('main h1').waitFor()
+    await page.evaluate(() => document.fonts.ready)
+    const images = page.locator('main img[src*="editorial"]')
+    if (!await images.count()) throw new Error(`Missing covers: ${path}`)
+    for (const image of await images.all()) {
+      await image.scrollIntoViewIfNeeded()
+      await image.evaluate(img => img.decode())
+    }
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)) throw new Error(`Overflow: ${path} at ${width}`)
+    await page.screenshot({path: `.playwright-cli/${name}-${width}.png`,fullPage:true})
+    checks.push(`${path}: ${await images.count()} loaded covers, ${width}px`)
+  }
+  await inspect('/blog','blog',1440)
+  let articles = await page.locator('main article').count()
+  while (await page.getByRole('button',{name:'Następna →'}).isEnabled()) {
+    await page.getByRole('button',{name:'Następna →'}).click()
+    for (const image of await page.locator('main article img').all()) {
+      await image.scrollIntoViewIfNeeded()
+      await image.evaluate(img => img.decode())
+      if (!await image.getAttribute('src').then(src=>src.includes('editorial'))) throw new Error('Legacy cover remains')
+    }
+    articles += await page.locator('main article').count()
+  }
+  checks.push(`${articles} blog articles across all pages: local covers loaded`)
+  await inspect('/case-studies','cases',1440)
+  const caseLinks = await page.locator('main article').evaluateAll(items=>items.map(item=>item.parentElement.getAttribute('href')))
+  for (const path of caseLinks) await inspect(path,path.split('/').pop(),1440)
+  await inspect('/blog/nowosci-ai-2026-09-07','blog-detail',1440)
+  for (const path of ['/blog','/case-studies',caseLinks[0],'/blog/nowosci-ai-2026-09-07']) {
+    await inspect(path,path.split('/').pop(),375)
+  }
+  return checks
+}

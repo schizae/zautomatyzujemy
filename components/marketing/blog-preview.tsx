@@ -3,6 +3,7 @@ import { FadeInUp } from '@/components/animations'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
+import { getBlogCover } from '@/lib/editorial-covers'
 import type { PostPreview } from '@/types'
 
 function formatDate(dateStr: string): string {
@@ -28,9 +29,9 @@ function toDisplayPosts(posts: PostPreview[]): DisplayPost[] {
   return posts.map((p) => ({
     slug: p.slug,
     title: p.title,
-    category: (p.tags?.[0] ?? 'Blog'),
+    category: (p.tags?.[0] ?? 'Blog').replace(/-/g, ' '),
     date: formatDate(p.published_at ?? p.created_at),
-    cover_image: p.cover_image ?? '',
+    cover_image: getBlogCover(p.slug, p.cover_image),
   }))
 }
 
@@ -71,21 +72,9 @@ export async function BlogPreview() {
             <Link href={post.slug.startsWith('#') ? '#blog' : `/blog/${post.slug}`}>
               <div className="mb-6">
                 {/* Image */}
-                {post.cover_image ? (
-                  <div className="relative w-full aspect-[1.8/1] mb-6 overflow-hidden rounded-lg border-b-4 border-[#e84324] bg-[#e7e2da]">
-                    <Image
-                      src={post.cover_image}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover grayscale contrast-[0.9] transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full aspect-[1.8/1] rounded-2xl mb-6 bg-[#e7e2da] flex items-center justify-center">
-                    <span className="text-[#c93820]/30 text-4xl font-headline font-black">AI</span>
-                  </div>
-                )}
+                <div className="relative w-full aspect-[1.8/1] mb-6 overflow-hidden rounded-lg bg-[#e7e2da]">
+<Image src={post.cover_image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 motion-safe:group-hover:scale-[1.03]" />
+</div>
 
                 {/* Category + date */}
                 <div className="font-label text-xs font-medium text-[#9c301b] tracking-wider uppercase mb-3">

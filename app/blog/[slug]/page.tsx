@@ -7,6 +7,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
 import { JsonLd } from '@/components/seo/json-ld'
+import { getBlogCover } from '@/lib/editorial-covers'
 import type { Post } from '@/types'
 
 const SITE_URL =
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: data.title,
       description,
       url: `/blog/${slug}`,
-      images: data.cover_image ? [{ url: data.cover_image }] : [],
+      images: [{ url: getBlogCover(slug, data.cover_image) }],
       publishedTime: data.published_at ?? undefined,
       modifiedTime: data.updated_at ?? undefined,
       authors: data.author ? [data.author] : ['Zautomatyzujemy.pl'],
@@ -58,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: data.title,
       description,
-      images: data.cover_image ? [data.cover_image] : [],
+      images: [getBlogCover(slug, data.cover_image)],
     },
   }
 }
@@ -76,16 +77,17 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!data) notFound()
 
   const post = data as Post
+  const coverImage = getBlogCover(post.slug, post.cover_image)
 
   return (
-    <main id="main" className="min-h-screen bg-white">
+    <main id="main" className="marketing-theme min-h-screen bg-[#f5f2ed] font-body text-[#151719] [color-scheme:light]">
       <JsonLd
         data={{
           '@context': 'https://schema.org',
           '@type': 'BlogPosting',
           headline: post.title,
           description: post.excerpt ?? post.title,
-          image: post.cover_image ?? undefined,
+          image: new URL(coverImage, SITE_URL).toString(),
           datePublished: post.published_at ?? post.created_at,
           dateModified: post.updated_at ?? post.published_at ?? post.created_at,
           author: {
@@ -143,40 +145,40 @@ export default async function BlogPostPage({ params }: PageProps) {
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.tags.map(tag => (
-                <span key={tag} className="text-xs font-bold text-[#c93820] bg-[#c93820]/20 px-2.5 py-0.5 rounded-full">
-                  {tag}
+                <span key={tag} className="text-xs font-medium text-[#ffaf98]">
+                  {tag.replace(/-/g, ' ')}
                 </span>
               ))}
             </div>
           )}
 
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl font-semibold text-white tracking-tight leading-tight mb-6">
             {post.title}
           </h1>
 
           <div className="flex items-center gap-4 text-[#96968f] text-sm">
-            {post.author && <span className="font-semibold text-slate-300">{post.author}</span>}
+            {post.author && <span className="font-semibold text-[#d9d6d0]">{post.author}</span>}
             <time>{formatDate(post.published_at ?? post.created_at)}</time>
           </div>
         </div>
       </div>
 
       {/* Cover image */}
-      {post.cover_image && (
+      {(
         <div className="relative max-w-3xl mx-auto px-6 -mt-8 aspect-video">
           <Image
-            src={post.cover_image}
+            src={coverImage}
             alt={post.title}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 768px"
-            className="rounded-2xl shadow-xl object-cover"
+            className="rounded-lg object-cover"
           />
         </div>
       )}
 
       {/* Content */}
-      <article className="max-w-3xl mx-auto px-6 py-16 text-slate-800 leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-slate-700 [&_strong]:font-bold [&_em]:italic [&_a]:text-[#c93820] [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:border-l-4 [&_blockquote]:border-[#c93820] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[#686862] [&_blockquote]:mb-5 [&_code]:bg-slate-100 [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_pre]:bg-slate-900 [&_pre]:text-slate-100 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-5 [&_hr]:border-[#d9d6d0] [&_hr]:my-8">
+      <article className="max-w-3xl mx-auto px-6 py-16 text-[#151719] leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-[#62625d] [&_strong]:font-bold [&_em]:italic [&_a]:text-[#c93820] [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:border-l-4 [&_blockquote]:border-[#c93820] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[#686862] [&_blockquote]:mb-5 [&_code]:bg-[#e7e2da] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_pre]:bg-[#151719] [&_pre]:text-[#f5f2ed] [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-5 [&_hr]:border-[#d9d6d0] [&_hr]:my-8">
         <MDXRemote source={post.content} components={safeMdxComponents} />
       </article>
     </main>

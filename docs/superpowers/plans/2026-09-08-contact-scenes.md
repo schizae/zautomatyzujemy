@@ -53,3 +53,11 @@ Każda historia ma 12 sekund, trzy wybieralne etapy oraz subtelne przejście ost
 Nowe pliki: `website-scenes.tsx`, `process-scenes.tsx`; zdjęcie `public/redesign/scenario-architecture.webp` wygenerowane dla fikcyjnej demonstracji (nie jest realizacją klienta). Zachowano wszystkie ścieżki kontaktu.
 
 Weryfikacja: `scenario-frames-browser.js.txt` potwierdza dopasowanie wszystkich 9 kadrów na 1440 i 375 px; `scenario-story-browser.js.txt` rozróżnialność projektu i zapytania; `scenario-motion-browser.js.txt` sterowanie, offscreen pause i zachowanie kontaktu. TypeScript i ESLint przechodzą. Istniejące ostrzeżenia hydracji dotyczą stylów ROI/kontaktu, poza przebudowanymi scenami.
+
+## Blog i case studies — 9 września 2026
+
+Na prośbę właściciela zastąpiono niespójne i uszkodzone zdalne okładki biblioteką 11 autorskich ilustracji redakcyjnych. Motywy obejmują brief AI, analizę, bezpieczeństwo, dokumenty, obsługę, handel, procesy, wiedzę, rekrutację, zdrowie i projektowanie. Źródła SVG oraz zoptymalizowane PNG znajdują się w `public/editorial`; odtwarza je `node scripts/generate-editorial-covers.mjs` przy użyciu istniejącego Sharp. PNG obsługują również podglądy społecznościowe.
+
+`lib/editorial-covers.ts` mapuje istniejące artykuły i scenariusze bez modyfikacji CMS. Nowe, nieznane wpisy zachowują okładkę z CMS, a przy jej braku otrzymują lokalną domyślną ilustrację. Case studies używają kremu, grafitu, koralowego akcentu i krojów marki także na podstronach. Zachowano oznaczenia przykładów poglądowych.
+
+Sprawdzone: TypeScript, ESLint, build produkcyjny oraz `scripts/editorial-browser.js.txt` — 30 okładek artykułów przez wszystkie strony paginacji, trzy scenariusze z podstronami, blog i szczegóły na 375/1440 px, brak poziomego overflow. Lokalny podgląd nadal zgłasza znane 404 skryptu Vercel Analytics, dostępnego na hostingu. Zmiany nie zostały wdrożone na produkcję.
