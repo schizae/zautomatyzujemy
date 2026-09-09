@@ -177,9 +177,19 @@ const GeneratedPostSchema = z.object({
   tags: z.array(z.string()),
 })
 
+/** Pola, które generator wypełnia w formularzu — celowo nie cały `Post`. */
+interface GeneratedPostDraft {
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  tags: string[]
+  author: string
+}
+
 export async function generatePostAction(
   topic: string
-): Promise<ActionResult<Omit<Post, 'id' | 'created_at' | 'updated_at' | 'is_published' | 'published_at' | 'cover_image'>>> {
+): Promise<ActionResult<GeneratedPostDraft>> {
   if (!(await isAdminAuthenticated())) return { success: false, error: 'Brak uprawnień.' }
   if (!topic.trim()) {
     return { success: false, error: 'Podaj temat artykułu.' }
