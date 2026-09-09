@@ -8,6 +8,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
 import { JsonLd } from '@/components/seo/json-ld'
 import { getBlogCover } from '@/lib/editorial-covers'
+import { TRAINED_ALGORITHMIC_MEDIA } from '@/lib/ai-disclosure'
+import { AiDisclosure } from '../_components/AiDisclosure'
 import type { Post } from '@/types'
 
 const SITE_URL =
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('posts')
-    .select('title, excerpt, cover_image, published_at, updated_at, author')
+    .select('title, excerpt, cover_image, published_at, updated_at, author, ai_generated, ai_model')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
@@ -38,6 +40,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!data) return { title: 'Artykuł nie znaleziony' }
 
   const description = data.excerpt ?? data.title
+
+  // Budujemy obiekt zamiast rozwijać warunkowo — `exactOptionalPropertyTypes`
+  // odrzuca właściwość, która raz jest, a raz jej nie ma.
+  const aiMeta: Record<string, string> = {}
+  if (data.ai_generated) {
+    aiMeta['ai-generated'] = 'true'
+    if (data.ai_model) aiMeta['ai-model'] = data.ai_model
+  }
 
   return {
     title: data.title,
@@ -61,6 +71,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [getBlogCover(slug, data.cover_image)],
     },
+    other: aiMeta,
   }
 }
 
@@ -103,6 +114,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             '@type': 'WebPage',
             '@id': `${SITE_URL}/blog/${post.slug}`,
           },
+          ...(post.ai_generated && { digitalSourceType: TRAINED_ALGORITHMIC_MEDIA }),
         }}
       />
       <JsonLd
@@ -180,6 +192,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Content */}
       <article className="max-w-3xl mx-auto px-6 py-16 text-[#151719] leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-[#62625d] [&_strong]:font-bold [&_em]:italic [&_a]:text-[#c93820] [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:border-l-4 [&_blockquote]:border-[#c93820] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[#686862] [&_blockquote]:mb-5 [&_code]:bg-[#e7e2da] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_pre]:bg-[#151719] [&_pre]:text-[#f5f2ed] [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-5 [&_hr]:border-[#d9d6d0] [&_hr]:my-8">
         <MDXRemote source={post.content} components={safeMdxComponents} />
+        <AiDisclosure aiGenerated={post.ai_generated} reviewedAt={post.reviewed_at} />
       </article>
     </main>
   )
