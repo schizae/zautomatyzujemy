@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FileText, Layers, LogOut, Zap, Trophy } from 'lucide-react'
+import { FileText, Layers, LogOut, Zap, Trophy, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { logoutAction } from '@/lib/actions/admin.actions'
 
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/case-studies', label: 'Case Study', icon: Trophy },
   { href: '/admin/content', label: 'Treść strony', icon: Layers },
+  { href: '/admin/ustawienia', label: 'Ustawienia', icon: Settings },
 ]
 
 export function AdminSidebar() {
