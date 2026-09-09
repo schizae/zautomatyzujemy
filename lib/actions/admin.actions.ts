@@ -9,6 +9,8 @@ import { google } from '@ai-sdk/google'
 import { loginAdmin, logoutAdmin, isAdminAuthenticated } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase/server'
 import { createRateLimiter } from '@/lib/rate-limit'
+import { setBlogPublishMode } from '@/lib/app-settings'
+import type { BlogPublishMode } from '@/lib/ai-disclosure'
 import type { ActionResult, Post, PageContent, Service, FaqItem, CaseStudy } from '@/types'
 
 const UNAUTHORIZED: ActionResult = { success: false, error: 'Brak uprawnień.' }
@@ -165,6 +167,53 @@ export async function deletePostAction(id: string): Promise<ActionResult> {
   revalidatePath('/blog')
   revalidatePath('/admin/blog')
   return { success: true }
+}
+
+/**
+ * Zatwierdzenie redakcyjne: publikuje szkic i zapisuje moment sprawdzenia.
+ * `reviewed_at` jest dowodem kontroli redakcyjnej, na którym opiera się
+ * zwolnienie z art. 50 ust. 4 — dlatego ustawiamy je tylko tutaj, po realnej
+ * decyzji człowieka.
+ */
+export async function approvePostAction(id: string): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) return UNAUTHORIZED
+  const supabase = createServiceClient()
+  const now = new Date().toISOString()
+
+  const { data, error } = await supabase
+    .from('posts')
+    .update({ is_published: true, published_at: now, reviewed_at: now })
+    .eq('id', id)
+    .select('slug')
+    .single()
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath('/blog')
+  revalidatePath(`/blog/${data.slug}`)
+  revalidatePath('/admin/blog')
+  return { success: true }
+}
+
+export async function setBlogPublishModeAction(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) return
+
+  // `formData.get` zwraca `string | File | null`, a TypeScript nie zawęzi tego
+  // do unii literałów samym porównaniem. Wartość pochodzi z naszego ukrytego
+  // pola, więc wszystko poza „auto" traktujemy jak tryb redakcyjny — czyli
+  // w stronę bezpieczniejszą.
+  const raw = formData.get('mode')
+  const mode: BlogPublishMode = raw === 'auto' ? 'auto' : 'review'
+
+  const { error } = await setBlogPublishMode(mode)
+  if (error) {
+    console.error('[setBlogPublishModeAction]', error)
+    return
+  }
+
+  revalidatePath('/admin/ustawienia')
 }
 
 // ─── Blog — AI Generation ─────────────────────────────────────────────────────
