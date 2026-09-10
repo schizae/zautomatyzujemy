@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
 import { useKlara } from '@/components/voice/klara-provider'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
@@ -289,7 +290,10 @@ export function ChatWidget() {
       }))
     lastEnrichedCountRef.current = chatMessages.length
     startSaveLead(async () => {
-      const result = await saveChatLeadAction(detectedEmail!, chatMessages)
+      // readFirstTouch() czyta window.sessionStorage — bez ryzyka SSR, bo ten
+      // efekt (jak każdy useEffect w komponencie klienckim) wykonuje się
+      // wyłącznie w przeglądarce, już po zamontowaniu.
+      const result = await saveChatLeadAction(detectedEmail!, chatMessages, readFirstTouch())
       if (result.success && result.data) setLeadId(result.data)
       setLeadSaved(true)
     })
