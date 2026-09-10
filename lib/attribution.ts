@@ -39,6 +39,23 @@ const OWN_HOSTS = ['zautomatyzujemy.pl', 'localhost']
 const SEARCH_LABELS = ['google', 'bing', 'duckduckgo', 'yahoo', 'ecosia', 'brave', 'yandex']
 const SOCIAL_LABELS = ['linkedin', 'facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'messenger']
 
+// Etykieta wyszukiwarki liczy się tylko na pierwszej pozycji (np. `google.pl`)
+// albo na drugiej, gdy pierwsza to bezpieczny przedrostek (`www.google.co.uk`,
+// `search.brave.com`). Dowolna inna pozycja to usługa pod tą domeną, nie
+// wyszukiwarka — `mail.google.com` to poczta, a `drive.google.com` to dysk,
+// nie wynik wyszukiwania. `search` jest na liście przedrostków przez Brave,
+// którego wyszukiwarka mieszka pod `search.brave.com`.
+const SAFE_SEARCH_PREFIXES = ['www', 'search']
+
+function isSearchHost(labels: string[]): boolean {
+  const firstLabel = labels[0]
+  if (firstLabel !== undefined && SEARCH_LABELS.includes(firstLabel)) return true
+
+  const secondLabel = labels[1]
+  if (firstLabel === undefined || secondLabel === undefined) return false
+  return SAFE_SEARCH_PREFIXES.includes(firstLabel) && SEARCH_LABELS.includes(secondLabel)
+}
+
 // Skrótowce, których nie da się dopasować etykietą, bo cała domena jest tokenem.
 // Porównujemy je dokładnie — `x.com` jako fragment trafiał w `box.com`.
 const SOCIAL_DOMAINS = ['lnkd.in', 't.co', 'x.com', 'fb.me', 'fb.com', 'youtu.be']
@@ -77,7 +94,7 @@ export function classifySource(
   if (OWN_HOSTS.some(own => matchesDomain(host, own))) return 'internal'
 
   const labels = host.split('.')
-  if (SEARCH_LABELS.some(label => labels.includes(label))) return 'organic'
+  if (isSearchHost(labels)) return 'organic'
   if (SOCIAL_LABELS.some(label => labels.includes(label))) return 'social'
   if (SOCIAL_DOMAINS.some(domain => matchesDomain(host, domain))) return 'social'
 

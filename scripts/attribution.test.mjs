@@ -60,6 +60,17 @@ test('krajowe warianty wyszukiwarek są rozpoznawane', () => {
   assert.equal(classifySource('https://www.google.co.uk/', null), 'organic')
 })
 
+test('poddomeny usług Google nie są wynikiem wyszukiwania', () => {
+  // Tak wygląda referrer po kliknięciu linku w Gmailu — to odesłanie z poczty,
+  // nie wejście z wyników wyszukiwania.
+  assert.equal(classifySource('https://mail.google.com/mail/u/0/', null), 'referral')
+  assert.equal(classifySource('https://drive.google.com/file/d/1', null), 'referral')
+})
+
+test('wyszukiwarka pod poddomeną search jest rozpoznawana', () => {
+  assert.equal(classifySource('https://search.brave.com/search?q=n8n', null), 'organic')
+})
+
 test('skrótowce serwisów społecznościowych nadal działają', () => {
   assert.equal(classifySource('https://lnkd.in/abc', null), 'social')
   assert.equal(classifySource('https://x.com/ktos/status/1', null), 'social')
