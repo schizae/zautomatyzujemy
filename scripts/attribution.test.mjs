@@ -41,6 +41,31 @@ test('obca witryna to odesłanie', () => {
   assert.equal(classifySource('https://n8n.io/creators/', null), 'referral')
 })
 
+test('domena zawierająca podciąg skrótowca nie jest myląco klasyfikowana', () => {
+  // `t.co` i `x.com` są na tyle krótkie, że dopasowanie po fragmencie trafiało
+  // w pospolite domeny biznesowe. Klasyfikacja idzie po etykietach hosta.
+  assert.equal(classifySource('https://kontakt.com/oferta', null), 'referral')
+  assert.equal(classifySource('https://start.com/', null), 'referral')
+  assert.equal(classifySource('https://box.com/share', null), 'referral')
+  assert.equal(classifySource('https://netflix.com/', null), 'referral')
+})
+
+test('domena zawierająca nazwę wyszukiwarki jako fragment nie jest organiczna', () => {
+  assert.equal(classifySource('https://notgoogle.com/', null), 'referral')
+  assert.equal(classifySource('https://bingo.pl/', null), 'referral')
+})
+
+test('krajowe warianty wyszukiwarek są rozpoznawane', () => {
+  assert.equal(classifySource('https://www.google.pl/search?q=n8n', null), 'organic')
+  assert.equal(classifySource('https://www.google.co.uk/', null), 'organic')
+})
+
+test('skrótowce serwisów społecznościowych nadal działają', () => {
+  assert.equal(classifySource('https://lnkd.in/abc', null), 'social')
+  assert.equal(classifySource('https://x.com/ktos/status/1', null), 'social')
+  assert.equal(classifySource('https://t.co/abc123', null), 'social')
+})
+
 test('wejście z własnej domeny jest oznaczone jako wewnętrzne', () => {
   assert.equal(classifySource('https://www.zautomatyzujemy.pl/blog', null), 'internal')
   assert.equal(classifySource('http://localhost:3000/blog', null), 'internal')

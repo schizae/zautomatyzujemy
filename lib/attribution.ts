@@ -33,10 +33,19 @@ const MAX_LENGTH = 500
 
 const OWN_HOSTS = ['zautomatyzujemy.pl', 'localhost']
 
-// Dopasowanie po fragmencie nazwy hosta. Świadomie proste: fałszywe trafienie
-// na domenie zawierającej „google" jest tańsze niż utrzymywanie pełnej listy.
-const SEARCH_TOKENS = ['google', 'bing', 'duckduckgo', 'yahoo', 'ecosia', 'brave', 'yandex']
-const SOCIAL_TOKENS = ['linkedin', 'lnkd.in', 'facebook', 'instagram', 'twitter', 'x.com', 't.co', 'tiktok', 'youtube']
+// Dopasowanie po etykietach hosta, nie po fragmencie nazwy. `www.google.pl`
+// ma etykiety `www`, `google`, `pl`, więc jedna reguła obsługuje wszystkie
+// krajowe warianty wyszukiwarki, a `notgoogle.com` już nie trafia.
+const SEARCH_LABELS = ['google', 'bing', 'duckduckgo', 'yahoo', 'ecosia', 'brave', 'yandex']
+const SOCIAL_LABELS = ['linkedin', 'facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'messenger']
+
+// Skrótowce, których nie da się dopasować etykietą, bo cała domena jest tokenem.
+// Porównujemy je dokładnie — `x.com` jako fragment trafiał w `box.com`.
+const SOCIAL_DOMAINS = ['lnkd.in', 't.co', 'x.com', 'fb.me', 'fb.com', 'youtu.be']
+
+function matchesDomain(host: string, domain: string): boolean {
+  return host === domain || host.endsWith(`.${domain}`)
+}
 
 function clamp(value: string | null | undefined): string | null {
   if (typeof value !== 'string') return null
@@ -65,9 +74,12 @@ export function classifySource(
   const host = hostOf(referrerValue)
   if (host === null) return 'direct'
 
-  if (OWN_HOSTS.some(own => host === own || host.endsWith(`.${own}`))) return 'internal'
-  if (SEARCH_TOKENS.some(token => host.includes(token))) return 'organic'
-  if (SOCIAL_TOKENS.some(token => host.includes(token))) return 'social'
+  if (OWN_HOSTS.some(own => matchesDomain(host, own))) return 'internal'
+
+  const labels = host.split('.')
+  if (SEARCH_LABELS.some(label => labels.includes(label))) return 'organic'
+  if (SOCIAL_LABELS.some(label => labels.includes(label))) return 'social'
+  if (SOCIAL_DOMAINS.some(domain => matchesDomain(host, domain))) return 'social'
 
   return 'referral'
 }
