@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, CheckCircle } from 'lucide-react'
 import { submitContactAction } from '@/lib/actions/contact.actions'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
+import type { RawAttribution } from '@/lib/attribution'
 import type { ActionResult } from '@/types'
 
 const initialState: ActionResult<string> = { success: true }
@@ -40,6 +42,16 @@ export function ContactForm({ message: controlledMessage, onMessageChange, idPre
   }
   const [gdprConsent, setGdprConsent] = useState(false)
 
+  const [attribution, setAttribution] = useState<RawAttribution>({
+    referrer: null,
+    landingPath: null,
+    utmSource: null,
+  })
+
+  useEffect(() => {
+    setAttribution(readFirstTouch())
+  }, [])
+
   const isSuccess = state.success && 'data' in state && state.data === 'sent'
   const [showSuccess, setShowSuccess] = useState(false)
 
@@ -64,6 +76,11 @@ export function ContactForm({ message: controlledMessage, onMessageChange, idPre
       <input type="hidden" name="goal" value={goal} />
       <input type="hidden" name="message" value={message} />
       <input type="hidden" name="gdprConsent" value={gdprConsent ? 'true' : 'false'} />
+
+      {/* Atrybucja — skąd przyszedł odwiedzający. Puste, gdy przeglądarka blokuje dane witryny. */}
+      <input type="hidden" name="referrer" value={attribution.referrer ?? ''} />
+      <input type="hidden" name="landingPath" value={attribution.landingPath ?? ''} />
+      <input type="hidden" name="utmSource" value={attribution.utmSource ?? ''} />
 
       {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
       <div aria-hidden="true" className="hidden">

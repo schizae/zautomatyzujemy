@@ -4,7 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
+import type { RawAttribution } from '@/lib/attribution'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
 import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
 import { CheckCircle2, Loader2 } from 'lucide-react'
@@ -14,6 +16,16 @@ const initialState: ActionResult = { success: false, error: '' }
 
 export function LeadMagnetSection() {
   const [state, formAction, isPending] = useActionState(subscribeLeadMagnetAction, initialState)
+
+  const [attribution, setAttribution] = useState<RawAttribution>({
+    referrer: null,
+    landingPath: null,
+    utmSource: null,
+  })
+
+  useEffect(() => {
+    setAttribution(readFirstTouch())
+  }, [])
 
   return (
     <section id="checklista" className="mx-auto grid max-w-[1680px] items-center gap-10 px-6 py-20 md:px-8 lg:min-h-[720px] lg:grid-cols-[1fr_0.95fr_1fr]">
@@ -63,6 +75,11 @@ export function LeadMagnetSection() {
                   </p>
 
                   <form action={formAction} className="space-y-4">
+                    {/* Atrybucja — skąd przyszedł odwiedzający. Puste, gdy przeglądarka blokuje dane witryny. */}
+                    <input type="hidden" name="referrer" value={attribution.referrer ?? ''} />
+                    <input type="hidden" name="landingPath" value={attribution.landingPath ?? ''} />
+                    <input type="hidden" name="utmSource" value={attribution.utmSource ?? ''} />
+
                     {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
                     <div aria-hidden="true" className="hidden">
                       <input type="text" name="website" tabIndex={-1} autoComplete="off" />
