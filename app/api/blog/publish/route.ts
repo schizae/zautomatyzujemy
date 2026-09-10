@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { createServiceClient } from '@/lib/supabase/server'
+import { resolvePublishState } from '@/lib/ai-disclosure'
+import { getBlogPublishMode } from '@/lib/app-settings'
+import { sendDraftAwaitingReview } from '@/lib/email/resend'
 import type { BlogPublishPayload } from '@/types'
 
 // ─── Walidacja ────────────────────────────────────────────────────────────────
@@ -20,6 +23,8 @@ const BlogPublishSchema = z.object({
   author: z.string().max(100).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
   published_at: z.string().datetime().optional(),
+  ai_generated: z.boolean().optional(),
+  ai_model: z.string().max(100).optional(),
 })
 
 // ─── Weryfikacja sekretu (timing-safe) ───────────────────────────────────────
@@ -72,9 +77,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const { data: existing } = await supabase
     .from('posts')
-    .select('id')
+    .select('id, is_published, published_at, reviewed_at')
     .eq('slug', payload.slug)
     .maybeSingle()
+
+  const mode = await getBlogPublishMode()
+  const publishState = resolvePublishState(
+    mode,
+    new Date().toISOString(),
+    payload.published_at ?? null,
+    existing
+      ? {
+          is_published: existing.is_published,
+          published_at: existing.published_at,
+          reviewed_at: existing.reviewed_at,
+        }
+      : null
+  )
 
   const postData = {
     slug: payload.slug,
@@ -84,8 +103,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     cover_image: payload.cover_image ?? null,
     author: payload.author ?? 'Zautomatyzujemy',
     tags: payload.tags ?? [],
-    is_published: true,
-    published_at: payload.published_at ?? new Date().toISOString(),
+    // Znacznik zapisujemy w obu trybach. W trybie redakcyjnym zgodność opiera się
+    // na kontroli redakcyjnej, w automatycznym na znaczniku — jedno zabezpiecza drugie.
+    ai_generated: payload.ai_generated ?? false,
+    ai_model: payload.ai_model ?? null,
+    ...publishState,
   }
 
   if (existing) {
@@ -109,16 +131,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // 5. Rewalidacja cache
+  // 5. Powiadomienie o szkicu czekającym na zatwierdzenie
+  //
+  // Await, nie fire-and-forget: na Vercelu funkcja kończy się po odpowiedzi
+  // i porzucona obietnica ginie. Błąd wysyłki nie może jednak wywrócić publikacji.
+  if (!publishState.is_published) {
+    try {
+      await sendDraftAwaitingReview(payload.title, payload.slug)
+    } catch (err) {
+      console.error('[/api/blog/publish] Nie udało się wysłać powiadomienia o szkicu:', err)
+    }
+  }
+
+  // 6. Rewalidacja cache
   revalidatePath('/blog')
   revalidatePath(`/blog/${payload.slug}`)
   revalidatePath('/')
 
-  console.log(`[/api/blog/publish] Opublikowano: "${payload.title}" (${payload.slug})`)
+  const statusLabel = publishState.is_published ? 'Opublikowano' : 'Zapisano szkic'
+  console.log(`[/api/blog/publish] ${statusLabel}: "${payload.title}" (${payload.slug})`)
 
   return NextResponse.json({
     success: true,
     slug: payload.slug,
     url: `/blog/${payload.slug}`,
+    published: publishState.is_published,
   })
 }

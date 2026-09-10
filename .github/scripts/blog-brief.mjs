@@ -279,5 +279,11 @@ const result = await publishPost({
   cover_image: coverUrl,
   tags: article.tags ?? ['Tygodniowy brief', 'Nowosci AI'],
   author: 'Zautomatyzujemy.pl',
+  ai_generated: true,
+  ai_model: 'gemini-2.5-flash',
 })
-console.log(`✅ Opublikowano: ${SITE_URL}${result.url}`)
+console.log(
+  result.published
+    ? `✅ Opublikowano: ${SITE_URL}${result.url}`
+    : `📝 Zapisano szkic do zatwierdzenia: ${SITE_URL}/admin/blog`
+)

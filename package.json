@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
+    "test": "node --test \"scripts/**/*.test.mjs\"",
     "db:generate": "node --env-file=.env.local scripts/generate-embeddings.mjs"
   },
   "dependencies": {

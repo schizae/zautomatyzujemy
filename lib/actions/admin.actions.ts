@@ -9,6 +9,8 @@ import { google } from '@ai-sdk/google'
 import { loginAdmin, logoutAdmin, isAdminAuthenticated } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase/server'
 import { createRateLimiter } from '@/lib/rate-limit'
+import { setBlogPublishMode } from '@/lib/app-settings'
+import type { BlogPublishMode } from '@/lib/ai-disclosure'
 import type { ActionResult, Post, PageContent, Service, FaqItem, CaseStudy } from '@/types'
 
 const UNAUTHORIZED: ActionResult = { success: false, error: 'Brak uprawnień.' }
@@ -65,6 +67,8 @@ const PostSchema = z.object({
   tags: z.string().optional(), // comma-separated, parsed below
   cover_image: z.string().url('Podaj poprawny URL obrazu.').optional().or(z.literal('')),
   is_published: z.boolean().optional(),
+  ai_generated: z.boolean(),
+  ai_model: z.string().max(100).optional(),
 })
 
 function parseTags(raw: string | undefined): string[] {
@@ -85,7 +89,18 @@ function parsePostFormData(formData: FormData) {
     tags: formData.get('tags') || undefined,
     cover_image: formData.get('cover_image') || undefined,
     is_published: formData.get('is_published') === 'true',
+    ai_generated: formData.get('ai_generated') === 'true',
+    ai_model: formData.get('ai_model') || undefined,
   })
+}
+
+/**
+ * Zapis wpisu z panelu jest decyzją człowieka: jeśli treść powstała maszynowo
+ * i redaktor publikuje ją świadomie, to właśnie jest kontrola redakcyjna.
+ * Szkic zostaje bez daty — nie ma czego poświadczać.
+ */
+function resolveReviewedAt(aiGenerated: boolean, isPublished: boolean, now: string): string | null {
+  return aiGenerated && isPublished ? now : null
 }
 
 // ─── Blog — CRUD ──────────────────────────────────────────────────────────────
@@ -100,14 +115,17 @@ export async function createPostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ...rest } = parsed.data
+  const { tags, cover_image, ai_model, ...rest } = parsed.data
   const supabase = createServiceClient()
+  const now = new Date().toISOString()
 
   const { error } = await supabase.from('posts').insert({
     ...rest,
     tags: parseTags(tags),
     cover_image: cover_image || null,
-    published_at: rest.is_published ? new Date().toISOString() : null,
+    ai_model: ai_model || null,
+    published_at: rest.is_published ? now : null,
+    reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
   })
 
   if (error) {
@@ -130,8 +148,9 @@ export async function updatePostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ...rest } = parsed.data
+  const { tags, cover_image, ai_model, ...rest } = parsed.data
   const supabase = createServiceClient()
+  const now = new Date().toISOString()
 
   const { error } = await supabase
     .from('posts')
@@ -139,7 +158,9 @@ export async function updatePostAction(
       ...rest,
       tags: parseTags(tags),
       cover_image: cover_image || null,
-      published_at: rest.is_published ? new Date().toISOString() : null,
+      ai_model: ai_model || null,
+      published_at: rest.is_published ? now : null,
+      reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
     })
     .eq('id', id)
 
@@ -167,6 +188,53 @@ export async function deletePostAction(id: string): Promise<ActionResult> {
   return { success: true }
 }
 
+/**
+ * Zatwierdzenie redakcyjne: publikuje szkic i zapisuje moment sprawdzenia.
+ * `reviewed_at` jest dowodem kontroli redakcyjnej, na którym opiera się
+ * zwolnienie z art. 50 ust. 4 — dlatego ustawiamy je tylko tutaj, po realnej
+ * decyzji człowieka.
+ */
+export async function approvePostAction(id: string): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) return UNAUTHORIZED
+  const supabase = createServiceClient()
+  const now = new Date().toISOString()
+
+  const { data, error } = await supabase
+    .from('posts')
+    .update({ is_published: true, published_at: now, reviewed_at: now })
+    .eq('id', id)
+    .select('slug')
+    .single()
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath('/blog')
+  revalidatePath(`/blog/${data.slug}`)
+  revalidatePath('/admin/blog')
+  return { success: true }
+}
+
+export async function setBlogPublishModeAction(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) return
+
+  // `formData.get` zwraca `string | File | null`, a TypeScript nie zawęzi tego
+  // do unii literałów samym porównaniem. Wartość pochodzi z naszego ukrytego
+  // pola, więc wszystko poza „auto" traktujemy jak tryb redakcyjny — czyli
+  // w stronę bezpieczniejszą.
+  const raw = formData.get('mode')
+  const mode: BlogPublishMode = raw === 'auto' ? 'auto' : 'review'
+
+  const { error } = await setBlogPublishMode(mode)
+  if (error) {
+    console.error('[setBlogPublishModeAction]', error)
+    return
+  }
+
+  revalidatePath('/admin/ustawienia')
+}
+
 // ─── Blog — AI Generation ─────────────────────────────────────────────────────
 
 const GeneratedPostSchema = z.object({
@@ -177,9 +245,24 @@ const GeneratedPostSchema = z.object({
   tags: z.array(z.string()),
 })
 
+/** Model redaktora AI w panelu — ta sama wartość ląduje w kolumnie `ai_model`. */
+const EDITOR_MODEL = 'gemini-2.5-flash'
+
+/** Pola, które generator wypełnia w formularzu — celowo nie cały `Post`. */
+interface GeneratedPostDraft {
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  tags: string[]
+  author: string
+  /** Formularz zapisuje to w `ai_model`, zamiast powtarzać nazwę modelu u siebie. */
+  model: string
+}
+
 export async function generatePostAction(
   topic: string
-): Promise<ActionResult<Omit<Post, 'id' | 'created_at' | 'updated_at' | 'is_published' | 'published_at' | 'cover_image'>>> {
+): Promise<ActionResult<GeneratedPostDraft>> {
   if (!(await isAdminAuthenticated())) return { success: false, error: 'Brak uprawnień.' }
   if (!topic.trim()) {
     return { success: false, error: 'Podaj temat artykułu.' }
@@ -187,7 +270,7 @@ export async function generatePostAction(
 
   try {
     const { object } = await generateObject({
-      model: google('gemini-2.5-flash'),
+      model: google(EDITOR_MODEL),
       schema: GeneratedPostSchema,
       prompt: `Napisz artykuł blogowy po polsku dla Zautomatyzujemy.pl (automatyzacja procesów z AI i n8n).
 
@@ -212,6 +295,7 @@ Styl: profesjonalny, praktyczny, przydatny dla właścicieli firm MŚP.`,
         content: object.content,
         tags: object.tags,
         author: 'Zautomatyzujemy',
+        model: EDITOR_MODEL,
       },
     }
   } catch (err) {
