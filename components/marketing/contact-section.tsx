@@ -59,7 +59,7 @@ export function ContactSection() {
           <div className="mt-5 rounded-lg border border-white/20 bg-[#151719] p-5 sm:p-7"><ContactForm /></div>
         </details>
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#dedbd5]">
-          <a href="mailto:norbert@zautomatyzujemy.pl" className="underline underline-offset-4">Napisz e-mail</a>
+          <a href="mailto:norbert@zautomatyzujemy.pl" className="underline underline-offset-4">norbert@zautomatyzujemy.pl</a>
           <a href="tel:+48730094465" className="hover:underline">+48 730 094 465</a>
         </div>
       </FadeInUp>
