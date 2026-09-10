@@ -29,7 +29,7 @@ const inter = Inter({
 // dawał brak przycisku, a nie przycisk, który po kliknięciu wyrzuca błąd.
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

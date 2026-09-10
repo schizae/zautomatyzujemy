@@ -9,7 +9,7 @@ import { EMAIL_NOT_CONFIRMED } from '@/lib/auth-messages'
 import type { ActionResult } from '@/types'
 
 // Linki w mailach Supabase muszą wracać na publiczny adres aplikacji.
-const SITE_URL = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+const SITE_URL = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 const CALLBACK_URL = `${SITE_URL}/auth/callback`
 
 // Wysyłka maili auth kosztuje limity Supabase — ograniczamy per IP.

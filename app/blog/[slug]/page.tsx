@@ -13,7 +13,7 @@ import { AiDisclosure } from '../_components/AiDisclosure'
 import type { Post } from '@/types'
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 interface PageProps {
   params: Promise<{ slug: string }>

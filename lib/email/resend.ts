@@ -58,7 +58,7 @@ export async function sendChecklistDelivery(
     return
   }
 
-  const siteUrl = 'https://zautomatyzujemy.pl'
+  const siteUrl = 'https://www.zautomatyzujemy.pl'
   const checklistUrl = `${siteUrl}/ai-act-checklist`
 
   // Bez tokenu (brak zgody marketingowej) kierujemy na formularz wypisu bez parametru —
@@ -291,7 +291,7 @@ export async function sendDraftAwaitingReview(
     return
   }
 
-  const siteUrl = 'https://zautomatyzujemy.pl'
+  const siteUrl = 'https://www.zautomatyzujemy.pl'
 
   const result = await getResend().emails.send({
     from: FROM_EMAIL,
