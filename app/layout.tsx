@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
+import { AttributionTracker } from '@/components/analytics/attribution-tracker'
 import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
@@ -130,6 +131,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </a>
         <Providers>{children}</Providers>
         <CookieBanner />
+        <AttributionTracker />
         <Analytics />
       </body>
     </html>
