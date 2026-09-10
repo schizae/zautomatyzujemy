@@ -129,9 +129,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           Przejdź do treści
         </a>
+        <AttributionTracker />
         <Providers>{children}</Providers>
         <CookieBanner />
-        <AttributionTracker />
         <Analytics />
       </body>
     </html>
