@@ -145,6 +145,23 @@ Zdjęcie i zawód trafiają na stronę `/o-mnie` wraz ze schematem `Person`.
 ## Co zostało do zrobienia
 
 3. Uzupełnić punkt odniesienia w `docs/seo/baseline.md` — dane z Search Console i pomiar PageSpeed.
-4. Wyeksportować zapytania z Search Console do `data/seo/gsc-queries.csv`.
+4. ~~Wyeksportować zapytania z Search Console~~ — ZROBIONE 11 września. Dane w `data/seo/`
+   i w `docs/seo/baseline.md`.
+
+6. **Planer słów kluczowych Google Ads** — jedyne darmowe źródło wolumenów dla polskiego
+   długiego ogona. Bing Webmaster Tools sprawdziliśmy i ma dane tylko dla trzynastu ze stu dziesięciu
+   naszych fraz, więc odpada.
+
+   Kroki:
+   1. Wejdź na ads.google.com i załóż konto. Przy pytaniu o kampanię wybierz przełączenie
+      na tryb eksperta i pomiń tworzenie kampanii. **Nie podawaj karty i nie uruchamiaj reklam** —
+      planer działa bez wydatków, choć pokaże wtedy widełki zamiast dokładnych liczb.
+   2. W górnym menu wybierz Narzędzia, potem Planer słów kluczowych, potem
+      **Poznaj liczbę wyszukiwań i prognozy**.
+   3. Otwórz plik `data/seo/frazy-do-plannera.txt`, skopiuj całą zawartość i wklej do pola.
+      To 42 frazy, planer przyjmie je naraz.
+   4. Ustaw lokalizację na Polskę i język na polski.
+   5. Kliknij Rozpocznij, a potem przycisk pobierania i wybierz plik CSV.
+   6. Prześlij mi plik albo wrzuć go do `data/seo/` pod nazwą `keyword-planner.csv`.
 5. Zdobyć trzy realne wdrożenia z prawem do opisu, albo uruchomić wariant zapasowy z publicznym
    repozytorium przepływu n8n.

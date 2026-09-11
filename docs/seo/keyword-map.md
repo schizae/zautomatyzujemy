@@ -171,6 +171,46 @@ dominuje przemysł drzewny i produkcja.
 - automatyzacja obsługi klienta
 - baza wiedzy ai
 
+### 2.2b Wolumeny z Bing Webmaster Tools — próba nieudana, wnioski zostają
+
+11 września podpięliśmy klucz API do Bing Webmaster Tools i sprawdziliśmy wszystkie 110 fraz.
+**Dane ma trzynaście z nich.** Endpoint powiązanych fraz dla Polski zwraca pustkę dla każdego zapytania.
+
+| Fraza | Średnie miesięczne wyświetlenia w Bingu |
+|---|---|
+| n8n | 218 |
+| chatbot ai | 21 |
+| voicebot | 4 |
+| pozostałe dziesięć, głównie techniczne warianty n8n | od 1 do 9 |
+
+Sprawdzone osobno, poza listą: `ai act` 117, `zapier` 62, `asystent ai` 26, `agent ai` 16.
+Żadna z naszych fraz zakupowych, od „automatyzacja procesów w firmie" po „chatbot dla firmy",
+nie ma w Bingu ani jednego wyświetlenia.
+
+Wniosek jest podwójny. **Bing nie jest źródłem wolumenów dla tego projektu**, bo jego polskie dane
+kończą się na krótkich, popularnych hasłach. Klucz zostaje podpięty, bo nic nie kosztuje
+i przyda się do porównywania skali haseł głównych, ale planowanie treści musi opierać się na czymś innym.
+
+Druga część wniosku jest ciekawsza. Spośród wszystkiego, co sprawdziliśmy, dwa hasła mają
+wyraźnie największą skalę: **n8n** i **AI Act**. Oba są obszarami, w których mamy realne aktywa:
+działające wdrożenia na n8n oraz gotową stronę `/ai-act-checklist`, rejestr systemów AI
+i oznaczanie treści generowanych. To zbieżność, której nie warto zmarnować.
+
+Surowe dane: `data/seo/bing-volumes.json`, skrypt: `scripts/seo/wolumeny-bing.mjs`.
+
+### 2.2c Skąd wziąć wolumeny naprawdę
+
+Pozostaje Planer słów kluczowych Google Ads. Jest darmowy przy koncie reklamowym bez wydatków
+i jako jedyny poda widełki dla polskiego długiego ogona. Przyjmuje wklejoną listę fraz naraz,
+więc to jedna operacja, a nie czterdzieści.
+
+Gotowa lista czterdziestu dwóch fraz do wklejenia: `data/seo/frazy-do-plannera.txt`.
+Opis kroków w `docs/zadania-wlasciciela.md`.
+
+Do czasu uzyskania tych liczb kolejność ustalamy na podstawie sygnałów, które już mamy:
+obecność frazy w podpowiedziach wyszukiwarki, liczba różnych haseł nasiennych, które ją wywołały,
+oraz gęstość konkurencji w wynikach.
+
 ### 2.3 Frazy świadomie odrzucone
 
 | Fraza | Dlaczego odpada |
