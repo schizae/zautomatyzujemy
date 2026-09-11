@@ -117,3 +117,34 @@ do Ciebie mailem. Podaj adres, na który je wysyłać.
 
 Przeglądu artykułów, na razie. Automat blogowy zmienia się dopiero w trzecim planie.
 Do tego czasu wszystko chodzi jak dotąd.
+
+---
+
+## Dane od właściciela — przekazane 11 września 2026
+
+Do wykorzystania w planie drugim, nie trzeba o nie pytać ponownie.
+
+| Co | Wartość |
+|---|---|
+| Imię i nazwisko | Norbert Chojnacki |
+| Zawód do strony o mnie | inżynier informatyki |
+| GitHub | https://github.com/schizae |
+| LinkedIn | https://www.linkedin.com/in/norbert-chojnacki-16a351270/ |
+| Zdjęcie | `public/norbert.png`, używane dziś w sekcji o nas na stronie głównej |
+| Adres na cotygodniowy przegląd nowości AI | sekret GitHuba `BRIEF_RECIPIENT_EMAIL` |
+
+Adres e-mail celowo nie jest zapisany w tym pliku. Repozytorium jest publiczne, a prywatna skrzynka
+w publicznym repozytorium to zaproszenie dla robotów zbierających adresy. Workflow z planu trzeciego
+odczyta go z sekretu.
+
+Oba adresy profili trafiają do pola `sameAs` w danych strukturalnych organizacji i osoby.
+Zdjęcie i zawód trafiają na stronę `/o-mnie` wraz ze schematem `Person`.
+
+---
+
+## Co zostało do zrobienia
+
+3. Uzupełnić punkt odniesienia w `docs/seo/baseline.md` — dane z Search Console i pomiar PageSpeed.
+4. Wyeksportować zapytania z Search Console do `data/seo/gsc-queries.csv`.
+5. Zdobyć trzy realne wdrożenia z prawem do opisu, albo uruchomić wariant zapasowy z publicznym
+   repozytorium przepływu n8n.
