@@ -333,6 +333,64 @@ Scalona lista wszystkich fraz z wolumenami, po usunięciu duplikatów:
 **`data/seo/wolumeny.csv`**, 2 232 frazy, z czego 133 mają wolumen co najmniej 50.
 To jest od teraz jedyne źródło, z którego bierzemy tematy dla automatu blogowego.
 
+### 2.4c Trzecia partia — temat lokalny zamknięty, szkolenia na czele
+
+**Lokalne: zamknięte.** Wyszukanie hasła `chojnice` zwróciło 5 387 fraz. Przejrzałem je pod kątem
+czegokolwiek z naszej branży. Jedyne trafienie to `informatyk chojnice` z trzydziestoma
+wyszukiwaniami miesięcznie. Reszta to pogoda (110 000), samo miasto (90 500), praca, kino, taxi,
+komunikacja miejska. **Nie ma w Chojnicach popytu na automatyzację ani AI.**
+Strona lokalna zostaje w planie jako jedna krótka wizytówka dla wiarygodności i dla ludzi,
+którzy trafią tam z polecenia. Nie jako kanał ruchu. Temat uznaję za rozstrzygnięty i nie wracam do niego.
+
+**Szkolenia okazały się największym dostępnym klastrem komercyjnym.**
+
+| Fraza | Wolumen |
+|---|---|
+| szkolenie ai | 1 900 |
+| szkolenia ai | 1 900 |
+| szkolenie z ai | 720 |
+| ai szkolenie | 480 |
+| ai szkolenia | 390 |
+| szkolenie ai w biznesie | 320 |
+| szkolenie ai w marketingu | 140 |
+| szkolenie ai dla firm | 140 |
+| szkolenia ai dla firm | 110 |
+| agenci ai szkolenie | 110 |
+
+Warianty się nakładają, ale nawet ostrożnie licząc to kilka tysięcy wyszukiwań miesięcznie.
+Dla porównania cała rodzina fraz o automatyzacji procesów to około dwóch tysięcy.
+
+To jest najlepsze wejście dla jednej osoby i trzeba to powiedzieć wprost.
+Szkolenie nie wymaga dostępu do systemów klienta, nie wymaga utrzymania po wdrożeniu,
+sprzedaje się szybciej niż projekt i jest naturalnym przedłużeniem klastra agentów AI,
+który jest drugą co do wielkości studnią. **Strona `/uslugi/szkolenia-z-ai-dla-zespolow` awansuje
+z czwartego miejsca na pierwsze.**
+
+**Chatboty: właściwa fraza ma złą intencję.** Samo `chatbot` ma 9 900, `chatbot gpt` 9 900,
+`openai chatbot` 2 900. To ludzie szukający narzędzia do rozmowy, nie wykonawcy.
+Warianty z intencją zakupową są mikroskopijne: `chatbot dla firm` 40, `chatbot na stronę` 50,
+`chatbot obsługa klienta` 10. Strona usługowa o chatbotach zostaje, ale jej frazą główną
+ma być `agent ai`, nie `chatbot`.
+
+**Zapier odpada.** Wyszukanie zwróciło klaster techniczny wokół integracji z Gmailem i logowania
+przez OAuth, nic, co prowadziłoby do zlecenia. `integromat`, czyli dawna nazwa Make, ma 590.
+
+### Czego nauczył nas jedyny konkurent z ruchem
+
+Cztery większe domeny sprawdzone razem dały 4 409 fraz, ale niemal cała widoczność należy
+do `webcon.com`, i to nie za sprawą oferty. Ich ruch stoi na poradnikach programistycznych:
+`pętle` 22 200, `ciąg fibonacci` 18 100, `znaczenie emotki` 12 100, `singleton` 5 400,
+`prometheus` 5 400, `spring and spring boot` 3 600.
+
+Wniosek jest niewygodny, ale użyteczny. **Jedyna firma z naszej listy, która ma realną widoczność,
+zbudowała ją treściami niezwiązanymi ze swoją usługą.** To pokazuje, jak trudno zdobyć ruch
+samymi stronami ofertowymi, i potwierdza, że blog ma być silnikiem, a strony usługowe miejscem lądowania.
+
+Osobna obserwacja: w ich zbiorze `ksef od kiedy` ma 33 100 wyszukiwań. KSeF jako produkt został
+świadomie odrzucony wcześniej i nie wracam do tej decyzji. Jako temat treści przy dokumentach
+i fakturach to jednak największy pojedynczy popyt, jaki widzieliśmy poza `n8n`.
+Zostawiam to jako informację, nie jako rekomendację.
+
 ### Konkurencja, której w bazie nie ma
 
 Trzy domeny, które wskazałem jako konkurentów na podstawie wyników wyszukiwania —
