@@ -7,6 +7,11 @@
 
 const { GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL } = process.env
 
+// Nazwy modeli w jednym miejscu, bo rozjeżdżały się między wywołaniem a polem
+// ai_model w ładunku publikacji, a to pole trafia do rejestru systemów AI.
+const MODEL_TEKSTU = 'gemini-3.8-flash'
+const MODEL_OBRAZU = 'gemini-3.1-flash-image'
+
 if (!GOOGLE_API_KEY || !IMGBB_API_KEY || !WEBHOOK_SECRET || !SITE_URL) {
   console.error('❌ Brak wymaganych zmiennych środowiskowych: GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL')
   process.exit(1)
@@ -150,7 +155,7 @@ Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
 }`
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_TEKSTU}:generateContent?key=${GOOGLE_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -180,7 +185,7 @@ async function generateCoverImage(imagePrompt) {
   const prompt = `${imagePrompt}. High quality editorial illustration, modern minimalist style, absolutely no text, no letters, no words anywhere in the image. Professional business magazine cover image.`
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GOOGLE_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_OBRAZU}:generateContent?key=${GOOGLE_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -270,7 +275,7 @@ const result = await publishPost({
   tags: article.tags ?? [],
   author: 'Zautomatyzujemy.pl',
   ai_generated: true,
-  ai_model: 'gemini-2.5-flash',
+  ai_model: MODEL_TEKSTU,
 })
 console.log(
   result.published

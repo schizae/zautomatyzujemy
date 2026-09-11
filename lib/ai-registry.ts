@@ -34,14 +34,14 @@ export const AI_SYSTEMS: readonly AiSystemEntry[] = [
   },
   {
     name: 'blog-auto',
-    model: 'gemini-2.5-flash oraz gemini-2.5-flash-image',
+    model: 'gemini-3.8-flash oraz gemini-3.1-flash-image',
     purpose: 'Cotygodniowy artykuł na blog wraz z okładką',
     inputs: 'Lista dotychczasowych tematów pobierana ze strony',
     role: 'podmiot stosujący',
   },
   {
     name: 'blog-brief',
-    model: 'gemini-2.5-flash oraz gemini-2.5-flash-image',
+    model: 'gemini-3.8-flash oraz gemini-3.1-flash-image',
     purpose: 'Cotygodniowy przegląd nowości AI wraz z okładką',
     inputs: 'Kanały RSS producentów modeli',
     role: 'podmiot stosujący',

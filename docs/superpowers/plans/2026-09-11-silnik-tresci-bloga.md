@@ -43,7 +43,7 @@ Poza zakresem: automat propozycji postów do sieci społecznościowych, to plan 
 | `lib/email/resend.ts` to moduł TypeScript Next.js, skrypt Actions go nie zaimportuje | odczyt pliku |
 | Nadawca maili: `powiadomienia@zautomatyzujemy.pl` | `lib/email/resend.ts:12` |
 
-Numeracja migracji: `016` i `017` zajmuje plan drugi, więc ten plan używa `018`.
+Numeracja migracji: `016`, `017` i `018` zajmuje plan drugi, więc ten plan używa `019`.
 
 ---
 
@@ -51,7 +51,7 @@ Numeracja migracji: `016` i `017` zajmuje plan drugi, więc ten plan używa `018
 
 | Plik | Odpowiedzialność |
 |---|---|
-| `supabase/migrations/018_blog_seo.sql` | Dwie kolumny w `posts`: fraza docelowa i wyłączenie z indeksu. |
+| `supabase/migrations/019_blog_seo.sql` | Dwie kolumny w `posts`: fraza docelowa i wyłączenie z indeksu. |
 | `docs/seo/editorial-standard.md` | Zasady pisania, czytane przez generator i przez człowieka. |
 | `scripts/seo/quality-gate.mjs` | Trzy bramki techniczne, czysta logika, bez sieci. |
 | `scripts/seo/quality-gate.test.mjs` | Testy bramek. |
@@ -133,12 +133,12 @@ git commit -m "feat(blog): podniesienie modelu na gemini-3.8-flash"
 ## Zadanie 2: Migracja bazy
 
 **Pliki:**
-- Utwórz: `supabase/migrations/018_blog_seo.sql`
+- Utwórz: `supabase/migrations/019_blog_seo.sql`
 
 - [ ] **Krok 1: Napisz migrację**
 
 ```sql
--- 018_blog_seo.sql
+-- 019_blog_seo.sql
 -- Dwie kolumny, obie z konsumentem od pierwszego dnia.
 -- target_keyword: fraza, pod którą artykuł powstał, potrzebna przy przeglądzie i przy raportach.
 -- noindex: wyłączenie archiwalnych przeglądów z indeksu bez usuwania ich ze strony.
@@ -170,7 +170,7 @@ Oczekiwane: dwa wiersze, `noindex` z `is_nullable = NO`.
 - [ ] **Krok 3: Commit**
 
 ```bash
-git add supabase/migrations/018_blog_seo.sql
+git add supabase/migrations/019_blog_seo.sql
 git commit -m "feat(blog): kolumny frazy docelowej i wylaczenia z indeksu"
 ```
 
