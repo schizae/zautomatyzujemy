@@ -282,7 +282,10 @@ function buildEmailHtml(data: LeadNotificationData, sourceLabel: string): string
  */
 export async function sendDraftAwaitingReview(
   title: string,
-  slug: string
+  slug: string,
+  /** Braki zgłoszone przez bramkę jakości. Redaktor ma wiedzieć, co poprawić,
+   *  zanim otworzy panel. */
+  qualityIssues: readonly string[] = []
 ): Promise<void> {
   if (!TO_EMAIL || !process.env['RESEND_API_KEY']) {
     console.warn(
@@ -316,6 +319,14 @@ export async function sendDraftAwaitingReview(
           <td style="padding:32px">
             <p style="margin:0 0 8px;font-size:15px;font-weight:600;color:#111827">${escHtml(title)}</p>
             <p style="margin:0 0 24px;font-size:13px;color:#6b7280">/blog/${escHtml(slug)}</p>
+            ${
+              qualityIssues.length > 0
+                ? `<div style="margin:0 0 24px;padding:16px;background:#fef3c7;border-radius:8px">
+              <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#92400e">Bramka jakości zgłosiła ${qualityIssues.length} ${qualityIssues.length === 1 ? 'uwagę' : 'uwagi'}:</p>
+              <ul style="margin:0;padding-left:18px;font-size:13px;color:#92400e;line-height:1.6">${qualityIssues.map(issue => `<li>${escHtml(issue)}</li>`).join('')}</ul>
+            </div>`
+                : ''
+            }
             <p style="margin:0 0 24px;font-size:14px;color:#374151;line-height:1.6">
               Redaktor AI przygotował artykuł. Panel stoi w trybie redakcyjnym, więc tekst
               nie trafił na stronę i czeka na Twoje sprawdzenie.

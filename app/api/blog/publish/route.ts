@@ -25,6 +25,12 @@ const BlogPublishSchema = z.object({
   published_at: z.string().datetime().optional(),
   ai_generated: z.boolean().optional(),
   ai_model: z.string().max(100).optional(),
+  target_keyword: z.string().max(200).nullish(),
+  // Wynik bramki jakości ze skryptu generującego. Brak pola oznacza, że nadawca
+  // bramki nie uruchomił — traktujemy to jak przejście, żeby nie zablokować
+  // ręcznych publikacji z panelu i zgłoszeń spoza generatora.
+  quality_gate_passed: z.boolean().optional(),
+  quality_gate_issues: z.array(z.string().max(300)).max(30).optional(),
 })
 
 // ─── Weryfikacja sekretu (timing-safe) ───────────────────────────────────────
@@ -82,8 +88,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     .maybeSingle()
 
   const mode = await getBlogPublishMode()
+
+  // Szkic, który nie przeszedł bramki jakości, nie publikuje się nawet w trybie
+  // automatycznym. Przejście bramki nie jest zatwierdzeniem merytorycznym — to tylko
+  // stwierdzenie, że tekst ma źródła i działające odnośniki. Ocena treści należy do człowieka.
+  const bramkaOdrzucila = payload.quality_gate_passed === false
+  const effectiveMode = bramkaOdrzucila ? 'review' : mode
+
   const publishState = resolvePublishState(
-    mode,
+    effectiveMode,
     new Date().toISOString(),
     payload.published_at ?? null,
     existing
@@ -107,6 +120,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // na kontroli redakcyjnej, w automatycznym na znaczniku — jedno zabezpiecza drugie.
     ai_generated: payload.ai_generated ?? false,
     ai_model: payload.ai_model ?? null,
+    target_keyword: payload.target_keyword ?? null,
     ...publishState,
   }
 
@@ -137,7 +151,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // i porzucona obietnica ginie. Błąd wysyłki nie może jednak wywrócić publikacji.
   if (!publishState.is_published) {
     try {
-      await sendDraftAwaitingReview(payload.title, payload.slug)
+      await sendDraftAwaitingReview(payload.title, payload.slug, payload.quality_gate_issues ?? [])
     } catch (err) {
       console.error('[/api/blog/publish] Nie udało się wysłać powiadomienia o szkicu:', err)
     }
