@@ -391,6 +391,68 @@ Osobna obserwacja: w ich zbiorze `ksef od kiedy` ma 33 100 wyszukiwań. KSeF jak
 i fakturach to jednak największy pojedynczy popyt, jaki widzieliśmy poza `n8n`.
 Zostawiam to jako informację, nie jako rekomendację.
 
+### 2.4d Prawdziwa konkurencja — korekta wcześniejszego wniosku
+
+Wcześniej napisałem, że nisza jest pusta. To był wniosek z sześciu domen, które sam wybrałem
+z wyników wyszukiwania, i był błędny. Właściciel sprawdził w Senuto domeny rankujące na
+„automatyzacje firm" i wyszło sześć innych, w tym dwie z realną widocznością.
+
+| Domena | TOP 3 | TOP 10 | TOP 50 | Szacowany ruch | Na czym stoi |
+|---|---|---|---|---|---|
+| **letsautomate.pl** | 10 | 23 | 93 | **613** | nasze frazy docelowe |
+| **sagiton.pl** | 16 | 67 | 224 | **544** | workflow i strony usługowe |
+| codium.pl | 5 | 16 | 146 | 585 | jeden artykuł o WordPressie, widoczność spada |
+| pirxon.com | 5 | 20 | 57 | 147 | RPA, inna nisza |
+| agenciai.pl | 0 | 4 | 37 | 88 | rośnie od miesiąca |
+| zautomatyzujmy.to | 1 | 1 | 6 | 1 | praktycznie zero |
+
+**letsautomate.pl siedzi dokładnie na naszych frazach.** Trzecia pozycja na
+`automatyzacja procesów biznesowych` (590), trzecia na `automatyzacja procesów` (480),
+**pierwsza na `automatyzacja procesów w firmie`** (140). Do tego czwarta na `automate` (2 400).
+To nie jest gigant: dwadzieścia trzy frazy w pierwszej dziesiątce i 613 szacowanych wejść miesięcznie.
+Ale to jest ten, którego trzeba wyprzedzić, żeby zająć flagową frazę.
+
+Ich najmocniejsza strona to nie oferta, tylko artykuł
+`/post/co-to-jest-automatyzacja-procesow-biznesowych` z pięcioma frazami w pierwszej dziesiątce.
+
+**sagiton.pl dowodzi, że strona usługowa potrafi rankować.**
+`/uslugi/konsulting-automatyzacja-i-ai` jest **pierwsza** na `ai consulting`.
+Do tego artykuł `/blog/co-to-jest-workflow` ciąga 143 wejścia miesięcznie na frazie
+`workflow` (3 600, pozycja 6). Widoczność rośnie stromo od pół roku.
+
+To jest najważniejsza obserwacja z całej analizy konkurencji. Wcześniej wyciągnąłem z webcona
+wniosek, że ruch bierze się wyłącznie z treści niezwiązanych z ofertą. Sagiton pokazuje, że to
+nieprawda: strona usługowa może być pierwsza, o ile fraza jest dość wąska. `ai consulting`
+ma 210 wyszukiwań, czyli dokładnie tyle, ile trzeba, żeby dało się wygrać bez autorytetu domeny.
+
+**codium.pl potwierdza natomiast wzorzec webcona.** 585 wejść niemal w całości z jednego artykułu
+o budowaniu stron na WordPressie (`wordpressem`, 33 100). Widoczność spada od roku z osiemdziesięciu
+do dwudziestu. Ruch bez związku z ofertą nie zamienia się w klientów i nie broni się w czasie.
+
+### Frazy, których nie mieliśmy
+
+| Fraza | Wolumen | Kto ją ma |
+|---|---|---|
+| workflow | 3 600 | sagiton.pl, pozycja 6 |
+| automate | 2 400 | letsautomate.pl, pozycja 4 |
+| business process automation | 260 | sagiton.pl, pozycja 4 |
+| ai consulting | 210 | sagiton.pl, pozycja 1 |
+| workflow po polsku | 320 | sagiton.pl, pozycja 18 |
+
+`workflow` to fraza, której w naszej mapie w ogóle nie było, a jest bezpośrednio związana z n8n
+i ma trzy i pół tysiąca wyszukiwań. Artykuł „co to jest workflow" trafia do kogoś, kto zaczyna
+się rozglądać za automatyzacją, czyli o krok wcześniej niż nasze dotychczasowe tematy.
+
+### Co z tego wynika dla planu
+
+1. **Poprzeczka jest znana.** Lider ma 613 szacowanych wejść miesięcznie i dwadzieścia trzy frazy
+   w pierwszej dziesiątce. To jest osiągalne w rok, a nie w pięć lat.
+2. **Flagowa fraza jest zajęta przez jedną stronę, nie przez dziesięć.** Żeby ją odbić, trzeba
+   napisać lepszy artykuł niż `co-to-jest-automatyzacja-procesow-biznesowych` i podeprzeć go
+   stroną usługową.
+3. **Do planu treści dochodzi `workflow`** jako temat wczesnego etapu.
+4. **Wąskie frazy usługowe da się wygrać stroną ofertową**, co potwierdza sens całego planu drugiego.
+
 ### Konkurencja, której w bazie nie ma
 
 Trzy domeny, które wskazałem jako konkurentów na podstawie wyników wyszukiwania —

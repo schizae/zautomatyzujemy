@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('posts')
-    .select('title, excerpt, cover_image, published_at, updated_at, author, ai_generated, ai_model')
+    .select('title, excerpt, cover_image, published_at, updated_at, author, ai_generated, ai_model, noindex')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
@@ -72,6 +72,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [getBlogCover(slug, data.cover_image)],
     },
     other: aiMeta,
+    // Archiwalne przeglądy zostają na stronie dla czytelników, ale wypadają z indeksu.
+    // follow zostaje włączone celowo: strona nie rankuje, ale jej odnośniki nadal
+    // przekazują sygnał do stron, na które prowadzi.
+    ...(data.noindex === true && { robots: { index: false, follow: true } }),
   }
 }
 
