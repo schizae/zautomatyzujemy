@@ -18,6 +18,7 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
+        editorial: ['Georgia', 'Times New Roman', 'serif'],
         sans: ['var(--font-sans)', 'sans-serif'],
         body: ['var(--font-sans)', 'sans-serif'],
         headline: ['var(--font-headline)', 'sans-serif'],

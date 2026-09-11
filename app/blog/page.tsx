@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { BrandLogo } from '@/components/brand-logo'
 import { ArrowLeft } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { PostPreview } from '@/types'
-import { BlogCarousel } from './_components/BlogCarousel'
+import { BlogGrid } from './_components/BlogCarousel'
 
 // Zawsze pobiera świeże dane — usunięcie posta w Supabase natychmiast
 // odzwierciedla się na stronie bez konieczności ręcznej rewalidacji.
@@ -28,35 +29,36 @@ export default async function BlogPage() {
   const posts = (data ?? []) as PostPreview[]
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main id="main" className="marketing-theme min-h-screen bg-[#f5f2ed] text-[#151719] [color-scheme:light]">
       {/* Header */}
-      <div className="bg-slate-950 pt-20 pb-16 px-6">
+      <div className="bg-[#151719] pt-20 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-8"><BrandLogo inverse /></div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-8"
+            className="inline-flex items-center gap-2 text-[#dedbd5] hover:text-white transition-colors text-sm mb-8"
           >
             <ArrowLeft size={16} />
             Wróć na stronę główną
           </Link>
-          <p className="text-xs font-bold text-primary tracking-widest uppercase mb-3">
+          <p className="text-xs font-bold text-[#ffb49f] tracking-widest uppercase mb-3">
             Baza Wiedzy
           </p>
-          <h1 className="text-5xl font-extrabold text-white tracking-tight">
-            Blog
+          <h1 className="text-4xl md:text-6xl font-headline font-medium text-white tracking-tight">
+            Pomysły na lepszą pracę.
           </h1>
-          <p className="text-slate-400 mt-4 text-lg">
+          <p className="text-[#dedbd5] mt-4 text-lg">
             Artykuły o automatyzacji AI i transformacji cyfrowej dla MŚP.
           </p>
         </div>
       </div>
 
-      {/* Posts carousel */}
-      <div className="max-w-7xl mx-auto px-10 py-16">
+      {/* Posts grid */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
         {posts.length === 0 ? (
-          <p className="text-center text-slate-400 py-16">Brak opublikowanych artykułów.</p>
+          <p className="text-center text-[#62625d] py-16">Brak opublikowanych artykułów.</p>
         ) : (
-          <BlogCarousel posts={posts} />
+          <BlogGrid posts={posts} />
         )}
       </div>
     </main>

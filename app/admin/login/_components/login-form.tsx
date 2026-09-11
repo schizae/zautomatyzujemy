@@ -15,24 +15,26 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-on-surface-variant">Hasło administratora</label>
+        <label htmlFor="admin-password" className="block text-sm font-bold text-[#62625d]">Hasło administratora</label>
         <Input
+          id="admin-password"
+          autoComplete="current-password"
           type="password"
           name="password"
           placeholder="••••••••"
           required
           autoFocus
-          className="bg-surface-container-low"
+          className="h-12 bg-white border-[#c7c3bb] text-[#151719] focus-visible:ring-[#c93820]/20"
         />
       </div>
 
       {!state.success && (
-        <p className="rounded-lg bg-red-900/30 px-4 py-2.5 text-sm font-medium text-red-400">
+        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
           {state.error}
         </p>
       )}
 
-      <Button type="submit" className="w-full gap-2" disabled={isPending}>
+      <Button type="submit" className="h-12 w-full gap-2 bg-[#c93820] text-white hover:bg-[#ab2f1c]" disabled={isPending}>
         {isPending ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (

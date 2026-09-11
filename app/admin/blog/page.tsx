@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { Plus, Pencil, Eye, EyeOff } from 'lucide-react'
+import { Plus, Pencil, Eye, EyeOff, Bot } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getAdminPosts } from '@/lib/actions/admin.actions'
 import { DeleteButton } from './_components/delete-button'
+import { ApproveButton } from './_components/approve-button'
 
 export const metadata = { title: 'Blog — Admin' }
 
@@ -46,6 +47,12 @@ export default async function AdminBlogPage() {
                     <div>
                       <p className="font-medium text-on-surface">{post.title}</p>
                       <p className="text-xs text-outline-color">/blog/{post.slug}</p>
+                      {post.ai_generated && (
+                        <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2 py-0.5 text-[11px] font-medium text-on-surface-variant">
+                          <Bot className="size-3" />
+                          {post.reviewed_at ? 'AI — sprawdzony' : 'AI — niesprawdzony'}
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -66,6 +73,9 @@ export default async function AdminBlogPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
+                      {!post.is_published && (
+                        <ApproveButton postId={post.id} postTitle={post.title} />
+                      )}
                       <Button variant="ghost" size="icon" asChild>
                         <Link href={`/admin/blog/${post.id}`}>
                           <Pencil className="size-4" />

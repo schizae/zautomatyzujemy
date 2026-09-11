@@ -8,13 +8,13 @@ export default function manifest(): MetadataRoute.Manifest {
       'Wdrażamy AI i automatyzacje, które oszczędzają czas, redukują koszty i skalują Twój biznes.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#121412',
-    theme_color: '#70e5ea',
+    background_color: '#f5f2ed',
+    theme_color: '#e84324',
     icons: [
       {
-        src: '/favicon.ico',
+        src: '/brand-icon.svg',
         sizes: 'any',
-        type: 'image/x-icon',
+        type: 'image/svg+xml',
       },
     ],
   }

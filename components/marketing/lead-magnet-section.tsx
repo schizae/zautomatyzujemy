@@ -1,112 +1,102 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useActionState, useEffect, useState } from 'react'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
+import type { RawAttribution } from '@/lib/attribution'
 import { subscribeLeadMagnetAction } from '@/lib/actions/contact.actions'
 import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
-import { Shield, CheckCircle2, Loader2 } from 'lucide-react'
+import { CheckCircle2, Loader2 } from 'lucide-react'
 import type { ActionResult } from '@/types'
 
 const initialState: ActionResult = { success: false, error: '' }
 
-const checklistItems = [
-  'Klasyfikacja systemów AI według poziomu ryzyka',
-  'Obowiązki dla firm korzystających z AI (nawet ChatGPT)',
-  'Lista wymaganych dokumentów i polityk',
-  'Wymagania szkoleniowe dla pracowników (AI literacy)',
-  'Terminy wejścia w życie poszczególnych przepisów',
-  'Plan działania krok po kroku dla MŚP',
-]
-
 export function LeadMagnetSection() {
   const [state, formAction, isPending] = useActionState(subscribeLeadMagnetAction, initialState)
 
+  const [attribution, setAttribution] = useState<RawAttribution>({
+    referrer: null,
+    landingPath: null,
+    utmSource: null,
+  })
+
+  useEffect(() => {
+    setAttribution(readFirstTouch())
+  }, [])
+
   return (
-    <section className="py-24 px-6 md:px-8 bg-gradient-to-b from-[#0d0f0d] to-[#121412]">
-      <div className="max-w-screen-2xl mx-auto">
-        <div className="rounded-[2.5rem] border border-[#ffa07b]/20 bg-gradient-to-br from-[#1a1208] via-[#1a1c1a] to-[#121412] overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-
-            {/* LEFT — info */}
-            <div className="p-10 md:p-14 border-b lg:border-b-0 lg:border-r border-[#ffa07b]/10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/20 mb-8">
-                <Shield size={13} className="text-[#ffa07b]" />
-                <span className="text-xs font-label uppercase tracking-widest text-[#ffa07b]">Bezpłatny PDF</span>
-              </div>
-
-              <h2 className="text-3xl md:text-4xl font-headline font-bold text-[#e2e3df] mb-4 leading-tight">
-                Checklista:{' '}
-                <span className="text-[#ffa07b]">Zgodność z AI Act</span>
-                {' '}dla MŚP
-              </h2>
-              <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
-                Praktyczny przewodnik dla małych i średnich firm. Bez prawniczego żargonu —
-                obowiązki, które już obowiązują, i terminy, które dopiero nadejdą.
-              </p>
-
-              <ul className="space-y-3">
-                {checklistItems.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="text-[#ffa07b] shrink-0 mt-0.5" size={16} />
-                    <span className="text-[#bcc9c9] text-sm font-body">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* RIGHT — form */}
-            <div className="p-10 md:p-14 flex flex-col justify-center">
+    <section id="checklista" className="mx-auto grid max-w-[1680px] items-center gap-10 px-6 py-20 md:px-8 lg:min-h-[720px] lg:grid-cols-[1fr_0.95fr_1fr]">
+      <div>
+        <p className="mb-10 text-xs uppercase tracking-[0.2em]"><span className="text-[#f34c30]">03 /</span> Wiedza i przygotowanie</p>
+        <h2 className="font-body text-4xl font-extrabold leading-[1.04] tracking-[-0.05em] xl:text-[60px]">Dobre decyzje<br />zaczynają się<br />od <span className="font-editorial text-[#e84324] font-normal italic tracking-[-0.06em]">wiedzy.</span></h2>
+        <p className="my-8 text-xl leading-relaxed">Szkolenia z AI, audyty procesów i konkretne wskazówki dla Twojej firmy.</p>
+        <div className="mt-10 border-t border-[#c7c3bb] pt-5 text-lg"><Link href="/#uslugi" className="block border-b border-[#c7c3bb] py-4">Poznaj szkolenia →</Link><Link href="/#kontakt" className="block border-b border-[#c7c3bb] py-4">Sprawdź zakres audytu →</Link></div>
+      </div>
+      <div className="relative mx-auto w-full max-w-sm">
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-8 top-16 bg-gradient-to-tr from-[#f4c6ae] via-[#f5e0d3] to-[#f5f2ed]" />
+        <Image src="/redesign/checklist-book.webp" alt="AI Act — checklista dla MŚP, bezpłatny materiał" width={700} height={1050} sizes="(min-width: 1024px) 30vw, 70vw" className="relative mx-auto w-full mix-blend-multiply" />
+      </div>
+      <div className="min-w-0">
+        <span className="mb-6 inline-block bg-[#c93820] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white">Bezpłatny PDF</span>
               {state.success ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-[#ffa07b]/10 border border-[#ffa07b]/30 flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="text-[#ffa07b]" size={28} />
+                  <div className="w-16 h-16 rounded-full bg-[#c93820]/10 border border-[#c93820]/30 flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="text-[#c93820]" size={28} />
                   </div>
-                  <h3 className="text-2xl font-headline font-bold text-[#e2e3df] mb-3">
+                  <h3 className="text-3xl xl:text-4xl font-body font-bold tracking-tight text-[#151719] mb-3">
                     Sprawdź skrzynkę!
                   </h3>
-                  <p className="text-[#bcc9c9] font-body text-base leading-relaxed mb-4">
+                  <p className="text-[#62625d] font-body text-base leading-relaxed mb-4">
                     Wysłałem Ci email z linkiem do checklisty. Możesz też otworzyć ją od razu:
                   </p>
                   <Link
                     href="/ai-act-checklist"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#ffa07b]/30 text-[#ffa07b] text-sm font-label hover:bg-[#ffa07b]/10 transition-colors mb-6"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#c93820]/30 text-[#c93820] text-sm font-label hover:bg-[#c93820]/10 transition-colors mb-6"
                   >
                     Otwórz checklistę →
                   </Link>
-                  <p className="text-[#5a6464] font-body text-sm">
+                  <p className="text-[#62625d] font-body text-sm">
                     Możesz też od razu umówić{' '}
-                    <Link href="/#kontakt" className="text-[#70e5ea] hover:underline">
+                    <Link href="/#kontakt" className="text-[#c93820] hover:underline">
                       bezpłatną konsultację
                     </Link>.
                   </p>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-2xl font-headline font-bold text-[#e2e3df] mb-3">
-                    Pobierz bezpłatnie
+                  <h3 className="text-3xl xl:text-4xl font-body font-bold tracking-tight text-[#151719] mb-3">
+                    Zacznij od checklisty.
                   </h3>
-                  <p className="text-[#bcc9c9] font-body text-sm mb-8">
-                    Podaj swój adres email — link do checklisty dostaniesz natychmiast.
-                    Sama checklista jest bezwarunkowa, newsletter to osobna decyzja.
+                  <p className="text-[#62625d] font-body text-lg mb-8">
+                    Otrzymaj checklistę AI Act na swój adres e-mail.
                   </p>
 
                   <form action={formAction} className="space-y-4">
+                    {/* Atrybucja — skąd przyszedł odwiedzający. Puste, gdy przeglądarka blokuje dane witryny. */}
+                    <input type="hidden" name="referrer" value={attribution.referrer ?? ''} />
+                    <input type="hidden" name="landingPath" value={attribution.landingPath ?? ''} />
+                    <input type="hidden" name="utmSource" value={attribution.utmSource ?? ''} />
+
                     {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
                     <div aria-hidden="true" className="hidden">
                       <input type="text" name="website" tabIndex={-1} autoComplete="off" />
                     </div>
 
                     <div>
-                      <label htmlFor="lm-email" className="block text-xs font-label uppercase tracking-wider text-[#bcc9c9] mb-2">
+                      <label htmlFor="lm-email" className="block text-xs font-label uppercase tracking-wider text-[#62625d] mb-2">
                         Adres e-mail
                       </label>
-                      <input
+                      <Input
                         id="lm-email"
                         name="email"
                         type="email"
                         required
+                        autoComplete="email"
                         placeholder="twoj@email.pl"
-                        className="w-full bg-[#1a1c1a] border border-[#3d4949]/30 rounded-xl px-4 py-3 text-[#e2e3df] text-sm font-body placeholder:text-[#5a6464] outline-none focus:border-[#ffa07b]/50 focus:ring-2 focus:ring-[#ffa07b]/10 transition-colors"
+                        className="h-14 w-full bg-[#faf8f5] border border-[#b4b0a9] rounded-md px-4 py-3 text-[#151719] text-sm font-body placeholder:text-[#62625d] outline-none focus:border-[#c93820]/50 focus:ring-2 focus:ring-[#c93820]/10 transition-colors"
                       />
                     </div>
 
@@ -115,9 +105,9 @@ export function LeadMagnetSection() {
                         type="checkbox"
                         name="newsletterConsent"
                         value="true"
-                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#3d4949] bg-[#1a1c1a] accent-[#ffa07b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa07b]/40"
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-[#c7c3bb] bg-[#ffffff] accent-[#c93820] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820]/40"
                       />
-                      <span className="text-[#bcc9c9] text-xs font-body leading-relaxed group-hover:text-[#e2e3df] transition-colors">
+                      <span className="text-[#62625d] text-sm font-body leading-relaxed group-hover:text-[#151719] transition-colors">
                         {NEWSLETTER_CONSENT_TEXT}
                       </span>
                     </label>
@@ -126,10 +116,10 @@ export function LeadMagnetSection() {
                       <p className="text-red-400 text-sm font-body">{state.error}</p>
                     )}
 
-                    <button
+                    <Button
                       type="submit"
                       disabled={isPending}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#ffa07b] text-[#1a0a00] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
+                      className="w-full flex items-center justify-center gap-2 h-auto px-6 py-5 rounded-md bg-[#c93820] text-[#ffffff] font-headline font-bold text-base hover:brightness-110 transition-all disabled:opacity-60 shadow-lg"
                     >
                       {isPending ? (
                         <>
@@ -139,22 +129,18 @@ export function LeadMagnetSection() {
                       ) : (
                         'Wyślij mi checklistę →'
                       )}
-                    </button>
+                    </Button>
 
-                    <p className="text-[#5a6464] text-xs font-body text-center leading-relaxed">
+                    <p className="text-[#62625d] text-xs font-body text-center leading-relaxed">
                       Bez zaznaczonej zgody użyjemy Twojego adresu wyłącznie do wysłania
                       checklisty. Zasady opisuje{' '}
-                      <Link href="/privacy-policy" className="text-[#70e5ea] hover:underline">
+                      <Link href="/privacy-policy" className="text-[#c93820] hover:underline">
                         polityka prywatności
                       </Link>.
                     </p>
                   </form>
                 </>
               )}
-            </div>
-
-          </div>
-        </div>
       </div>
     </section>
   )

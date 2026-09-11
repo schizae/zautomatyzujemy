@@ -29,6 +29,10 @@ export function PostForm({ post }: PostFormProps) {
   const [topic, setTopic] = useState('')
   const [isGenerating, startGenerating] = useTransition()
   const [generateError, setGenerateError] = useState('')
+  // Raz oznaczony wpis zostaje oznaczony: redaktor może przepisać każde zdanie,
+  // ale tekst i tak powstał maszynowo, a to jest deklaracja o pochodzeniu.
+  const [aiGenerated, setAiGenerated] = useState(post?.ai_generated ?? false)
+  const [aiModel, setAiModel] = useState(post?.ai_model ?? '')
 
   function handleTitleChange(value: string) {
     setTitle(value)
@@ -60,6 +64,8 @@ export function PostForm({ post }: PostFormProps) {
         setExcerpt(result.data.excerpt ?? '')
         setContent(result.data.content)
         setTags(result.data.tags.join(', '))
+        setAiGenerated(true)
+        setAiModel(result.data.model)
       }
     })
   }
@@ -109,6 +115,7 @@ export function PostForm({ post }: PostFormProps) {
         <input type="hidden" name="excerpt" value={excerpt} />
         <input type="hidden" name="content" value={content} />
         <input type="hidden" name="tags" value={tags} />
+        <input type="hidden" name="ai_model" value={aiModel} />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-2">
@@ -192,6 +199,25 @@ export function PostForm({ post }: PostFormProps) {
           />
           <label htmlFor="is_published" className="text-sm font-medium text-on-surface-variant">
             Opublikuj od razu
+          </label>
+        </div>
+
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="ai_generated"
+            name="ai_generated"
+            value="true"
+            checked={aiGenerated}
+            onChange={e => setAiGenerated(e.target.checked)}
+            className="mt-0.5 size-4 rounded accent-primary"
+          />
+          <label htmlFor="ai_generated" className="text-sm font-medium text-on-surface-variant">
+            Treść wygenerowana przez AI
+            <span className="mt-1 block text-xs font-normal text-outline-color">
+              Zaznacza się samo po użyciu generatora. Pod artykułem pojawi się wtedy
+              adnotacja o maszynowym pochodzeniu.
+            </span>
           </label>
         </div>
 

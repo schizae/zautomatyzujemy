@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
+import { AttributionTracker } from '@/components/analytics/attribution-tracker'
 import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
@@ -23,8 +24,12 @@ const inter = Inter({
   display: 'swap',
 })
 
+// Oba klucze są publiczne z definicji — trafiają do kodu strony.
+// Renderujemy widget tylko wtedy, gdy są ustawione, żeby brak konfiguracji
+// dawał brak przycisku, a nie przycisk, który po kliknięciu wyrzuca błąd.
+
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -50,8 +55,8 @@ export const metadata: Metadata = {
   creator: 'Zautomatyzujemy.pl',
   publisher: 'Zautomatyzujemy.pl',
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [{ url: '/brand-icon.svg', type: 'image/svg+xml' }],
+    apple: '/brand-apple-icon.png',
   },
   openGraph: {
     type: 'website',
@@ -100,8 +105,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#121412' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f2ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#151719' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -115,15 +120,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="pl"
-      className={`dark ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
+      className={`dark motion-reduce:!scroll-auto ${spaceGrotesk.variable} ${manrope.variable} ${inter.variable}`}
     >
       <body className="font-body antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:bg-[#70e5ea] focus:px-4 focus:py-2 focus:text-[#003739] focus:font-bold focus:text-sm"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:bg-[#c93820] focus:px-4 focus:py-2 focus:text-white focus:font-bold focus:text-sm"
         >
           Przejdź do treści
         </a>
+        <AttributionTracker />
         <Providers>{children}</Providers>
         <CookieBanner />
         <Analytics />

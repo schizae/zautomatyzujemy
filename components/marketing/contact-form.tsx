@@ -1,30 +1,56 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, CheckCircle } from 'lucide-react'
 import { submitContactAction } from '@/lib/actions/contact.actions'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
+import type { RawAttribution } from '@/lib/attribution'
 import type { ActionResult } from '@/types'
 
 const initialState: ActionResult<string> = { success: true }
 
-const labelClass = 'text-xs font-label uppercase tracking-widest text-[#bcc9c9]'
+const labelClass = 'block text-xs font-label font-semibold uppercase tracking-widest text-[#dedbd5]'
 const fieldClass =
-  'w-full bg-[#1e201e] border-b border-[#3d4949] focus:border-[#70e5ea] outline-none py-3 px-1 transition-all text-[#e2e3df] placeholder-[#bcc9c9]/30 font-body text-sm'
+  'min-h-12 w-full rounded-md bg-[#212326] border border-[#66696c] focus-visible:border-[#f34c30] focus-visible:ring-2 focus-visible:ring-[#f34c30]/30 py-3 px-4 text-[#f5f2ed] placeholder:text-[#b9b7b2] font-body text-base [color-scheme:dark]'
 
 const GOAL_OPTIONS = [
-  { value: 'llm', label: 'Implementacja LLM' },
-  { value: 'automation', label: 'Automatyzacja Workflow' },
-  { value: 'strategy', label: 'Strategia Enterprise' },
-  { value: 'custom', label: 'Własne Rozwiązanie' },
+  { value: 'llm', label: 'Asystent AI dla firmy' },
+  { value: 'automation', label: 'Automatyzacja codziennej pracy' },
+  { value: 'strategy', label: 'Szkolenie lub audyt AI' },
+  { value: 'custom', label: 'Strona internetowa lub aplikacja' },
 ]
 
-export function ContactForm() {
+interface ContactFormProps {
+  message?: string
+  onMessageChange?: (message: string) => void
+  idPrefix?: string
+}
+
+export function ContactForm({ message: controlledMessage, onMessageChange, idPrefix = 'contact' }: ContactFormProps = {}) {
   const [state, formAction, isPending] = useActionState(submitContactAction, initialState)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [goal, setGoal] = useState(GOAL_OPTIONS[0]!.value)
-  const [message, setMessage] = useState('')
+  const [localMessage, setLocalMessage] = useState('')
+  const message = controlledMessage ?? localMessage
+  const setMessage = (nextMessage: string) => {
+    if (controlledMessage === undefined) setLocalMessage(nextMessage)
+    onMessageChange?.(nextMessage)
+  }
   const [gdprConsent, setGdprConsent] = useState(false)
+
+  const [attribution, setAttribution] = useState<RawAttribution>({
+    referrer: null,
+    landingPath: null,
+    utmSource: null,
+  })
+
+  useEffect(() => {
+    setAttribution(readFirstTouch())
+  }, [])
 
   const isSuccess = state.success && 'data' in state && state.data === 'sent'
   const [showSuccess, setShowSuccess] = useState(false)
@@ -34,7 +60,7 @@ export function ContactForm() {
       setName('')
       setEmail('')
       setGoal(GOAL_OPTIONS[0]!.value)
-      setMessage('')
+      setLocalMessage('')
       setGdprConsent(false)
       setShowSuccess(true)
       const timer = setTimeout(() => setShowSuccess(false), 4000)
@@ -51,6 +77,11 @@ export function ContactForm() {
       <input type="hidden" name="message" value={message} />
       <input type="hidden" name="gdprConsent" value={gdprConsent ? 'true' : 'false'} />
 
+      {/* Atrybucja — skąd przyszedł odwiedzający. Puste, gdy przeglądarka blokuje dane witryny. */}
+      <input type="hidden" name="referrer" value={attribution.referrer ?? ''} />
+      <input type="hidden" name="landingPath" value={attribution.landingPath ?? ''} />
+      <input type="hidden" name="utmSource" value={attribution.utmSource ?? ''} />
+
       {/* Honeypot — ukryte przed ludźmi, widoczne dla botów */}
       <div aria-hidden="true" className="hidden">
         <input type="text" name="website" tabIndex={-1} autoComplete="off" />
@@ -58,9 +89,9 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label htmlFor="contact-name" className={labelClass}>Imię i nazwisko</label>
-          <input
-            id="contact-name"
+          <label htmlFor={`${idPrefix}-name`} className={labelClass}>Imię i nazwisko</label>
+          <Input
+            id={`${idPrefix}-name`}
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -70,9 +101,9 @@ export function ContactForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="contact-email" className={labelClass}>E-mail</label>
-          <input
-            id="contact-email"
+          <label htmlFor={`${idPrefix}-email`} className={labelClass}>E-mail</label>
+          <Input
+            id={`${idPrefix}-email`}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -84,15 +115,15 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="contact-goal" className={labelClass}>Cele do osiągnięcia</label>
+        <label htmlFor={`${idPrefix}-goal`} className={labelClass}>Cele do osiągnięcia</label>
         <select
-          id="contact-goal"
+          id={`${idPrefix}-goal`}
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           className={`${fieldClass} cursor-pointer`}
         >
           {GOAL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-[#1e201e]">
+            <option key={opt.value} value={opt.value} className="bg-[#212326]">
               {opt.label}
             </option>
           ))}
@@ -100,14 +131,14 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="contact-message" className={labelClass}>Wiadomość</label>
-        <textarea
-          id="contact-message"
+        <label htmlFor={`${idPrefix}-message`} className={labelClass}>Wiadomość</label>
+        <Textarea
+          id={`${idPrefix}-message`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Opisz problem, który rozwiązujemy..."
           rows={4}
-          className={`${fieldClass} resize-none`}
+          className={`${fieldClass} min-h-32 resize-y`}
           required
         />
       </div>
@@ -119,14 +150,14 @@ export function ContactForm() {
           checked={gdprConsent}
           onChange={(e) => setGdprConsent(e.target.checked)}
           required
-          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#1e201e] accent-[#70e5ea] cursor-pointer"
+          className="mt-0.5 shrink-0 w-4 h-4 rounded border border-[#3d4949] bg-[#212326] accent-[#e84324] cursor-pointer"
         />
-        <span className="text-xs font-body text-[#bcc9c9] leading-relaxed">
+        <span className="text-xs font-body text-[#dedbd5] leading-relaxed">
           Wyrażam zgodę na przetwarzanie moich danych osobowych przez Zautomatyzujemy.pl
           w celu udzielenia odpowiedzi na zapytanie, zgodnie z{' '}
           <a
             href="/privacy-policy"
-            className="text-[#70e5ea] hover:underline"
+            className="text-[#ffb49f] hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -144,20 +175,20 @@ export function ContactForm() {
       )}
 
       {showSuccess && (
-        <div className="flex items-center gap-2 rounded-lg bg-[#70e5ea]/10 border border-[#70e5ea]/20 px-4 py-2.5 text-sm font-medium text-[#70e5ea] font-body">
+        <div className="flex items-center gap-2 rounded-lg bg-[#ffab98]/10 border border-[#ffab98]/20 px-4 py-2.5 text-sm font-medium text-[#ffb49f] font-body">
           <CheckCircle className="size-4 shrink-0" />
           Wiadomość wysłana! Odezwiemy się w ciągu 24 godzin.
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={isPending || !gdprConsent}
-        className="w-full bg-[#70e5ea] text-[#003739] font-headline font-bold py-5 rounded-full text-lg hover:shadow-[0_0_30px_rgba(112,229,234,0.3)] transition-all hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
+        className="min-h-14 h-auto w-full rounded-md bg-[#c93820] px-6 py-4 text-base font-semibold text-white hover:bg-[#a82e19] disabled:opacity-60 flex items-center justify-center gap-3"
       >
         {isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
         {isPending ? 'Wysyłanie...' : 'Wyślij Zapytanie'}
-      </button>
+      </Button>
     </form>
   )
 }

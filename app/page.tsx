@@ -2,10 +2,9 @@ import type { Metadata } from 'next'
 import { ChatWidget } from '@/components/chat/chat-widget'
 import { Navbar } from '@/components/marketing/navbar'
 import { HeroSection } from '@/components/marketing/hero-section'
+import { SmoothScroll } from '@/components/marketing/smooth-scroll'
 import { ServicesSection } from '@/components/marketing/services-section'
-import { CaseStudySection } from '@/components/marketing/case-study-section'
 import { AboutSection } from '@/components/marketing/about-section'
-import { AiActBanner } from '@/components/marketing/ai-act-banner'
 import { LeadMagnetSection } from '@/components/marketing/lead-magnet-section'
 import { BlogPreview } from '@/components/marketing/blog-preview'
 import { RoiCalculator } from '@/components/marketing/roi-calculator'
@@ -42,7 +41,7 @@ async function getHeroContent(): Promise<Record<string, string>> {
 }
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
   title: 'Automatyzacja AI dla firm | Zautomatyzujemy.pl',
@@ -115,7 +114,7 @@ export default async function HomePage() {
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           telephone: '+48730094465',
-          email: 'n.chojnacki1993@gmail.com',
+          email: 'norbert@zautomatyzujemy.pl',
           description:
             'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM dla małych i średnich firm.',
           // Bez ulicy i współrzędnych — działalność prowadzona z domu, wizytówka
@@ -150,15 +149,14 @@ export default async function HomePage() {
         />
       )}
       <Navbar />
-      <main id="main">
+      <SmoothScroll />
+      <main id="main" className="marketing-theme bg-[#f5f2ed] text-[#151719] [color-scheme:light]">
         <HeroSection content={heroContent} />
-        <AiActBanner />
         <ServicesSection />
-        <CaseStudySection />
+        <RoiCalculator />
         <LeadMagnetSection />
         <AboutSection />
         <BlogPreview />
-        <RoiCalculator />
         <FaqSection />
         <ContactSection />
       </main>

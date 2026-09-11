@@ -3,11 +3,14 @@
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, isTextUIPart } from 'ai'
 import { useRef, useEffect, useState, useTransition } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle } from 'lucide-react'
-import Image from 'next/image'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { X, Send, Loader2, Copy, Check, MessageCircle, AlertCircle, Mic, PhoneOff } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.actions'
+import { readFirstTouch } from '@/components/analytics/attribution-tracker'
+import { useKlara } from '@/components/voice/klara-provider'
 
 // ─── Stałe ───────────────────────────────────────────────────────────────────
 
@@ -15,7 +18,7 @@ import { saveChatLeadAction, updateChatLeadAction } from '@/lib/actions/chat.act
 // Odrzuca losowe ciągi z @, wymaga sensownej struktury
 const EMAIL_REGEX = /[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/
 
-const GREETING = `Cześć! Jestem Automatek — asystent AI Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert. W czym mogę pomóc?`
+const GREETING = `Cześć! Jestem Klara — asystent AI Zautomatyzujemy.pl. Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem. Odpowiem ogólnie na pytania o automatyzację i wdrożenia AI, ale konkretne rozwiązania i wycenę ustala z Tobą Norbert. W czym mogę pomóc?`
 
 // Limit dogrywek danych leada — chroni przed serią wywołań Gemini w długiej rozmowie
 const MAX_LEAD_ENRICHMENTS = 3
@@ -28,6 +31,17 @@ const QUICK_REPLIES = [
 ]
 
 const LS_GREETING = 'zaut_chat_greeting_seen'
+
+// Adres endpointu GŁOSu, który wydaje krótko żyjące tokeny rozmowy (ADR-24).
+// Brak zmiennej = brak przycisku głosowego; czat działa jak działał.
+const GLOS_TOKEN_URL = process.env['NEXT_PUBLIC_GLOS_TOKEN_URL']
+
+const VOICE_STATUS_TEXT: Record<string, string> = {
+  connecting: 'Łączę z asystentem…',
+  active: 'Trwa rozmowa głosowa',
+  denied: 'Zezwól na mikrofon w ustawieniach przeglądarki (kłódka przy adresie) i spróbuj ponownie.',
+  error: 'Nie udało się połączyć. Spróbuj ponownie za chwilę.',
+}
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
@@ -59,11 +73,11 @@ function InlineText({ text }: { text: string }) {
     <>
       {tokens.map((token, i) => {
         if (/^\*\*[^*]+\*\*$/.test(token))
-          return <strong key={i} className="font-semibold text-[#e2e3df]">{token.slice(2, -2)}</strong>
+          return <strong key={i} className="font-semibold text-[#f5f2ed]">{token.slice(2, -2)}</strong>
         if (/^\*[^*]+\*$/.test(token))
           return <em key={i}>{token.slice(1, -1)}</em>
         if (/^`[^`]+`$/.test(token))
-          return <code key={i} className="rounded bg-[#333533] px-1 font-mono text-xs text-[#70e5ea]">{token.slice(1, -1)}</code>
+          return <code key={i} className="rounded bg-[#303337] px-1 font-mono text-xs text-[#ffb49f]">{token.slice(1, -1)}</code>
         return <span key={i}>{token}</span>
       })}
     </>
@@ -98,7 +112,7 @@ function MarkdownMessage({ text }: { text: string }) {
       elements.push(<div key={key} className="h-1.5" />)
     } else if (/^#{2,3}\s/.test(line)) {
       elements.push(
-        <p key={key} className="mt-1.5 font-semibold text-[#e2e3df]">
+        <p key={key} className="mt-1.5 font-semibold text-[#f5f2ed]">
           <InlineText text={line.replace(/^#{2,3}\s/, '')} />
         </p>
       )
@@ -112,14 +126,19 @@ function MarkdownMessage({ text }: { text: string }) {
   })
   flushList('list-end')
 
-  return <div className="space-y-0.5 text-[15px] text-[#bcc9c9]">{elements}</div>
+  return <div className="space-y-0.5 text-[15px] text-[#dedbd5]">{elements}</div>
 }
 
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
 export function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, setIsOpen, voice, pendingDraft, clearPendingDraft } = useKlara()
+  const reduced = useReducedMotion()
+  const stopVoice = voice.stop
+  useEffect(() => () => stopVoice(), [stopVoice])
   const [input, setInput] = useState('')
+  const [draftPreview, setDraftPreview] = useState<string | null>(null)
+  const consumedDraftId = useRef<number | null>(null)
   const [greetingStep, setGreetingStep] = useState<'hidden' | 'typing' | 'shown'>(() => {
     if (typeof window === 'undefined') return 'hidden'
     return localStorage.getItem(LS_GREETING) === 'true' ? 'shown' : 'hidden'
@@ -130,6 +149,23 @@ export function ChatWidget() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const launcherRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (!isOpen) return
+    const opener = document.activeElement
+    const launcher = launcherRef.current
+    const focusTimer = window.setTimeout(() => textareaRef.current?.focus({ preventScroll: true }), 0)
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); setIsOpen(false) }
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      window.clearTimeout(focusTimer)
+      document.removeEventListener('keydown', closeOnEscape)
+      const target = opener instanceof HTMLElement && opener !== document.body && opener.isConnected ? opener : launcher
+      target?.focus({ preventScroll: true })
+    }
+  }, [isOpen, setIsOpen])
   const prevAssistantCount = useRef(0)
   const prevIsLoading = useRef(false)
   const greetingTimers = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -152,6 +188,18 @@ export function ChatWidget() {
   })
 
   const isLoading = status === 'streaming' || status === 'submitted'
+
+  useEffect(() => {
+    if (!isOpen || isLoading || !pendingDraft || consumedDraftId.current === pendingDraft.id) return
+    consumedDraftId.current = pendingDraft.id
+    if (input.trim() && input !== pendingDraft.text) {
+      setDraftPreview(pendingDraft.text)
+    } else {
+      setInput(pendingDraft.text)
+      setDraftPreview(null)
+    }
+    clearPendingDraft()
+  }, [isOpen, isLoading, pendingDraft, input, clearPendingDraft])
 
   // Obsługa błędów — status 'error' z SDK lub error z onError
   useEffect(() => {
@@ -176,7 +224,7 @@ export function ChatWidget() {
 
   // Scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
   }, [messages, greetingStep, isLoading])
 
   // Greeting animation
@@ -242,7 +290,10 @@ export function ChatWidget() {
       }))
     lastEnrichedCountRef.current = chatMessages.length
     startSaveLead(async () => {
-      const result = await saveChatLeadAction(detectedEmail!, chatMessages)
+      // readFirstTouch() czyta window.sessionStorage — bez ryzyka SSR, bo ten
+      // efekt (jak każdy useEffect w komponencie klienckim) wykonuje się
+      // wyłącznie w przeglądarce, już po zamontowaniu.
+      const result = await saveChatLeadAction(detectedEmail!, chatMessages, readFirstTouch())
       if (result.success && result.data) setLeadId(result.data)
       setLeadSaved(true)
     })
@@ -298,43 +349,87 @@ export function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-4">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end gap-4">
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            role="dialog"
+            aria-labelledby="klara-chat-title"
+            initial={{ opacity: reduced ? 1 : 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="w-[416px] md:w-[500px] glass-card rounded-3xl border border-[#3d4949]/30 shadow-2xl overflow-hidden flex flex-col mb-2"
+            exit={{ opacity: reduced ? 1 : 0, y: 12, scale: 0.98 }}
+            transition={{ duration: reduced ? 0 : 0.22, ease: [.16, 1, .3, 1] }}
+            className="w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100dvh-112px)] rounded-xl bg-[#151719] border border-[#56595c] shadow-2xl overflow-hidden flex flex-col mb-2"
           >
             {/* ── Header ──────────────────────────────────────────────────── */}
-            <div className="bg-[#70e5ea]/10 p-6 flex items-center gap-4 border-b border-[#3d4949]/20">
-              <div className="relative w-10 h-10 rounded-full bg-[#50c9ce] flex items-center justify-center overflow-hidden flex-shrink-0">
-                <Image
-                  src="/logo.png"
-                  alt="Automatek"
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover rounded-full p-1"
-                />
+            <div className="shrink-0 bg-[#212326] p-4 flex items-center gap-4 border-b border-[#8b8d8f]/20">
+              <div className="relative w-10 h-10 rounded-full bg-[#f34c30] flex items-center justify-center overflow-hidden flex-shrink-0">
+                <Mic aria-hidden="true" className="size-5 text-white" />
               </div>
               <div className="flex-1">
-                <h5 className="text-sm font-bold font-headline text-[#e2e3df]">Automatek</h5>
-                <p className="text-[10px] text-[#70e5ea] uppercase font-label tracking-widest">
+                <h5 id="klara-chat-title" className="text-sm font-bold font-headline text-[#f5f2ed]">Klara</h5>
+                <p className="text-[10px] text-[#ffb49f] uppercase font-label tracking-widest">
                   Asystent AI &middot; odpowiedzi automatyczne
                 </p>
               </div>
-              <button
+              <Button variant="ghost"
                 onClick={() => setIsOpen(false)}
-                className="flex size-7 items-center justify-center rounded-lg text-[#bcc9c9] transition-colors hover:bg-[#282a28] hover:text-white"
+                aria-label="Zamknij czat"
+                className="flex size-7 items-center justify-center rounded-lg text-[#dedbd5] transition-colors hover:bg-[#282b2f] hover:text-white"
               >
                 <X className="size-4" />
-              </button>
+              </Button>
             </div>
 
+            {/* ── Rozmowa głosowa (ADR-24) ────────────────────────────────── */}
+            {GLOS_TOKEN_URL && (
+              <div className="border-b border-[#8b8d8f]/20 bg-[#151719]/40 px-6 py-4">
+                <Button variant="ghost"
+                  type="button"
+                  onClick={voice.status === 'active' ? voice.stop : () => void voice.start()}
+                  disabled={voice.status === 'connecting'}
+                  aria-label={
+                    voice.status === 'active'
+                      ? 'Zakończ rozmowę głosową'
+                      : 'Porozmawiaj z asystentem głosowym AI'
+                  }
+                  className={cn(
+                    'flex w-full items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-medium transition-all font-label disabled:opacity-60',
+                    voice.status === 'active'
+                      ? 'bg-red-500/90 text-white hover:bg-red-500'
+                      : 'bg-gradient-to-br from-[#e84324] to-[#c93820] text-white hover:brightness-110',
+                  )}
+                >
+                  {voice.status === 'connecting' ? (
+                    <Loader2 className="size-4 motion-safe:animate-spin" />
+                  ) : voice.status === 'active' ? (
+                    <PhoneOff className="size-4" />
+                  ) : (
+                    <Mic className="size-4" />
+                  )}
+                  {voice.status === 'active'
+                    ? 'Zakończ rozmowę'
+                    : voice.status === 'connecting'
+                      ? 'Łączę…'
+                      : 'Porozmawiaj z asystentem głosowym AI'}
+                </Button>
+
+                <p
+                  className={cn(
+                    'mt-2.5 text-center text-xs font-label',
+                    voice.status === 'denied' || voice.status === 'error'
+                      ? 'text-red-400'
+                      : 'text-[#f5f2ed]',
+                  )}
+                  aria-live="polite"
+                >
+                  {VOICE_STATUS_TEXT[voice.status] ?? 'Wolisz mówić niż pisać? Odbiorę od razu.'}
+                </p>
+              </div>
+            )}
+
             {/* ── Messages ────────────────────────────────────────────────── */}
-            <div className="p-6 h-[308px] overflow-y-auto space-y-4 bg-[#121412]/60" aria-live="polite" aria-label="Historia rozmowy">
+            <div className="p-4 min-h-0 h-[280px] sm:h-[340px] flex-auto overflow-y-auto space-y-4 bg-[#151719]/60" aria-live="polite" aria-label="Historia rozmowy">
 
               {/* Powitanie typing */}
               <AnimatePresence>
@@ -346,10 +441,10 @@ export function ChatWidget() {
                     exit={{ opacity: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                    <div className="bg-[#282b2f] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -362,7 +457,7 @@ export function ChatWidget() {
                     transition={{ duration: 0.25 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-2 rounded-2xl rounded-tl-none text-sm text-[#bcc9c9] max-w-[80%] font-body">
+                    <div className="bg-[#282b2f] px-4 py-2 rounded-2xl rounded-tl-none text-sm text-[#dedbd5] max-w-[90%] font-body">
                       {GREETING}
                     </div>
                   </motion.div>
@@ -381,13 +476,13 @@ export function ChatWidget() {
                     className="flex flex-wrap gap-2"
                   >
                     {QUICK_REPLIES.map(reply => (
-                      <button
+                      <Button variant="ghost"
                         key={reply}
                         onClick={() => sendMessage({ text: reply })}
-                        className="rounded-full border border-[#3d4949]/50 bg-[#1e201e] px-3 py-1.5 text-sm text-[#bcc9c9] hover:border-[#70e5ea]/50 hover:text-[#70e5ea] transition-all font-label"
+                        className="rounded-full border border-[#8b8d8f]/50 bg-[#212326] px-3 py-1.5 text-sm text-[#dedbd5] hover:border-[#ffb49f]/50 hover:text-[#ffb49f] transition-all font-label"
                       >
                         {reply}
-                      </button>
+                      </Button>
                     ))}
                   </motion.div>
                 )}
@@ -408,13 +503,13 @@ export function ChatWidget() {
                       transition={{ duration: 0.2 }}
                       className={cn('group flex w-full', isUser ? 'justify-end' : 'justify-start')}
                     >
-                      <div className={cn('flex max-w-[80%] flex-col gap-0.5', isUser ? 'items-end' : 'items-start')}>
+                      <div className={cn('flex max-w-[90%] flex-col gap-0.5', isUser ? 'items-end' : 'items-start')}>
                         <div
                           className={cn(
                             'px-4 py-2 rounded-2xl text-sm',
                             isUser
-                              ? 'bg-[#70e5ea]/20 text-[#70e5ea] rounded-tr-none'
-                              : 'bg-[#282a28] text-[#bcc9c9] rounded-tl-none',
+                              ? 'bg-[#ffb49f]/20 text-[#ffb49f] rounded-tr-none'
+                              : 'bg-[#282b2f] text-[#dedbd5] rounded-tl-none',
                           )}
                         >
                           {!isUser ? <MarkdownMessage text={text} /> : <span className="font-body">{text}</span>}
@@ -422,17 +517,17 @@ export function ChatWidget() {
                         {/* Meta row */}
                         <div className={cn('flex items-center gap-1 px-1', isUser ? 'flex-row-reverse' : 'flex-row')}>
                           {timestamp && (
-                            <span className="text-[10px] text-[#3d4949]">{formatTime(timestamp)}</span>
+                            <span className="text-[10px] text-[#b9b7b2]">{formatTime(timestamp)}</span>
                           )}
-                          <button
+                          <Button variant="ghost"
                             onClick={() => copyMessageText(text, message.id)}
-                            className="flex items-center gap-0.5 text-[10px] text-[#3d4949] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[#bcc9c9]"
+                            className="flex items-center gap-0.5 text-[10px] text-[#b9b7b2] opacity-100 transition-opacity group-hover:opacity-100 hover:text-[#dedbd5]"
                           >
                             {copiedId === message.id
-                              ? <><Check className="size-2.5 text-[#70e5ea]" /><span className="text-[#70e5ea]">Skopiowano</span></>
+                              ? <><Check className="size-2.5 text-[#ffb49f]" /><span className="text-[#ffb49f]">Skopiowano</span></>
                               : <><Copy className="size-2.5" /><span>Kopiuj</span></>
                             }
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </motion.div>
@@ -450,10 +545,10 @@ export function ChatWidget() {
                     exit={{ opacity: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-[#282a28] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:0ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:150ms]" />
-                      <span className="size-1.5 animate-bounce rounded-full bg-[#bcc9c9] [animation-delay:300ms]" />
+                    <div className="bg-[#282b2f] px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:0ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:150ms]" />
+                      <span className="size-1.5 motion-safe:animate-bounce rounded-full bg-[#dedbd5] [animation-delay:300ms]" />
                     </div>
                   </motion.div>
                 )}
@@ -482,7 +577,7 @@ export function ChatWidget() {
                     key="lead-saved"
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl bg-[#70e5ea]/10 border border-[#70e5ea]/20 px-3.5 py-2 text-center text-xs font-medium text-[#70e5ea] font-label"
+                    className="rounded-xl bg-[#ffb49f]/10 border border-[#ffb49f]/20 px-3.5 py-2 text-center text-xs font-medium text-[#ffb49f] font-label"
                   >
                     ✓ Twój kontakt został zapisany. Odezwiemy się wkrótce!
                   </motion.div>
@@ -493,30 +588,47 @@ export function ChatWidget() {
             </div>
 
             {/* ── Input ───────────────────────────────────────────────────── */}
-            <div className="p-4 bg-[#0d0f0d] border-t border-[#3d4949]/10">
+            <div className="shrink-0 p-4 bg-[#101214] border-t border-[#8b8d8f]/10">
+              {draftPreview !== null && (
+                <div className="mb-3 rounded-lg border border-[#ffb49f]/30 bg-[#ffb49f]/5 p-3 text-sm text-[#dedbd5]" role="status">
+                  <p className="font-semibold">Masz już niewysłaną wiadomość.</p>
+                  <p className="mt-1">Opis przekazany z sekcji usług:</p>
+                  <p className="mt-2 max-h-24 overflow-y-auto whitespace-pre-wrap break-words">{draftPreview}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button variant="ghost" type="button" disabled={isLoading} onClick={() => {
+                      setInput(draftPreview)
+                      setDraftPreview(null)
+                      textareaRef.current?.focus()
+                    }} className="text-[#ffb49f]">Zastąp obecny szkic</Button>
+                    <Button variant="ghost" type="button" onClick={() => setDraftPreview(null)}>Zachowaj obecny szkic</Button>
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="relative">
-                <textarea
+                <Textarea
                   ref={textareaRef}
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  aria-label="Wiadomość do Klary"
                   placeholder="Napisz swoją wiadomość..."
                   disabled={isLoading}
                   rows={1}
-                  className="w-full bg-[#1e201e] py-3 pl-4 pr-12 rounded-full border-none focus:ring-1 focus:ring-[#70e5ea]/50 text-base text-[#e2e3df] outline-none resize-none overflow-hidden placeholder-[#3d4949] font-body disabled:opacity-50"
+                  className="w-full bg-[#212326] py-3 pl-4 pr-12 rounded-lg border border-[#66696c] focus:ring-2 focus:ring-[#ffb49f]/50 text-base text-[#f5f2ed] outline-none resize-none overflow-hidden placeholder:text-[#b9b7b2] font-body disabled:opacity-50"
                 />
-                <button
+                <Button variant="ghost"
                   type="submit"
+                  aria-label="Wyślij wiadomość"
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#70e5ea] disabled:opacity-40 hover:brightness-125 transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#ffb49f] disabled:opacity-40 hover:brightness-125 transition-all"
                 >
                   {isLoading
-                    ? <Loader2 className="size-5 animate-spin" />
+                    ? <Loader2 className="size-5 motion-safe:animate-spin" />
                     : <Send className="size-5" />
                   }
-                </button>
+                </Button>
               </form>
-              <p className="mt-2 text-center text-[9px] text-[#3d4949] font-label">
+              <p className="mt-2 text-center text-[9px] text-[#b9b7b2] font-label">
                 Enter — wyślij · Shift+Enter — nowy wiersz
               </p>
             </div>
@@ -533,7 +645,7 @@ export function ChatWidget() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -right-1 -top-1 z-10 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-[#121412]"
+              className="absolute -right-1 -top-1 z-10 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-[#151719]"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
             </motion.div>
@@ -541,14 +653,15 @@ export function ChatWidget() {
         </AnimatePresence>
 
         <motion.button
+          ref={launcherRef}
           onClick={() => setIsOpen(prev => !prev)}
           whileHover={{ scale: 1.07 }}
           whileTap={{ scale: 0.9 }}
           className={cn(
             'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
             isOpen
-              ? 'bg-[#282a28] text-[#bcc9c9]'
-              : 'bg-gradient-to-br from-[#70e5ea] to-[#50c9ce] text-[#003739] shadow-[0_8px_32px_rgba(112,229,234,0.4)]',
+              ? 'bg-[#282b2f] text-[#dedbd5]'
+              : 'bg-gradient-to-br from-[#e84324] to-[#c93820] text-white shadow-[0_8px_32px_rgba(21,23,25,0.25)]',
           )}
           aria-label={isOpen ? 'Zamknij czat' : 'Otwórz czat'}
         >

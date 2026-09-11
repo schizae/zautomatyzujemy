@@ -1,0 +1,14 @@
+async page => {
+  await page.goto('http://localhost:3001')
+  await page.getByRole('button', {name:/Chcę więcej zapytań/}).click()
+  const second = page.getByRole('button', {name:'02 Projekt',exact:true})
+  if (await second.count() !== 1) throw new Error('Missing distinct selectable process acts')
+  await second.click()
+  await page.waitForFunction(() => document.querySelector('[data-testid=scene-stage]')?.getAttribute('data-stage') === '1')
+  const middle = await page.getByTestId('scene-stage').innerText()
+  await page.getByRole('button', {name:'03 Zapytanie',exact:true}).click()
+  await page.waitForFunction(() => document.querySelector('[data-testid=scene-stage]')?.getAttribute('data-stage') === '2')
+  const final = await page.getByTestId('scene-stage').innerText()
+  if (middle === final || !middle.includes('FORMA') || !final.includes('Nowa rozmowa')) throw new Error('Middle and final must tell different parts of the process')
+  return 'PASS: distinct project and inquiry acts'
+}

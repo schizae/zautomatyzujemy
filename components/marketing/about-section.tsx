@@ -1,143 +1,15 @@
-'use client'
-
+import Link from 'next/link'
 import Image from 'next/image'
-import { SlideIn, FloatingElement } from '@/components/animations'
-import { CheckCircle2 } from 'lucide-react'
-
-const competences = [
-  { label: 'Automatyzacje n8n', desc: 'Workflow\'y łączące dziesiątki systemów' },
-  { label: 'LLM i chatboty RAG', desc: 'Asystenci AI znający Twój biznes' },
-  { label: 'Zgodność z AI Act', desc: 'Audyty, dokumentacja, szkolenia' },
-  { label: 'Wdrożenia dla MŚP', desc: 'Od analizy po gotowe rozwiązanie' },
-  { label: 'Szkolenia AI', desc: 'Uczymy zespoły, jak efektywnie używać AI' },
-  { label: 'Dedykowane oprogramowanie', desc: 'Aplikacje i systemy szyte pod Twój biznes' },
-]
-
+import { FadeInUp } from '@/components/animations'
 export function AboutSection() {
-  return (
-    <section className="py-32 bg-[#0d0f0d] px-6 md:px-8" id="o-nas">
-      <div className="max-w-screen-2xl mx-auto">
-
-        {/* Label */}
-        <div className="mb-16">
-          <span className="text-xs font-label uppercase tracking-widest text-[#70e5ea]">
-            O nas
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-
-          {/* LEFT — Photo */}
-          <SlideIn direction="left" className="lg:col-span-5">
-            <div className="relative">
-
-              {/* Photo frame */}
-              <div className="relative rounded-[2.5rem] overflow-hidden border border-[#70e5ea]/15 shadow-[0_0_80px_rgba(112,229,234,0.08)]">
-                {/* Cyan corner accent top-left */}
-                <div className="absolute top-0 left-0 w-16 h-16 z-10 pointer-events-none">
-                  <div className="absolute top-4 left-4 w-6 h-px bg-[#70e5ea]/60" />
-                  <div className="absolute top-4 left-4 w-px h-6 bg-[#70e5ea]/60" />
-                </div>
-                {/* Cyan corner accent bottom-right */}
-                <div className="absolute bottom-0 right-0 w-16 h-16 z-10 pointer-events-none">
-                  <div className="absolute bottom-4 right-4 w-6 h-px bg-[#70e5ea]/60" />
-                  <div className="absolute bottom-4 right-4 w-px h-6 bg-[#70e5ea]/60" />
-                </div>
-
-                <Image
-                  src="/norbert.png"
-                  alt="Norbert Chojnacki — założyciel Zautomatyzujemy.pl"
-                  width={600}
-                  height={800}
-                  className="w-full object-cover object-top"
-                  priority
-                />
-
-                {/* Subtle bottom gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f0d]/40 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Floating credential card */}
-              <FloatingElement
-                className="absolute -bottom-8 -right-4 md:-right-8 hidden md:block"
-                amplitude={6}
-                duration={4}
-              >
-                <div className="bg-[#1a1c1a] border border-[#3d4949]/30 backdrop-blur-sm p-5 rounded-2xl shadow-xl max-w-[200px]">
-                  <p className="text-[#70e5ea] font-headline font-bold text-2xl mb-0.5">Inż.</p>
-                  <p className="text-[#e2e3df] font-headline font-bold text-sm leading-tight">
-                    Informatyki
-                  </p>
-                  <p className="text-[#bcc9c9] text-xs font-body mt-2 leading-snug">
-                    n8n · LLM · RAG · AI Act
-                  </p>
-                </div>
-              </FloatingElement>
-            </div>
-          </SlideIn>
-
-          {/* RIGHT — Text */}
-          <SlideIn direction="right" delay={0.15} className="lg:col-span-7">
-
-            {/* Name & role */}
-            <div className="mb-8">
-              <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight text-[#e2e3df] mb-2">
-                Norbert Chojnacki
-              </h2>
-              <p className="text-[#70e5ea] font-label text-sm uppercase tracking-widest">
-                Założyciel · Inżynier Informatyki · Ekspert AI i Automatyzacji
-              </p>
-            </div>
-
-            {/* Paragraphs */}
-            <div className="space-y-5 text-[#bcc9c9] font-body text-base leading-relaxed mb-10">
-              <p>
-                Zautomatyzujemy.pl to firma specjalizująca się w praktycznym wdrożeniu AI
-                i automatyzacji dla biznesu. Gdy powierzasz nam projekt, od razu trafiasz
-                do eksperta — bez warstw pośredników, bez informacji gubionej w kolejnych
-                mailach. Zyskujesz jedno miejsce odpowiedzialności: od analizy Twojego procesu,
-                przez projektowanie, aż po działające wdrożenie.
-              </p>
-              <p>
-                Budujemy systemy automatyzacji i AI dla firm z różnych branż — od biur
-                rachunkowych, przez sklepy internetowe, po agencje marketingowe. Pracujemy
-                z n8n, modelami językowymi (GPT, Gemini, Claude) oraz systemami RAG.
-                Zamiast gotowych szablonów, każde rozwiązanie projektujemy od podstaw —
-                pod konkretny proces i konkretny cel Twojej firmy.
-              </p>
-              <p>
-                Śledzimy AI Act od pierwszych projektów regulacji — przez kolejne
-                nowelizacje, aż po Digital Omnibus. Jeśli używasz AI w firmie — nawet
-                tylko ChatGPT do maili — masz obowiązki prawne, a część z nich jest
-                już egzekwowana. Lepiej wiedzieć o nich zawczasu niż przy kontroli.
-              </p>
-              <p>
-                Zależy nam na partnerstwie, nie jednorazowej transakcji. Po wdrożeniu
-                zostajemy z Tobą — sprawdzamy, czy system działa zgodnie z oczekiwaniami,
-                i reagujemy, gdy coś wymaga korekty. Nasz cel to Twój wymierny wynik,
-                nie odhaczony ticket. Jeśli myślisz podobnie — porozmawiajmy.
-              </p>
-            </div>
-
-            {/* Competences grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {competences.map((c) => (
-                <div
-                  key={c.label}
-                  className="flex items-start gap-3 bg-[#1a1c1a] rounded-2xl p-4 border border-[#3d4949]/10"
-                >
-                  <CheckCircle2 className="text-[#70e5ea] shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <p className="text-[#e2e3df] font-headline font-bold text-sm">{c.label}</p>
-                    <p className="text-[#bcc9c9] text-xs font-body mt-0.5">{c.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </SlideIn>
-        </div>
-      </div>
-    </section>
-  )
+  return <section id="o-nas" className="mx-auto max-w-[1680px] scroll-mt-24 px-6 pb-8 pt-12 md:px-8">
+    <FadeInUp>
+      <p className="mb-6 text-xs uppercase tracking-[0.2em] text-[#62625d]">04 / Ludzie i wiedza</p>
+      <h2 className="max-w-6xl font-body text-5xl font-extrabold leading-[1.05] tracking-[-0.055em] xl:text-[88px]">Technologia ma sens,<br />gdy pomaga <span className="font-editorial font-normal italic tracking-[-0.065em]">ludziom.</span></h2>
+      <details className="mt-10 border-b border-[#c7c3bb] pb-8">
+        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-6 py-4 text-xl"><span className="border-l-4 border-[#f34c30] pl-6">Bezpośrednia współpraca. Jasny zakres. Wsparcie po wdrożeniu.</span><span className="rounded-md border border-[#151719] px-6 py-4 text-base">Poznaj nas →</span></summary>
+        <div className="mt-6 flex flex-col gap-6 sm:flex-row"><Image src="/norbert.png" alt="Norbert Chojnacki" width={120} height={160} className="w-24 rounded-lg object-cover" /><div className="max-w-2xl"><h3 className="text-xl font-semibold">Norbert Chojnacki</h3><p className="my-4 leading-relaxed text-[#62625d]">Pomagam firmom wdrażać AI i porządkować codzienną pracę. Rozmawiasz bezpośrednio ze mną — od poznania potrzeb, przez projekt, po uruchomienie rozwiązania.</p><Link href="/#kontakt" className="text-[#c93820] underline">Poznajmy się</Link></div></div>
+      </details>
+    </FadeInUp>
+  </section>
 }

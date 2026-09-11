@@ -7,6 +7,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { NEWSLETTER_CONSENT_TEXT } from '@/lib/newsletter-consent'
 import { sendLeadNotification, sendChecklistDelivery } from '@/lib/email/resend'
 import { checkRateLimit } from '@/lib/rate-limiter'
+import { normalizeAttribution } from '@/lib/attribution'
+import type { NormalizedAttribution } from '@/lib/attribution'
 import type { ActionResult } from '@/types'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -19,6 +21,34 @@ async function getClientIp(): Promise<string> {
 /** Honeypot: pole "website" jest ukryte przed ludźmi, ale boty je wypełniają. */
 function isBot(formData: FormData): boolean {
   return (formData.get('website') as string | null)?.trim() !== ''
+}
+
+const AttributionSchema = z.object({
+  referrer: z.string().max(500).nullish(),
+  landingPath: z.string().max(500).nullish(),
+  utmSource: z.string().max(500).nullish(),
+})
+
+/**
+ * Atrybucja przychodzi z ukrytych pól formularza, czyli spod kontroli klienta.
+ * Wartości niezgodne ze schematem odrzucamy w całości — lead zapisze się bez nich.
+ */
+function attributionFromFormData(formData: FormData): NormalizedAttribution {
+  const parsed = AttributionSchema.safeParse({
+    referrer: formData.get('referrer'),
+    landingPath: formData.get('landingPath'),
+    utmSource: formData.get('utmSource'),
+  })
+
+  if (!parsed.success) {
+    return normalizeAttribution({})
+  }
+
+  return normalizeAttribution({
+    referrer: parsed.data.referrer ?? null,
+    landingPath: parsed.data.landingPath ?? null,
+    utmSource: parsed.data.utmSource ?? null,
+  })
 }
 
 // ─── Lead Magnet ──────────────────────────────────────────────────────────────
@@ -82,6 +112,7 @@ export async function subscribeLeadMagnetAction(
 
   const { email } = parsed.data
   const supabase = createServiceClient()
+  const attribution = attributionFromFormData(formData)
 
   const { error } = await supabase.from('leads').insert({
     name: null,
@@ -89,6 +120,10 @@ export async function subscribeLeadMagnetAction(
     conversation_summary: 'Lead magnet: Checklista AI Act dla MŚP',
     source: 'lead_magnet',
     n8n_sent: false,
+    landing_path: attribution.landingPath,
+    referrer: attribution.referrer,
+    utm_source: attribution.utmSource,
+    source_kind: attribution.sourceKind,
   })
 
   if (error) {
@@ -160,6 +195,7 @@ export async function submitContactAction(
 
   const { name, email, message } = parsed.data
   const supabase = createServiceClient()
+  const attribution = attributionFromFormData(formData)
 
   const { error } = await supabase.from('leads').insert({
     name,
@@ -167,6 +203,10 @@ export async function submitContactAction(
     conversation_summary: message,
     source: 'contact_form',
     n8n_sent: false,
+    landing_path: attribution.landingPath,
+    referrer: attribution.referrer,
+    utm_source: attribution.utmSource,
+    source_kind: attribution.sourceKind,
   })
 
   if (error) {

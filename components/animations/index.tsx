@@ -1,8 +1,35 @@
 'use client'
 
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useInView, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import { useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
+
+// Start only after hydration: SSR and a failed script still leave readable content.
+function useEntrance<T extends HTMLElement>(delay: number, duration: number) {
+  const ref = useRef<T>(null)
+  const entered = useRef(false)
+  const isInView = useInView(ref, { once: true, margin: '0px 0px -40px 0px' })
+  useEffect(() => {
+    const element = ref.current
+    if (!element || !isInView || entered.current) return
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (preference.matches) return
+    const animation = element.animate(
+      [{ opacity: 0, transform: 'translateY(40px)' }, { opacity: 1, transform: 'translateY(0)' }],
+      { duration: duration * 1000, delay: Math.min(delay, .35) * 1000, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' }
+    )
+    animation.onfinish = () => { entered.current = true }
+    const stop = () => { if (preference.matches) { entered.current = true; animation.cancel() } }
+    preference.addEventListener('change', stop)
+    return () => { animation.cancel(); preference.removeEventListener('change', stop) }
+  }, [isInView, delay, duration])
+  return ref
+}
+
+export function RevealText({ children, className, delay = 0 }: FadeInUpProps) {
+  const ref = useEntrance<HTMLSpanElement>(delay, 1.1)
+  return <span ref={ref} className={cn('inline-block', className)}>{children}</span>
+}
 
 // ─── Fade In Up — universal scroll-reveal wrapper ────────────────────────────
 
@@ -17,21 +44,17 @@ export function FadeInUp({
   children,
   className,
   delay = 0,
-  duration = 0.6,
+  duration = 1.15,
 }: FadeInUpProps) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const ref = useEntrance<HTMLDivElement>(delay, duration)
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -65,7 +88,6 @@ export function StaggerContainer({
   staggerDelay = 0.12,
 }: StaggerProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
 
   return (
     <motion.div
@@ -73,8 +95,8 @@ export function StaggerContainer({
       className={className}
       variants={staggerContainer}
       custom={staggerDelay}
-      initial="hidden"
-      animate={isInView ? 'show' : 'hidden'}
+      initial={false}
+      animate='show'
     >
       {children}
     </motion.div>
@@ -110,6 +132,7 @@ export function SlideIn({
   direction = 'left',
   delay = 0,
 }: SlideInProps) {
+  const reduced = useReducedMotion()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const x = direction === 'left' ? -60 : 60
@@ -118,8 +141,8 @@ export function SlideIn({
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, x }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      initial={false}
+      animate={isInView || reduced ? { opacity: 1, x: 0 } : { opacity: 1, x: x / 4 }}
       transition={{ duration: 0.7, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}

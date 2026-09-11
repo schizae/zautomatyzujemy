@@ -18,6 +18,12 @@ export interface Post {
   tags: string[]
   created_at: string
   updated_at: string
+  /** Czy treść powstała maszynowo (art. 50 ust. 2 AI Act) */
+  ai_generated: boolean
+  /** Model użyty do wygenerowania, np. `gemini-2.5-flash` */
+  ai_model: string | null
+  /** Kiedy zatwierdzono redakcyjnie — dowód kontroli redakcyjnej */
+  reviewed_at: string | null
 }
 
 /** Dane potrzebne do wylistowania artykułów (bez pełnego content) */
@@ -165,6 +171,9 @@ export interface BlogPublishPayload {
   author?: string
   tags?: string[]
   published_at?: string
+  /** Ustawiane przez generatory z `.github/scripts/` */
+  ai_generated?: boolean
+  ai_model?: string
 }
 
 /** Payload wysyłany przez chatbota do n8n po zebraniu e-maila */
