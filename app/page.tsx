@@ -93,7 +93,15 @@ export default async function HomePage() {
           url: SITE_URL,
           description:
             'Automatyzacja procesów z AI — chatboty, integracje n8n, RAG i wdrożenia LLM.',
-          sameAs: [],
+          sameAs: [
+            'https://github.com/schizae',
+            'https://www.linkedin.com/in/norbert-chojnacki-16a351270/',
+          ],
+          founder: {
+            '@type': 'Person',
+            '@id': `${SITE_URL}/o-mnie#osoba`,
+            name: 'Norbert Chojnacki',
+          },
         }}
       />
       <JsonLd
@@ -110,7 +118,7 @@ export default async function HomePage() {
       <JsonLd
         data={{
           '@context': 'https://schema.org',
-          '@type': 'LocalBusiness',
+          '@type': 'ProfessionalService',
           name: 'Zautomatyzujemy.pl',
           url: SITE_URL,
           telephone: '+48730094465',
@@ -125,10 +133,10 @@ export default async function HomePage() {
             postalCode: '89-600',
             addressCountry: 'PL',
           },
-          areaServed: {
-            '@type': 'Country',
-            name: 'Polska',
-          },
+          areaServed: [
+            { '@type': 'Country', name: 'Polska' },
+            { '@type': 'AdministrativeArea', name: 'województwo pomorskie' },
+          ],
           priceRange: '$$',
         }}
       />
