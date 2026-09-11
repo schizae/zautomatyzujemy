@@ -1,19 +1,26 @@
 /**
  * blog-brief.mjs
- * Tygodniowy Brief AI — migracja z n8n na GitHub Actions
+ * Miesięczny przegląd nowości AI — wysyłany mailem do właściciela, nie publikowany na blogu.
  *
- * Przepływ: RSS feeds → Gemini (tekst) → Gemini (obraz) → ImgBB → /api/blog/publish
+ * Przepływ: RSS feeds → Gemini (tekst) → Resend → prywatna skrzynka
+ *
+ * Dlaczego mailem: przeglądy newsów nie mają popytu w wyszukiwarce (nikt nie wpisuje
+ * „nowości AI 2026-08-24"), a zajmowały połowę bloga. Zbieranie materiałów zostaje,
+ * bo jest użyteczne — zmienia się tylko odbiorca.
+ *
+ * Resend wołamy przez API, bo lib/email/resend.ts to moduł TypeScript aplikacji Next.js,
+ * którego skrypt GitHub Actions nie zaimportuje.
  */
 
-const { GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL } = process.env
+const { GOOGLE_API_KEY, RESEND_API_KEY, BRIEF_RECIPIENT_EMAIL } = process.env
 
-// Nazwy modeli w jednym miejscu, bo rozjeżdżały się między wywołaniem a polem
-// ai_model w ładunku publikacji, a to pole trafia do rejestru systemów AI.
 const MODEL_TEKSTU = 'gemini-3.8-flash'
-const MODEL_OBRAZU = 'gemini-3.1-flash-image'
+const FROM_EMAIL = 'powiadomienia@zautomatyzujemy.pl'
 
-if (!GOOGLE_API_KEY || !IMGBB_API_KEY || !WEBHOOK_SECRET || !SITE_URL) {
-  console.error('❌ Brak wymaganych zmiennych środowiskowych: GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL')
+if (!GOOGLE_API_KEY || !RESEND_API_KEY || !BRIEF_RECIPIENT_EMAIL) {
+  console.error(
+    '❌ Brak wymaganych zmiennych środowiskowych: GOOGLE_API_KEY, RESEND_API_KEY, BRIEF_RECIPIENT_EMAIL'
+  )
   process.exit(1)
 }
 
@@ -62,8 +69,12 @@ function parseJsonFromGemini(text) {
 
 // ─── Krok 1: Pobieranie RSS ───────────────────────────────────────────────────
 
+// Okno czasowe równe kadencji: przegląd jest miesięczny, więc bierzemy 30 dni.
+// Przy tygodniowym oknie połowa miesiąca wypadałaby poza zasięg.
+const OKNO_DNI = 30
+
 async function fetchRssArticles() {
-  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const odKiedy = Date.now() - OKNO_DNI * 24 * 60 * 60 * 1000
   const articles = []
 
   for (const feed of FEEDS) {
@@ -82,7 +93,7 @@ async function fetchRssArticles() {
           extractField(item, 'published') ||
           extractField(item, 'updated')
         const pubDate = pubDateStr ? new Date(pubDateStr).getTime() : Date.now()
-        if (pubDate < sevenDaysAgo) continue
+        if (pubDate < odKiedy) continue
 
         const title = extractField(item, 'title')
         if (!title) continue
@@ -114,7 +125,7 @@ async function fetchRssArticles() {
     }
   }
 
-  if (articles.length === 0) throw new Error('Brak artykułów z ostatnich 7 dni — przerywam.')
+  if (articles.length === 0) throw new Error(`Brak artykułów z ostatnich ${OKNO_DNI} dni — przerywam.`)
   articles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
   return articles
 }
@@ -124,9 +135,8 @@ async function fetchRssArticles() {
 async function generateBrief(articles) {
   const today = new Date()
   const dateStr = today.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
-  const isoDate = today.toISOString().split('T')[0]
   const weekStart = new Date(today)
-  weekStart.setDate(today.getDate() - 7)
+  weekStart.setDate(today.getDate() - OKNO_DNI)
   const weekStartStr = weekStart.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })
 
   const bySource = {}
@@ -140,35 +150,34 @@ async function generateBrief(articles) {
     articlesContext += `\n### ${source}\n`
     for (const a of arts.slice(0, 6)) {
       const date = new Date(a.pubDate).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })
-      articlesContext += `- **${a.title}** [${date}]\n`
+      // Adres źródła musi trafić do promptu, inaczej model wymyśli go sam,
+      // a przegląd ma służyć do podejmowania decyzji, nie do zgadywania.
+      articlesContext += `- **${a.title}** [${date}] — ${a.link || 'brak adresu'}\n`
       if (a.description) articlesContext += `  ${a.description}\n`
     }
   }
 
-  const prompt = `Jestes redaktorem newslettera "Zautomatyzujemy.pl Brief" skierowanego do polskich wlascicieli firm i menedzerow. Tworzysz cotygodniowy przeglad najwazniejszych wydarzen ze swiata AI i automatyzacji.
+  const prompt = `Przygotowujesz prywatny przeglad nowosci dla Norberta, ktory prowadzi jednoosobowa firme wdrazajaca AI i automatyzacje w polskich MSP. To nie jest tekst do publikacji. To material roboczy, ktory ma mu pomoc zdecydowac, o czym warto napisac i co warto wdrozyc u klientow.
 
 Zakres czasowy: ${weekStartStr} - ${dateStr}
 Zebrane artykuly (${articles.length} szt.):
 ${articlesContext}
 
-ZADANIE: Na podstawie powyzszych artykulow napisz tygodniowy brief w jezyku polskim.
+ZADANIE: Wybierz od 6 do 10 pozycji, ktore maja realne znaczenie dla kogos, kto wdraza automatyzacje u malych firm. Pomijaj newsy o wycenach spolek, personaliach i wewnetrznych sporach korporacji.
 
 WYMAGANIA:
-1. Wybierz 6-8 NAJWAZNIEJSZYCH wydarzen (priorytet: premiery produktow, przelomowe badania, zmiany strategiczne duzych firm, trendy wplywajace na biznes)
-2. Dla kazdego wydarzenia: chwytliwy srodtytul + 2-3 zdania opisu co sie stalo i dlaczego jest wazne
-3. Sekcja koncowa "## Co to oznacza dla Twojego biznesu?" z 3 praktycznymi wnioskami dla MSP
-4. Ton: profesjonalny, przystepny, bez zargonu technicznego
-5. Format: Markdown (## dla glownych sekcji, **bold** dla kluczowych pojec)
-6. Nie zaczynaj od tytulu — od razu pierwsza sekcja tematyczna
+1. Dla kazdej pozycji podaj: tytul, adres zrodla, date publikacji, dwa zdania streszczenia oraz JEDNO zdanie o tym, ktorej uslugi albo problemu klienta to dotyczy.
+2. Uslugi do odniesienia: automatyzacja procesow biznesowych, agenci AI i chatboty, obieg dokumentow, szkolenia z AI, zgodnosc z AI Act.
+3. ROZROZNIAJ WPROST streszczenie od wlasnej interpretacji. Streszczenie opisuje to, co bylo w materiale. Interpretacje oznaczaj slowami "Moja interpretacja:". Nigdy nie przedstawiaj wlasnego wniosku jako faktu z artykulu.
+4. Jesli material nie ma adresu zrodla, pomin go w calosci.
+5. Na koncu sekcja "## Co z tego moze byc tematem artykulu" z maksymalnie trzema propozycjami, kazda z jednym zdaniem uzasadnienia.
+6. Ton rzeczowy, bez marketingu. To notatka dla jednej osoby, nie newsletter.
+7. Format: Markdown.
 
 Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
 {
-  "title": "Nowosci ze swiata AI — ${dateStr}",
-  "slug": "nowosci-ai-${isoDate}",
-  "excerpt": "Cotygodniowy przeglad: [2-3 zdania streszczajace najwazniejsze wydarzenia tygodnia]",
-  "content": "[pelny artykul w Markdown]",
-  "tags": ["Tygodniowy brief", "Nowosci AI", "Automatyzacja"],
-  "image_prompt": "[prompt do okladki po angielsku: profesjonalna ilustracja bez tekstu, nawiazujaca do tematyki AI w biznesie, styl editorial magazine]"
+  "title": "Przeglad nowosci AI — ${dateStr}",
+  "content": "[pelny przeglad w Markdown]"
 }`
 
   const res = await fetch(
@@ -190,105 +199,94 @@ Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
   return parseJsonFromGemini(text)
 }
 
-// ─── Krok 3: Generowanie okładki (Gemini) ────────────────────────────────────
+// ─── Krok 3: Wysyłka mailem ──────────────────────────────────────────────────
 
-async function generateCoverImage(imagePrompt) {
-  const prompt = `${imagePrompt}. High quality editorial illustration, modern minimalist style, no text, no letters, no words anywhere in the image. Professional AI business newsletter cover.`
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_OBRAZU}:generateContent?key=${GOOGLE_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseModalities: ['IMAGE'] },
-      }),
-      signal: AbortSignal.timeout(60000),
-    }
-  )
-
-  if (!res.ok) throw new Error(`Gemini image API: HTTP ${res.status}`)
-  const data = await res.json()
-  const parts = data?.candidates?.[0]?.content?.parts ?? []
-  const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'))
-  if (!imagePart) throw new Error('Gemini nie zwrócił obrazu')
-  return imagePart.inlineData.data
+function escapeHtml(tekst) {
+  return tekst
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 }
 
-// ─── Krok 4: Upload do ImgBB ─────────────────────────────────────────────────
-
-async function uploadToImgBB(base64Image) {
-  const body = new URLSearchParams()
-  body.append('image', base64Image)
-
-  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
-    signal: AbortSignal.timeout(30000),
-  })
-
-  if (!res.ok) throw new Error(`ImgBB upload: HTTP ${res.status}`)
-  const data = await res.json()
-  const url = data?.data?.url
-  if (!url) throw new Error('ImgBB nie zwróciło URL obrazu')
-  return url
+/**
+ * Zamiana Markdown na prosty HTML. Świadomie bez biblioteki: skrypt nie ma zależności,
+ * a przegląd czyta jedna osoba w kliencie pocztowym, gdzie i tak połowa stylów odpada.
+ */
+function markdownNaHtml(markdown) {
+  return escapeHtml(markdown)
+    .split(/\n{2,}/)
+    .map(blok => {
+      const linia = blok.trim()
+      if (linia.startsWith('## ')) {
+        return `<h2 style="margin:32px 0 12px;font-size:17px;font-weight:700;color:#111827">${linia.slice(3)}</h2>`
+      }
+      if (linia.startsWith('### ')) {
+        return `<h3 style="margin:24px 0 8px;font-size:15px;font-weight:600;color:#111827">${linia.slice(4)}</h3>`
+      }
+      const zLinkami = linia
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" style="color:#c93820">$1</a>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" style="color:#c93820">$2</a>')
+        .replace(/\n/g, '<br>')
+      return `<p style="margin:0 0 14px;font-size:14px;line-height:1.7;color:#374151">${zLinkami}</p>`
+    })
+    .join('\n')
 }
 
-// ─── Krok 5: Publikacja ───────────────────────────────────────────────────────
+async function wyslijPrzeglad(temat, markdown) {
+  const html = `<!DOCTYPE html>
+<html lang="pl"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:32px 16px;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden">
+    <div style="background:#151719;padding:24px 28px">
+      <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ffb49f">zautomatyzujemy.pl</p>
+      <h1 style="margin:8px 0 0;font-size:19px;font-weight:700;color:#f5f2ed">${escapeHtml(temat)}</h1>
+    </div>
+    <div style="padding:28px">
+      ${markdownNaHtml(markdown)}
+      <p style="margin:32px 0 0;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#9ca3af">
+        Przegląd zebrany automatycznie z kanałów RSS i opracowany modelem ${escapeHtml(MODEL_TEKSTU)}.
+        Materiał roboczy, nie publikacja. Tematy do artykułów wybierasz sam.
+      </p>
+    </div>
+  </div>
+</body></html>`
 
-async function publishPost(post) {
-  const res = await fetch(`${SITE_URL}/api/blog/publish`, {
+  const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
-      'x-webhook-secret': WEBHOOK_SECRET,
     },
-    body: JSON.stringify(post),
-    signal: AbortSignal.timeout(30000),
+    body: JSON.stringify({
+      from: FROM_EMAIL,
+      to: BRIEF_RECIPIENT_EMAIL,
+      subject: temat,
+      html,
+    }),
+    signal: AbortSignal.timeout(20000),
   })
 
   if (!res.ok) {
-    const text = await res.text()
-    throw new Error(`Błąd publikacji (${res.status}): ${text}`)
+    throw new Error(`Resend: HTTP ${res.status} ${await res.text()}`)
   }
 
-  return res.json()
+  const dane = await res.json()
+  return dane.id ?? 'brak id'
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-console.log('📰 Krok 1/5: Pobieranie artykułów z RSS...')
+console.log(`📰 Krok 1/3: Pobieranie artykułów z RSS (ostatnie ${OKNO_DNI} dni)...`)
 const articles = await fetchRssArticles()
-console.log(`✅ Pobrano ${articles.length} artykułów z ostatnich 7 dni\n`)
+console.log(`✅ Pobrano ${articles.length} artykułów\n`)
 
-console.log('🤖 Krok 2/5: Generowanie briefu (Gemini)...')
-const article = await generateBrief(articles)
-console.log(`✅ Brief: "${article.title}"\n`)
+console.log('🤖 Krok 2/3: Opracowanie przeglądu (Gemini)...')
+const przeglad = await generateBrief(articles)
+console.log(`✅ Przegląd: "${przeglad.title}"\n`)
 
-console.log('🎨 Krok 3/5: Generowanie okładki (Gemini)...')
-const base64Image = await generateCoverImage(article.image_prompt)
-console.log('✅ Okładka wygenerowana\n')
-
-console.log('📤 Krok 4/5: Upload okładki do ImgBB...')
-const coverUrl = await uploadToImgBB(base64Image)
-console.log(`✅ Okładka: ${coverUrl}\n`)
-
-console.log('🚀 Krok 5/5: Publikacja na blogu...')
-const result = await publishPost({
-  slug: article.slug,
-  title: article.title,
-  excerpt: article.excerpt ?? '',
-  content: article.content,
-  cover_image: coverUrl,
-  tags: article.tags ?? ['Tygodniowy brief', 'Nowosci AI'],
-  author: 'Zautomatyzujemy.pl',
-  ai_generated: true,
-  ai_model: MODEL_TEKSTU,
-})
-console.log(
-  result.published
-    ? `✅ Opublikowano: ${SITE_URL}${result.url}`
-    : `📝 Zapisano szkic do zatwierdzenia: ${SITE_URL}/admin/blog`
-)
+console.log('📧 Krok 3/3: Wysyłka na prywatną skrzynkę...')
+const idWiadomosci = await wyslijPrzeglad(przeglad.title, przeglad.content)
+console.log(`✅ Wysłano, id wiadomości: ${idWiadomosci}`)
+console.log('   Na blogu nic nie przybyło — tak ma być.')

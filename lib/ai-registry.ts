@@ -41,9 +41,10 @@ export const AI_SYSTEMS: readonly AiSystemEntry[] = [
   },
   {
     name: 'blog-brief',
-    model: 'gemini-3.8-flash oraz gemini-3.1-flash-image',
-    purpose: 'Cotygodniowy przegląd nowości AI wraz z okładką',
-    inputs: 'Kanały RSS producentów modeli',
+    model: 'gemini-3.8-flash',
+    purpose:
+      'Miesięczny przegląd nowości AI wysyłany mailem do właściciela — materiał roboczy, nie publikacja',
+    inputs: 'Kanały RSS producentów modeli i mediów branżowych',
     role: 'podmiot stosujący',
   },
   {
