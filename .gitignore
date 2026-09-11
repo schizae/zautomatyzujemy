@@ -60,3 +60,8 @@ next-env.d.ts
 
 # Playwright Agent CLI — migawki stron, ślady, nagrania z sesji przeglądarki
 .playwright-cli/
+
+# Katalogi robocze spoza projektu — worktree współpracownika, pliki tymczasowe i wyniki
+.worktrees/
+output/
+tmp/
