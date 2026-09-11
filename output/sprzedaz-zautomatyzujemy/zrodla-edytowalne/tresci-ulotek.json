@@ -1,0 +1,104 @@
+[
+  {
+    "key": "automatyzacje",
+    "label": "AUTOMATYZACJE DLA FIRM",
+    "title": [
+      "Mniej ręcznej",
+      "pracy.",
+      "Więcej czasu."
+    ],
+    "intro": "Łączę narzędzia, których już używasz, i porządkuję powtarzalne zadania w Twojej firmie.",
+    "flow": [
+      "Zapytanie od klienta",
+      "Dane trafiają do właściwej osoby",
+      "Sprawa ma swój następny krok"
+    ],
+    "backtitle": [
+      "Pokaż mi zadanie,",
+      "które ciągle wraca."
+    ],
+    "blocks": [
+      [
+        "Kopiujesz te same dane?",
+        "Sprawdzimy, jak połączyć pocztę, formularz, arkusz lub CRM. Zaczniemy od jednego przepływu."
+      ],
+      [
+        "Gubią się zgłoszenia?",
+        "Ustalimy, gdzie ma trafić sprawa, kto za nią odpowiada i kiedy potrzebna jest decyzja człowieka."
+      ],
+      [
+        "Nie wiesz, od czego zacząć?",
+        "Możemy zacząć od audytu procesu lub praktycznego szkolenia z AI na zadaniach Twojego zespołu."
+      ]
+    ],
+    "note": "Zakres, integracje, cena i koszty utrzymania ustalane po rozmowie."
+  },
+  {
+    "key": "asystenci-ai",
+    "label": "CHATBOTY I ASYSTENCI AI",
+    "title": [
+      "Klient pyta.",
+      "Asystent pomaga.",
+      "Ty decydujesz."
+    ],
+    "intro": "Asystent korzystający z wiedzy Twojej firmy: odpowiedzi na ustalone pytania i przekazanie sprawy do człowieka.",
+    "flow": [
+      "Pytanie o Twoją ofertę",
+      "Odpowiedź z przygotowanych treści",
+      "Kontakt do dalszej rozmowy"
+    ],
+    "backtitle": [
+      "Najpierw zakres.",
+      "Potem rozmowa."
+    ],
+    "blocks": [
+      [
+        "Na stronie internetowej",
+        "Chatbot może wyjaśniać ofertę i zbierać zgłoszenia. Ustalamy źródła wiedzy i testujemy typowe pytania."
+      ],
+      [
+        "Rozmowa głosowa",
+        "Wypróbuj Klarę w przeglądarce. Obsługa numeru telefonu i integracje wymagają osobnego ustalenia zakresu."
+      ],
+      [
+        "Z kontrolą człowieka",
+        "Wybieramy sprawy do przekazania pracownikowi. AI może się pomylić, dlatego zakres i testy są częścią projektu."
+      ]
+    ],
+    "note": "Demo przedstawia możliwości. Wdrożenie dopasowujemy do Twojej firmy."
+  },
+  {
+    "key": "strony-aplikacje",
+    "label": "STRONY I APLIKACJE DLA BIZNESU",
+    "title": [
+      "Jasna oferta.",
+      "Prosty kontakt.",
+      "Sprawna obsługa."
+    ],
+    "intro": "Tworzę strony i narzędzia, które pomagają klientom wykonać następny krok, a Tobie obsłużyć ich sprawę.",
+    "flow": [
+      "Klient poznaje Twoją ofertę",
+      "Wysyła czytelne zapytanie",
+      "Zespół otrzymuje potrzebne dane"
+    ],
+    "backtitle": [
+      "Od wejścia na stronę",
+      "do konkretnej sprawy."
+    ],
+    "blocks": [
+      [
+        "Strona firmowa",
+        "Oferta czytelna na telefonie, wygodny kontakt i formularz dopasowany do informacji, których potrzebujesz."
+      ],
+      [
+        "Narzędzie do pracy",
+        "Panel, rezerwacje lub obsługa zleceń. Najpierw opisujemy jedną ścieżkę i sprawdzamy potrzebne integracje."
+      ],
+      [
+        "Bezpośrednia współpraca",
+        "Rozmawiasz ze mną od pierwszego spotkania po przekazanie rozwiązania. Zakres i sposób odbioru ustalamy wcześniej."
+      ]
+    ],
+    "note": "Treści, funkcje, harmonogram i utrzymanie określamy przed realizacją."
+  }
+]

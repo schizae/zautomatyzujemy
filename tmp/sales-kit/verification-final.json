@@ -1,0 +1,63 @@
+[
+  {
+    "pdf": "01-podrecznik-sprzedazy.pdf",
+    "pages": 29,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "02-ulotki-A5.pdf",
+    "pages": 6,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "02-ulotki-A5-druk.pdf",
+    "pages": 6,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "03-wizytowka-85x55.pdf",
+    "pages": 2,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "03-wizytowka-85x55-druk.pdf",
+    "pages": 2,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "04-sciaga-na-spotkanie-A4.pdf",
+    "pages": 2,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "pdf": "06-karty-rozmowy-i-odbioru-A4.pdf",
+    "pages": 2,
+    "dimensions_and_text": "OK"
+  },
+  {
+    "qr_raster": "flyer-1.png",
+    "encoded_url": "https://zautomatyzujemy.pl/#kontakt",
+    "mismatched_modules": 0
+  },
+  {
+    "qr_raster": "flyer-3.png",
+    "encoded_url": "https://zautomatyzujemy.pl/#kontakt",
+    "mismatched_modules": 0
+  },
+  {
+    "qr_raster": "flyer-5.png",
+    "encoded_url": "https://zautomatyzujemy.pl/#kontakt",
+    "mismatched_modules": 0
+  },
+  {
+    "qr_raster": "card-2.png",
+    "encoded_url": "https://zautomatyzujemy.pl/#klara",
+    "mismatched_modules": 0
+  },
+  {
+    "workbook": "05-narzedzia-sprzedazy.xlsx",
+    "sheets": 6,
+    "cached_formulas": 25,
+    "crm_empty_records": 30
+  }
+]

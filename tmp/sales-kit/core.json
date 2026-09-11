@@ -1,0 +1,99 @@
+[
+  {
+    "title": "Jak korzystać z zestawu",
+    "intro": "To podręcznik roboczy Norberta Chojnackiego do sprzedaży obecnych usług Zautomatyzujemy.pl polskim małym i średnim firmom. Najpierw znajdź powtarzalny problem, potem pokaż małe rozwiązanie i zaproponuj konkretny zakres. Celem rozmowy jest uzgodniona decyzja, również decyzja o rezygnacji.",
+    "blocks": [
+      {"heading":"Przed pierwszą rozmową", "text":"Przećwicz prezentację w 20 sekund. Wybierz jeden typ klienta i jeden problem. Otwórz działające demo Klary, sprawdź mikrofon i przygotuj zapasowy opis procesu. Miej pod ręką kartę rozmowy, kalkulator i jedną odpowiednią ulotkę. Nie wręczaj całego zestawu naraz."},
+      {"heading":"W czasie spotkania", "text":"Pytaj o ostatni konkretny przypadek i liczby. Zapisz sposób pracy przed wdrożeniem, właściciela procesu oraz kryterium sukcesu. Pokaż tylko demonstrację pasującą do problemu. Zakończ uzgodnionym krokiem, osobą odpowiedzialną i datą."},
+      {"heading":"Po spotkaniu", "text":"Wyślij podsumowanie ustaleń uzgodnionym kanałem. Dopiero po sprawdzeniu integracji wpisz zakres, cenę i termin do oferty. Zapisz następne działanie w arkuszu. Przy odmowie ustal przyczynę, nie uruchamiaj automatycznie kolejnych wiadomości."},
+      {"heading":"Co przekazujesz klientowi", "text":"Ulotki, wizytówkę i spersonalizowaną ofertę. Podręcznik, kalkulację własnej stawki i rejestr innych klientów zachowujesz dla siebie. Klient może zobaczyć wspólnie wypełnioną kalkulację korzyści, jeśli założenia pochodzą od niego."},
+      {"heading":"Status materiałów", "text":"Wersja 9 września 2026. Oferta i kontakt zweryfikowane w aktualnym kodzie projektu. Przykłady są scenariuszami, nie referencjami. Kwoty, harmonogramy, zakres opieki i kryteria odbioru wymagają dopasowania przed przedstawieniem zobowiązania. Nie zakładaj statusu VAT ani formy działalności na podstawie strony."}
+    ]
+  },
+  {
+    "title": "Co sprzedajesz i komu",
+    "intro": "Rozmawiaj o pracy klienta. Nazwy narzędzi podawaj wtedy, gdy pomagają wyjaśnić koszt, kompatybilność albo sposób utrzymania. Jedno spotkanie powinno prowadzić do jednego pierwszego wdrożenia.",
+    "blocks": [
+      {"heading":"Automatyzacje i integracje", "text":"Sygnał: dane są przepisywane między pocztą, arkuszem i CRM. Powiedz: „Połączę te kroki, żeby zgłoszenie trafiało do właściwej osoby bez ręcznego kopiowania”. Pierwszy zakres: jedno źródło, jeden system docelowy, jawne wyjątki. Mierz czas obsługi oraz liczbę błędów i powtórek. Nie obiecuj integracji, zanim sprawdzisz dostęp do API lub eksportu."},
+      {"heading":"Chatbot i asystent głosowy", "text":"Sygnał: powtarzalne pytania klientów i przerwy w dostępności. Powiedz: „Asystent odpowie na ustalone pytania i przekaże sprawę, kiedy potrzebny jest człowiek”. Pierwszy zakres: zatwierdzona baza wiedzy i zbieranie zgłoszeń. Mierz poprawność odpowiedzi i użyteczne zgłoszenia. Głos na stronie i odbieranie telefonu to oddzielne zakresy."},
+      {"heading":"Strony i aplikacje", "text":"Sygnał: trudno znaleźć ofertę, wysłać zapytanie lub śledzić zlecenie. Powiedz: „Ułatwię klientowi zrobienie następnego kroku, a Tobie obsługę zgłoszenia”. Pierwszy zakres: jedna ścieżka od informacji do kontaktu albo jedna funkcja aplikacji. Mierz ukończone formularze i czas obsługi; większego ruchu nie gwarantuje sama nowa strona."},
+      {"heading":"Szkolenia i audyty", "text":"Sygnał: zespół próbuje AI bez wspólnego sposobu pracy albo firma nie wie, od czego zacząć. Powiedz: „Przejdziemy przez rzeczywiste zadania i wybierzemy zastosowania, które warto rozwijać”. Rezultat audytu to mapa procesów i priorytety; szkolenia to wykonane ćwiczenia i materiały. Nie przedstawiaj przeglądu technicznego jako certyfikacji prawnej."}
+    ]
+  },
+  {
+    "title": "Typy klientów z dobrym punktem wejścia",
+    "intro": "To hipotezy do kwalifikacji, nie lista firm z potwierdzoną potrzebą. Zacznij od branży, do której masz dostęp przez znajomych, partnerów lub lokalne spotkania. Znajomość konkretnego procesu ułatwia następne wdrożenia.",
+    "blocks": [
+      {"heading":"Sprzedaż okien drzwi i bram z montażem", "text":"Kupujący: właściciel albo kierownik sprzedaży. Sygnał: dużo wycen i brak wiedzy, które czekają na decyzję. Pytanie: „Co dzieje się tydzień po wysłaniu wyceny?”. Wejście: przypisanie zgłoszeń i pilnowanie kolejnego kontaktu. Kanał dotarcia: partner prowadzący reklamy, wykonawca strony, lokalny dostawca. Odrzuć, gdy firma ma pełny grafik i nie chce zwiększać sprzedaży."},
+      {"heading":"Firmy instalacyjne i serwisowe", "text":"Kupujący: właściciel pracujący w terenie. Sygnał: rozmowy przerywają pracę, zgłoszenia giną w wiadomościach. Pytanie: „Jak zapisujecie sprawę, gdy nikt nie może odebrać?”. Wejście: uporządkowane zgłoszenia; telefonia po potwierdzeniu wykonalności. Dowód: historia połączeń i przykłady spraw. Odrzuć, jeśli większość kontaktów wymaga natychmiastowej złożonej diagnozy."},
+      {"heading":"Małe sklepy internetowe i dystrybutorzy", "text":"Kupujący: właściciel lub osoba odpowiedzialna za obsługę. Sygnał: wielokrotne pytania o ofertę, dostawę i proces zamówienia. Pytanie: „Jakie pięć pytań powtarza się najczęściej?”. Wejście: asystent informacyjny i przekazanie sprawy. Dostęp do statusu konkretnego zamówienia to dodatkowa integracja z uwierzytelnieniem. Odrzuć, gdy wbudowane FAQ rozwiąże problem taniej."},
+      {"heading":"Firmy usługowe B2B", "text":"Kupujący: właściciel lub kierownik operacyjny. Sygnał: zgłoszenia z maila są przepisywane do kilku miejsc. Pytanie: „Ile razy te same dane wpisujecie ponownie?”. Wejście: jeden obieg zgłoszenia i powiadomienie o wyjątkach. Dowód: czas przejścia 10 rzeczywistych spraw. Odrzuć, gdy proces zmienia się codziennie i nikt nie może ustalić reguł."}
+    ]
+  },
+  {
+    "title": "Dalsze segmenty i sygnały ostrzegawcze",
+    "intro": "Nie każdy problem jest dobrym pierwszym projektem dla jednej osoby. Oddziel zdolność zbudowania rozwiązania od możliwości jego późniejszego utrzymania.",
+    "blocks": [
+      {"heading":"Biura rachunkowe", "text":"Punkt wejścia: kompletowanie dokumentów i informowanie o brakach. Rozmówca: właściciel lub koordynator. Zapytaj: „Ile czasu zajmuje ustalenie, kto jeszcze nie dostarczył dokumentów?”. Pilotaż: status kompletności jednego procesu. Nie deklaruj automatycznego księgowania bez nadzoru ani interpretacji podatkowych. To także potencjalny partner polecający inne firmy."},
+      {"heading":"Małe firmy produkcyjne i hurtownie", "text":"Punkt wejścia: przepisywanie zamówień, raporty i przekazywanie statusów. Zapytaj: „Który raport robicie co tydzień z tych samych źródeł?”. Pierwszy projekt powinien działać obok krytycznego systemu, z kontrolą człowieka. Integracje ze starszym ERP wyceń po sprawdzeniu dostępu. Unikaj pierwszego projektu sterującego produkcją bez możliwości bezpiecznego wyłączenia."},
+      {"heading":"Szkoły językowe i firmy szkoleniowe", "text":"Punkt wejścia: pytania o ofertę, zapisy i przekazywanie informacji. Zapytaj: „Które pytania wracają przed każdym naborem?”. Pilotaż: asystent informacyjny i formularz zainteresowania. Ustal oddzielnie obsługę danych dzieci, jeśli występują; nie używaj ich w demonstracji. Sprawdź sezonowość przed proponowaniem stałej opieki."},
+      {"heading":"Firmy ze stroną która utrudnia kontakt", "text":"Punkt wejścia: telefon i formularz niewygodne na komórce, oferta niezrozumiała, brak informacji potrzebnych do zapytania. Zapytaj: „Jak klient ma wykonać pierwszy krok?”. Pokaż trzy konkretne obserwacje. Najpierw rozważ naprawę obecnej strony. Pełny redesign proponuj, gdy ma uzasadnienie w treści, funkcjach lub stanie technicznym."},
+      {"heading":"Kiedy odmawiać lub zawężać zakres", "text":"Sygnały: brak osoby decyzyjnej, oczekiwanie gwarantowanej sprzedaży, brak legalnego dostępu do danych, nieograniczone poprawki, opieka całodobowa bez budżetu, brak możliwości testu. Powiedz: „W tym zakresie nie mogę odpowiedzialnie zagwarantować działania. Mogę zacząć od mniejszego etapu albo polecić inny sposób rozwiązania problemu”."}
+    ]
+  },
+  {
+    "title": "Skąd brać rozmowy sprzedażowe",
+    "intro": "Łatwiej rozmawiać z osobą, która ma rozpoznany problem i zgodziła się na kontakt. Buduj źródła takich rozmów, zamiast mierzyć liczbę wysłanych wiadomości.",
+    "blocks": [
+      {"heading":"Polecenie z przekazaniem kontaktu", "text":"Do znajomego podczas rozmowy: „Szukam firm, które tracą czas na przepisywanie zgłoszeń lub odpowiadanie na te same pytania. Jeśli znasz właściciela z takim problemem, zapytaj, czy chce ze mną porozmawiać, albo przekaż mu moją wizytówkę”. Samo otrzymanie numeru od znajomego nie oznacza zgody tej osoby na marketing."},
+      {"heading":"Partnerzy obsługujący te same firmy", "text":"Na spotkaniu z wykonawcą stron lub agencją: „Ty pomagasz zdobyć zapytania, ja mogę uporządkować ich obsługę. Przy najbliższym kliencie z takim problemem możemy wspólnie sprawdzić jeden proces”. Ustal, kto prowadzi klienta, za co odpowiada i jak rozliczacie polecenie. Wynagrodzenie partnerskie policz w marży; nie obiecuj go bez ustaleń."},
+      {"heading":"Lokalne spotkania i materiały drukowane", "text":"Zacznij od Chojnic i regionu, jeśli ułatwia Ci to osobiste spotkania. Wybieraj wydarzenia przedsiębiorców i dostawców branżowych. Ulotkę zostawiaj za zgodą gospodarza. Zdanie przy wręczeniu: „Tu są trzy sytuacje, w których automatyzacja może pomóc. Która najbardziej przypomina Państwa pracę?”. Wizytówka ma wspierać rozmowę, nie zastępować jej."},
+      {"heading":"Zapytania przychodzące i publiczne potrzeby", "text":"Odpowiadaj rzeczowo na opublikowane zapytania o wykonawcę w granicach ich treści i zasad platformy. Na własnym profilu pokazuj oznaczone demonstracje: problem, przebieg, ograniczenie, zaproszenie do kontaktu. Nie nazywaj scenariusza wdrożeniem klienta. Mierz, ile rozmów i ofert powstaje z danego kanału."},
+      {"heading":"Kontakt elektroniczny w Polsce", "text":"Art. 398 Prawa komunikacji elektronicznej wymaga uprzedniej zgody na wykorzystanie wskazanych środków komunikacji do informacji handlowej, w tym marketingu bezpośredniego. Nie traktuj publicznego e-maila, telefonu firmowego ani samego polecenia jako automatycznej zgody. Zapisuj źródło i zakres zgody; respektuj rezygnację. Szablony w tym zestawie stosuj do uzgodnionego kontaktu lub obsługi konkretnego zapytania. Źródło: UKE, ustawa PKE, art. 398, link na końcu podręcznika."}
+    ]
+  },
+  {
+    "title": "Gotowe otwarcia rozmowy",
+    "intro": "Wybierz jedną wersję i powiedz ją własnymi słowami. Po krótkim przedstawieniu zadaj pytanie; nie recytuj całej oferty. Scenariusz telefoniczny dotyczy umówionej rozmowy lub odpowiedzi na prośbę o kontakt.",
+    "blocks": [
+      {"heading":"Przedstawienie w 20 sekund", "text":"„Nazywam się Norbert Chojnacki. Pomagam firmom uporządkować powtarzalną pracę: zgłoszenia klientów, przepisywanie danych i odpowiedzi na te same pytania. Łączę istniejące narzędzia albo wdrażam prostego asystenta. Co u Państwa najczęściej trzeba robić ręcznie?”."},
+      {"heading":"Przedstawienie w 60 sekund", "text":"„Wyobraźmy sobie, że zapytanie przychodzi na e-mail. Ktoś musi je przeczytać, przepisać do arkusza i przekazać dalej. Mogę połączyć te kroki, a nietypowe sprawy zostawić do decyzji pracownika. Zaczynam od jednego procesu i wspólnie sprawdzamy, czy to oszczędza pracę. Prowadzę projekt osobiście, od rozmowy po uruchomienie. Jak dzisiaj trafiają do Państwa zapytania?”."},
+      {"heading":"Umówiony telefon po formularzu", "text":"„Dzień dobry, Norbert Chojnacki, Zautomatyzujemy.pl. Kontaktuję się w sprawie przesłanego zapytania o obsługę zgłoszeń. Czy teraz jest dobry moment na krótką rozmowę? Chciałbym ustalić, jak wygląda obecny proces, a potem powiedzieć, czy mogę pomóc”. Jeśli nie: ustal termin albo zakończ. Nie przechodź do innych usług bez związku z zapytaniem."},
+      {"heading":"Rozmowa przy wizytówce", "text":"„To kontakt do mnie i demo asystenta. Zanim je pokażę: czy większym problemem są u Państwa powtarzalne pytania, przepisywanie danych czy sama strona?”. Jeśli żadnym: „W porządku. Nie będę dopasowywać rozwiązania na siłę. Gdy pojawi się konkretny temat, proszę wrócić do mnie”."},
+      {"heading":"Kiedy klient od razu pyta o cenę", "text":"„Cena zależy głównie od liczby systemów i wyjątków. Żeby nie rzucać przypadkowej kwoty, potrzebuję wiedzieć, co uruchamia proces, gdzie mają trafić dane i ile jest takich spraw. Potem przedstawię zakres z pełnym kosztem wdrożenia i utrzymania”. Gdy masz policzony standardowy zakres, podaj jego cenę wraz z ograniczeniami, a nie samą kwotę „od”."}
+    ]
+  },
+  {
+    "title": "Kwalifikacja zanim złożysz ofertę",
+    "intro": "Wypełnij kartę rozmowy. Brak danych nie jest jeszcze odmową; jest powodem do mniejszego kroku, na przykład pomiaru procesu. Nie projektuj pełnego systemu podczas bezpłatnej konsultacji.",
+    "blocks": [
+      {"heading":"Problem i częstotliwość", "text":"Zapytaj: „Proszę pokazać ostatnią taką sprawę. Ile razy w miesiącu to się zdarza? Ile minut zajmuje? Co się dzieje, kiedy ktoś o tym zapomni?”. Zapisz źródło liczby: pomiar, raport lub szacunek klienta. Rozróżniaj irytację od kosztu uzasadniającego zakup."},
+      {"heading":"Właściciel i decyzja", "text":"Zapytaj: „Kto korzysta z procesu na co dzień, kto może go zmienić i kto akceptuje wydatek? Kto jeszcze powinien zobaczyć demonstrację?”. Pracownik może być świetnym partnerem merytorycznym, ale nie zakładaj, że sam podejmie decyzję zakupową."},
+      {"heading":"Wykonalność i dostęp", "text":"Zapytaj: „Jakie systemy biorą udział? Czy mamy możliwość testu i dostęp administracyjny przez zaproszenie? Jakie dane są przetwarzane? Co musi pozostać ręczne?”. Przed ofertą sprawdź ograniczenia planów, licencji i integracji. Nie proś o wysyłanie haseł pocztą."},
+      {"heading":"Ekonomia i priorytet", "text":"Zapytaj: „Co jest ważniejsze: odzyskany czas, szybsza odpowiedź czy mniej błędów? Kiedy ma to zacząć pomagać? Jaki poziom wydatku ma sens przy tym problemie?”. Ustal kryterium odbioru technicznego oddzielnie od oczekiwanego wyniku biznesowego. Nie zapisuj oszczędności płac, jeśli etat i koszt pozostają bez zmian."},
+      {"heading":"Trzy możliwe decyzje", "text":"OFERTA: problem jest powtarzalny, wykonalność sprawdzona, decydent i miara znani. DIAGNOZA: problem istnieje, ale brak danych albo dostępów; ustal mały etap i jego rezultat. REZYGNACJA: nie ma sensownego zwrotu, istnieje prostsza funkcja w używanym systemie albo ryzyko przekracza możliwości opieki. Powiedz klientowi, do której sytuacji doszliście i dlaczego."}
+    ]
+  },
+  {
+    "title": "Cena i rozmowa o opłacalności",
+    "intro": "Cena wynika z zakresu, czasu pracy, kosztów i ryzyka, które przyjmujesz. Korzyść klienta pomaga ocenić sens zakupu, ale nie usprawiedliwia dowolnej marży ani wymyślonych oszczędności.",
+    "blocks": [
+      {"heading":"Policz własny próg", "text":"Uwzględnij analizę, budowę, testy, szkolenie, dokumentację, poprawki objęte ofertą i bufor ryzyka. Dodaj koszt narzędzi oraz partnera, jeśli występuje. Oddziel jednorazowe wdrożenie od stałej opieki i zużycia. W arkuszu Wycena uzupełnij stawkę oraz faktyczne zasady podatkowe; nie zakładaj automatycznie VAT 23%."},
+      {"heading":"Policz wartość z klientem", "text":"Uwolnione godziny = liczba spraw × skrócenie czasu × udział spraw możliwych do automatyzacji / 60. Pomnóż je przez koszt godziny, aby zobaczyć wartość czasu. To nie musi być gotówka na koncie. Dodatkową marżę z zamówień licz oddzielnie i ostrożnie; nie sumuj jej z wartością tych samych godzin, jeśli już służą obsłudze tych zamówień."},
+      {"heading":"Przykład wyłącznie hipotetyczny", "text":"200 spraw × 6 minut mniej × 70% pokrycia daje 14 godzin miesięcznie. Przy wartości godziny 80 zł to 1 120 zł wartości uwolnionego czasu. Po 350 zł kosztów miesięcznych zostaje 770 zł wartości netto. Wdrożenie za 3 000 zł daje około 3,9 miesiąca prostego zwrotu ekonomicznego, ale nie dowodzi gotówkowej oszczędności 770 zł. Liczby służą ćwiczeniu, nie stanowią cennika."},
+      {"heading":"Przedstaw dwa sensowne zakresy", "text":"„Wariant pierwszy obejmuje jeden proces, testy i przekazanie instrukcji. Drugi dodaje uzgodniony monitoring oraz obsługę zmian w limicie. Rekomenduję pierwszy, jeśli proces jest stabilny”. Każdy wariant ma być realnie użyteczny. Nie twórz sztucznie złego pakietu po to, aby wymusić droższy."},
+      {"heading":"Negocjuj zakresem", "text":"„Możemy zmniejszyć koszt, jeśli na start połączymy tylko jedną skrzynkę i zostawimy raport jako drugi etap. Czy ten zakres nadal rozwiązuje najważniejszy problem?”. Jeśli udzielasz rabatu, wskaż faktyczny powód i warunek. Nie usuwaj testów ani nie ukrywaj kosztów utrzymania, by zmieścić się w budżecie."}
+    ]
+  },
+  {
+    "title": "Decyzja zakupowa i rytm działania",
+    "intro": "Dobra rozmowa kończy się jasnością. „Proszę wysłać ofertę” to etap, nie sprzedaż. Zapisuj wynik oraz kolejny krok, żeby nie mylić aktywności z postępem.",
+    "blocks": [
+      {"heading":"Podsumuj przed decyzją", "text":"„Ustaliliśmy, że problemem jest ręczne przepisywanie zgłoszeń. Pierwszy etap obejmie jedną skrzynkę i CRM, a poprawność sprawdzimy na uzgodnionych przykładach. Cena obejmuje testy i instrukcję; narzędzia są osobno wyszczególnione. Czy coś w tym zakresie nadal budzi wątpliwości?”. Daj czas na odpowiedź."},
+      {"heading":"Zaproponuj kolejny krok", "text":"„Jeśli zakres jest właściwy, kolejnym krokiem jest akceptacja oferty i spotkanie startowe. Co musi się jeszcze wydarzyć po Państwa stronie, żeby podjąć decyzję?”. Gdy klient nie jest gotowy: „Jakiej informacji brakuje i kiedy możemy do niej wrócić?”. Jeśli nie ma terminu ani potrzeby, oznacz szansę jako wstrzymaną, nie „prawie sprzedaną”."},
+      {"heading":"Pierwszy tydzień", "text":"Wybierz jeden segment i problem. Przećwicz otwarcie oraz demo na znajomej osobie. Przygotuj listę potencjalnych partnerów i miejsc spotkań; zbierz rozmowy w dozwolonych kanałach. Plan aktywności może zakładać pięć rozmów, ale nie traktuj tego jako prognozy konwersji. Z każdej rozmowy zapisz język, którym klient opisuje problem."},
+      {"heading":"Kolejne trzy tygodnie", "text":"Prowadź diagnozy i proponuj małe płatne etapy tylko tam, gdzie mają sens. Raz w tygodniu sprawdź: rozmowy z decydentem, kwalifikowane szanse, wysłane oferty, uzgodnione decyzje, podpisane zlecenia i przyczyny odmów. Popraw najczęstsze wąskie gardło. Nie zwiększaj liczby kontaktów, jeśli problemem jest niewiarygodna oferta albo zły segment."},
+      {"heading":"Dowód i polecenie po wdrożeniu", "text":"Po odbiorze zapytaj, czy efekt odpowiada uzgodnieniom. Dopiero wtedy poproś o opinię i osobną zgodę na wykorzystanie nazwy, danych oraz wyników. Przypadek klienta opisuj: stan przed, zakres, sposób pomiaru, wynik i ograniczenia. Zgoda na wdrożenie nie jest zgodą na publikowanie referencji."}
+    ]
+  }
+]

@@ -356,6 +356,19 @@ const ServiceSchema = z.object({
   icon: z.string().min(1).max(50),
   sort_order: z.coerce.number().int().min(0),
   is_active: z.boolean().optional(),
+  // Slug jest kluczem trasy /uslugi/<slug>, więc zmiana adresu zrywa linki i pozycje.
+  // Zostaje edytowalny, bo mapa fraz może kazać go poprawić, ale świadomie.
+  slug: z
+    .string()
+    .min(3, 'Slug musi mieć min. 3 znaki.')
+    .max(120)
+    .regex(/^[a-z0-9-]+$/, 'Slug może zawierać tylko małe litery, cyfry i myślniki.'),
+  subtitle: z.string().max(300).nullish(),
+  content: z.string().max(20000).nullish(),
+  // Limity wyższe niż to, co pokazuje wyszukiwarka. Twarde ucinanie na 60 i 160
+  // zmuszałoby do liczenia znaków w trakcie pisania, a licznik w formularzu wystarczy.
+  seo_title: z.string().max(70).nullish(),
+  seo_description: z.string().max(170).nullish(),
 })
 
 export async function upsertServiceAction(
@@ -370,6 +383,11 @@ export async function upsertServiceAction(
     icon: formData.get('icon'),
     sort_order: formData.get('sort_order') ?? 0,
     is_active: formData.get('is_active') === 'true',
+    slug: formData.get('slug'),
+    subtitle: formData.get('subtitle'),
+    content: formData.get('content'),
+    seo_title: formData.get('seo_title'),
+    seo_description: formData.get('seo_description'),
   })
 
   if (!parsed.success) {

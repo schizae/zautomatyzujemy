@@ -103,7 +103,7 @@ export interface Service {
   icon: string
   sort_order: number
   is_active: boolean
-  /** Klucz trasy /uslugi/<slug> — unikalny, wymagany od migracji 010 */
+  /** Klucz trasy /uslugi/<slug> — unikalny, wymagany od migracji 016 */
   slug: string
   /** Jedno zdanie pod nagłówkiem na stronie usługi */
   subtitle: string | null

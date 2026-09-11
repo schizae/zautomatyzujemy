@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
 import { JsonLd } from '@/components/seo/json-ld'
 import { BrandLogo } from '@/components/brand-logo'
+import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { ServiceCta } from '@/components/marketing/service-cta'
 import type { Service } from '@/types'
 
@@ -104,13 +103,16 @@ export default async function ServicePage({ params }: PageProps) {
           <div className="mb-10">
             <BrandLogo inverse />
           </div>
-          <Link
-            href="/uslugi"
-            className="mb-10 inline-flex items-center gap-2 rounded text-sm text-[#dedbd5] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffb49f]"
-          >
-            <ArrowLeft size={16} />
-            Wszystkie usługi
-          </Link>
+          <div className="mb-10">
+            <Breadcrumbs
+              inverse
+              items={[
+                { label: 'Strona główna', href: '/' },
+                { label: 'Usługi', href: '/uslugi' },
+                { label: service.title, href: `/uslugi/${service.slug}` },
+              ]}
+            />
+          </div>
           <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">Usługa</p>
           <h1 className="font-editorial text-4xl font-normal leading-[1.08] tracking-tight text-[#f5f2ed] md:text-6xl">
             {service.title}
