@@ -12,6 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from('posts')
       .select('slug, updated_at')
       .eq('is_published', true)
+      // Wycięcie z mapy samo w sobie nie deindeksuje — to robi robots w metadanych.
+      // Filtr jest po to, żeby nie wysyłać wyszukiwarce dwóch sprzecznych sygnałów.
+      .eq('noindex', false)
       .order('published_at', { ascending: false }),
     supabase
       .from('case_studies')
