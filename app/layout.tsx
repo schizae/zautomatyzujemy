@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, Inter } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/_components/providers'
 import { CookieBanner } from '@/components/marketing/cookie-banner'
+import { AttributionTracker } from '@/components/analytics/attribution-tracker'
 import { Analytics } from '@vercel/analytics/next'
 
 const spaceGrotesk = Space_Grotesk({
@@ -28,7 +29,7 @@ const inter = Inter({
 // dawał brak przycisku, a nie przycisk, który po kliknięciu wyrzuca błąd.
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -128,6 +129,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           Przejdź do treści
         </a>
+        <AttributionTracker />
         <Providers>{children}</Providers>
         <CookieBanner />
         <Analytics />

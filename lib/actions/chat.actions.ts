@@ -7,6 +7,8 @@ import { after } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sanitizeUserContent } from '@/lib/prompt-sanitize'
 import { sendLeadNotification } from '@/lib/email/resend'
+import { normalizeAttribution } from '@/lib/attribution'
+import type { RawAttribution } from '@/lib/attribution'
 import type { ActionResult } from '@/types'
 
 export interface ChatMessage {
@@ -177,7 +179,8 @@ function dispatchToN8n(payload: Record<string, unknown>): void {
  */
 export async function saveChatLeadAction(
   email: string,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  attribution: RawAttribution = {}
 ): Promise<ActionResult<string>> {
   const parsed = ChatLeadSchema.safeParse({ email, messages })
   if (!parsed.success) {
@@ -186,6 +189,7 @@ export async function saveChatLeadAction(
 
   const { email: validEmail, messages: validMessages } = parsed.data
   const details = await extractLeadDetails(validMessages)
+  const normalized = normalizeAttribution(attribution)
 
   const supabase = createServiceClient()
   const { data, error } = await supabase
@@ -201,6 +205,10 @@ export async function saveChatLeadAction(
       lead_score_reason: details.scoreReason,
       source: 'chatbot',
       n8n_sent: false,
+      landing_path: normalized.landingPath,
+      referrer: normalized.referrer,
+      utm_source: normalized.utmSource,
+      source_kind: normalized.sourceKind,
     })
     .select('id')
     .single()

@@ -41,7 +41,7 @@ async function getHeroContent(): Promise<Record<string, string>> {
 }
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
   title: 'Automatyzacja AI dla firm | Zautomatyzujemy.pl',
