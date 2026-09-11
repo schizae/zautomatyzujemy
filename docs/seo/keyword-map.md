@@ -299,6 +299,40 @@ ogólna. Do tego `automatyzacja produkcji` 320, `automatyzacja magazynu` 170,
 ogólna automatyzacja biurowa, a w powiecie chojnickim dominuje przemysł drzewny i produkcja.
 To jest zbieżność warta osobnej strony.
 
+### 2.4b Druga partia eksportów — korekty
+
+Osiem dodatkowych zapytań zawęziło obraz i w dwóch miejscach go poprawiło.
+
+| Fraza | Wolumen | Co z tego wynika |
+|---|---|---|
+| automatyzacja obiegu dokumentów | 90 | to jest właściwa fraza główna dla strony o dokumentach |
+| **automatyzacja faktur** | **20** | temat faktur jest w wyszukiwarce marginalny |
+| szkolenie ai dla firm | 140 | plus `szkolenia ai dla firm` 110 i `szkolenia z ai dla firm` 40 |
+| agenci ai szkolenie | 110 | przecięcie dwóch najmocniejszych klastrów |
+| automatyzacja i robotyzacja w mśp | 110 | fraza wprost o naszej grupie docelowej |
+| automatyzacja biznesu | 110 | |
+| automatyzacja obsługi klienta | 110 | |
+| automatyzacja sprzedaży | 110 | |
+| automatyzacja przemysłowa / przemysłu | 110 + 110 | klaster produkcyjny znowu się powtarza |
+| chatbot dla firm | 40 | frazy chatbotowe są małe, audytorium siedzi przy agentach |
+| sztuczna inteligencja w firmie | 70 | |
+
+**Dwie korekty do wpisania w plan.**
+
+Pierwsza: automatyzacja faktur ma dwadzieścia wyszukiwań miesięcznie. Strona usługowa
+o dokumentach i fakturach zostaje, bo to realna usługa i realny problem klientów,
+ale jako cel wyszukiwarkowy jest słaba. Frazę główną zmieniamy na `automatyzacja obiegu dokumentów`,
+a samą stronę traktujemy jako miejsce lądowania z innych treści, nie jako źródło ruchu.
+
+Druga: szkolenia są mocniejsze, niż zakładałem. Trzy warianty sumują się do około 290 wyszukiwań,
+a do tego dochodzi `agenci ai szkolenie` ze 110. Szkolenie nie wymaga infrastruktury ani wdrożenia,
+więc dla jednej osoby to najniższy próg wejścia w sprzedaż i jednocześnie naturalne przedłużenie
+klastra agentów AI. To awansuje wyżej, niż stoi w tabeli priorytetów.
+
+Scalona lista wszystkich fraz z wolumenami, po usunięciu duplikatów:
+**`data/seo/wolumeny.csv`**, 2 232 frazy, z czego 133 mają wolumen co najmniej 50.
+To jest od teraz jedyne źródło, z którego bierzemy tematy dla automatu blogowego.
+
 ### Konkurencja, której w bazie nie ma
 
 Trzy domeny, które wskazałem jako konkurentów na podstawie wyników wyszukiwania —
