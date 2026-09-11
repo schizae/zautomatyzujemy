@@ -227,6 +227,90 @@ wykluczeń, żeby nie napisał artykułu o zarobkach w automatyzacji procesów.
 
 ---
 
+## 2.4 Prawdziwe wolumeny z Senuto — 11 września 2026
+
+Trial Senuto dał to, czego nie dały ani podpowiedzi, ani Bing: miesięczne liczby wyszukiwań
+dla polskiego rynku. Surowe eksporty leżą w `data/seo/senuto/`.
+**Te liczby przewracają wcześniejszą kolejność klastrów i trzeba to powiedzieć wprost.**
+
+### Skala popytu, uporządkowana
+
+| Fraza | Śr. mies. wyszukiwań |
+|---|---|
+| n8n | **33 100** |
+| agent ai / ai agent / agenty ai | 5 400 (ten sam klaster w trzech zapisach) |
+| ai act | 3 600 |
+| asystent ai | 2 400 |
+| automatyzacja | 1 900 |
+| agenci ai | 1 300 |
+| asystenci ai | 720 |
+| eu ai act | 720 |
+| automatyzacja procesów biznesowych | 590 |
+| automatyzacja procesów | 480 |
+| automatyzacja ai | 480 |
+| jak stworzyć agenta ai | 390 |
+| tworzenie agenta ai | 390 |
+| agent ai jak stworzyć | 390 |
+| automatyzacja procesów produkcji | 390 |
+| automatyzacja procesów produkcyjnych | 390 |
+| n8n ai agent / n8n ai agents | 320 + 320 |
+| ai act co to | 320 |
+| tworzenie agentów ai | 320 |
+| co to jest agent ai | 260 |
+| budowanie agentów ai | 260 |
+| ai act eurlex | 210 |
+| ai act po polsku | 140 |
+| **automatyzacja procesów w firmie** | **140** |
+| n8n kurs | 110 |
+| automatyzacja procesów księgowych | 90 |
+| wdrożenie ai w firmie | 90 |
+| szkolenie n8n | 70 |
+
+### Cztery wnioski, które zmieniają plan
+
+**1. `n8n` to fraza o zupełnie innej skali niż wszystko pozostałe.** Trzydzieści trzy tysiące
+wyszukiwań miesięcznie, czyli kilkadziesiąt razy więcej niż cała reszta naszej oferty razem wzięta.
+Intencja jest w większości nawigacyjna i techniczna, bo ludzie szukają samego narzędzia,
+jego instalacji na Dockerze czy repozytorium. Nie da się tego wygrać frazą główną i nie warto próbować.
+Da się natomiast wejść w otoczkę: `n8n kurs` 110, `szkolenie n8n` 70, `n8n ai agent` i `n8n ai agents`
+po 320. To są ludzie, którzy n8n już znają i szukają pomocy — czyli dokładnie profil klienta.
+
+**2. Klaster agentów AI jest drugą co do wielkości studnią i jest cały poradnikowy.**
+Sumując warianty pytające: `jak stworzyć agenta ai`, `tworzenie agenta ai`, `agent ai jak stworzyć`,
+`tworzenie agentów ai`, `co to jest agent ai`, `budowanie agentów ai`, `agenci ai co to` — około
+dwóch tysięcy wyszukiwań miesięcznie od ludzi, którzy chcą wiedzieć, jak to zrobić.
+To jest gotowy plan na serię artykułów, a nie pojedynczy wpis.
+
+**3. AI Act ma realny popyt i my mamy pod niego gotowe aktywa.** `ai act` 3 600, `eu ai act` 720,
+`ai act co to` 320, `ai act po polsku` 140. Strona `/ai-act-checklist` już istnieje, rejestr systemów AI
+działa, oznaczanie treści generowanych jest wdrożone. Żaden z naszych konkurentów nie ma
+takiego zestawu, a temat obowiązuje od sierpnia 2026, więc popyt nie jest chwilowy.
+
+**4. Fraza, którą wybrałem na główną dla najważniejszej strony usługowej, jest za mała.**
+`automatyzacja procesów w firmie` ma 140 wyszukiwań. `automatyzacja procesów biznesowych` ma 590,
+czyli ponad cztery razy więcej. Wcześniej odrzuciłem tę drugą, bo jej podpowiedzi są zanieczyszczone
+intencją zawodową. Przy takiej różnicy to była zła decyzja: celujemy we frazę większą, a treść
+piszemy tak, żeby od pierwszego zdania było jasne, że mówimy do firmy, a nie do studenta.
+
+**Piąta rzecz, której się nie spodziewałem.** `automatyzacja procesów produkcji` i
+`automatyzacja procesów produkcyjnych` mają po 390 wyszukiwań, razem 780, czyli więcej niż fraza
+ogólna. Do tego `automatyzacja produkcji` 320, `automatyzacja magazynu` 170,
+`automatyzacja i robotyzacja procesów produkcyjnych` 170. Produkcja to osobny, większy rynek niż
+ogólna automatyzacja biurowa, a w powiecie chojnickim dominuje przemysł drzewny i produkcja.
+To jest zbieżność warta osobnej strony.
+
+### Konkurencja, której w bazie nie ma
+
+Trzy domeny, które wskazałem jako konkurentów na podstawie wyników wyszukiwania —
+`justautomate.ai`, `agisona.pl` i `automationnex.io` — **nie mają w bazie Senuto żadnych danych.**
+Czwarta, `dokodu.it`, ma siedem fraz, z czego jedna sensowna (`automatyzacja ai`, 480).
+
+To znaczy, że firmy, które widzieliśmy w wynikach, mają widoczność bliską zeru. Zajmują pozycje
+na frazach bez popytu. **Nisza jest pusta.** Nikt tu nie zbudował autorytetu, a to znaczy, że próg
+wejścia jest niższy, niż zakładałem, pisząc o „gęsto obsadzonych klastrach".
+Poprawka dotyczy fraz cenowych: tam artykuły rzeczywiście są, ale ich autorzy nie mają widoczności
+poza nimi.
+
 ## 3. Przypisanie klastrów do stron
 
 | Klaster | Strona docelowa | Priorytet | Werdykt |
@@ -245,6 +329,25 @@ wykluczeń, żeby nie napisał artykułu o zarobkach w automatyzacji procesów.
 Kolejność zmieniła się po zebraniu danych. W pierwszej wersji planu poziom lokalny miał być
 pierwszy, bo „najszybciej daje efekt". Podpowiedzi tego nie potwierdziły, więc spada na koniec.
 Awansowały szkolenia, bo mają konkretne frazy zakupowe i najniższy próg wejścia dla jednej osoby.
+
+### 3.1 Korekta po wolumenach z Senuto
+
+Tabela wyżej pozostaje w mocy co do stron usługowych, ale frazy główne i kolejność treści
+na blogu zmieniają się tak:
+
+| Strona | Fraza główna przed | Fraza główna po korekcie | Powód |
+|---|---|---|---|
+| `/uslugi/automatyzacja-procesow-biznesowych` | automatyzacja procesów w firmie (140) | automatyzacja procesów biznesowych (590) | cztery razy większy popyt |
+| nowa, do rozważenia | — | automatyzacja procesów produkcyjnych (390 + 390) | osobny rynek, zbieżny z lokalnym przemysłem |
+| `/uslugi/chatboty-i-asystenci-ai` | chatbot dla firmy | agent ai (5400) jako filar, chatbot dla firmy jako wsparcie | klaster agentów jest wielokrotnie większy |
+| `/uslugi/zgodnosc-z-ai-act` | zgodność z ai act | ai act (3600) | mamy gotowe aktywa i realny popyt |
+
+Kolejność tematów dla automatu blogowego, od najmocniejszego:
+1. seria o budowaniu agentów AI — około 2 000 wyszukiwań miesięcznie w wariantach pytających
+2. otoczka n8n: kurs, szkolenie, agenci w n8n, przechowywanie danych wrażliwych
+3. AI Act w praktyce: rejestr systemów, oznaczanie treści, obowiązki od sierpnia 2026
+4. automatyzacja procesów produkcyjnych
+5. reszta klastrów usługowych
 
 Slugi wzięte z migracji `011_services_content.sql` na gałęzi `feat/strony-uslugowe`, żeby nie tworzyć
 drugiego zestawu adresów. Korekta pod frazy dopiero po uzupełnieniu wolumenów.
