@@ -1,4 +1,4 @@
--- 011_services_content.sql
+-- 017_services_content.sql
 -- Treści stron usługowych. Zasady: zero deklaracji o zrealizowanych
 -- wdrożeniach i klientach, zero cen i terminów, pierwsza osoba liczby
 -- pojedynczej.

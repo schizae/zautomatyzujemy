@@ -1,4 +1,4 @@
--- 010_services_pages.sql
+-- 016_services_pages.sql
 -- Rozszerza services o pola potrzebne stronom /uslugi/<slug>.
 -- Slug jest kluczem trasy, więc musi być unikalny i niepusty.
 
