@@ -13,7 +13,7 @@ wymagają doświadczenia, którego autorzy ogólnych poradników nie mają.
 ## Filar 1: agenci AI — od pytania do wdrożenia
 
 Klaster wart około dwóch tysięcy wyszukiwań miesięcznie w wariantach pytających.
-Wszystkie artykuły linkują do `/uslugi/chatboty-i-asystenci-ai` oraz do
+Wszystkie artykuły linkują do `/uslugi/agenci-ai-i-chatboty` oraz do
 `/uslugi/szkolenia-z-ai-dla-zespolow`.
 
 | # | Temat | Fraza główna | Wolumen | Intencja |

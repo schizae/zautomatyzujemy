@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/contexts/auth-context'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { label: 'Rozwiązania', href: '/#uslugi' },
+  { label: 'Usługi', href: '/uslugi' },
   { label: 'Demo Klary', href: '/#klara' },
   { label: 'Blog', href: '/blog' },
   { label: 'O nas', href: '/#o-nas' },

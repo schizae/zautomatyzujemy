@@ -65,7 +65,7 @@ export function ServicesSection() {
       <details className="mt-12 border-y border-white/20 py-4">
         <summary className="cursor-pointer py-3 text-sm text-[#dedbd5] underline-offset-4 hover:underline">Poznaj pełny zakres usług — strony, aplikacje, AI, szkolenia i audyty</summary>
         <div className="grid gap-6 py-6 sm:grid-cols-2 lg:grid-cols-3">{services.map(([name, description]) => <div key={name}><h3 className="mb-3 text-lg font-medium">{name}</h3><p className="text-sm leading-relaxed text-[#aaa8a1]">{description}</p></div>)}</div>
-        <Link href="/#kontakt" className="inline-flex min-h-11 items-center text-sm text-[#f34c30] underline underline-offset-4">Porozmawiajmy o zakresie współpracy ↗</Link>
+        <div className="flex flex-wrap gap-x-8 gap-y-3"><Link href="/uslugi" className="inline-flex min-h-11 items-center text-sm text-[#f34c30] underline underline-offset-4">Zobacz szczegóły każdej usługi ↗</Link><Link href="/#kontakt" className="inline-flex min-h-11 items-center text-sm text-[#dedbd5] underline underline-offset-4">Porozmawiajmy o zakresie współpracy</Link></div>
       </details>
       <div id="case-study" className="mt-6 flex flex-wrap justify-between gap-5 scroll-mt-24 text-sm">
         <Link href="/case-studies" className="inline-flex min-h-11 items-center text-[#dedbd5] underline underline-offset-4">Poznaj przykładowe zastosowania</Link>
