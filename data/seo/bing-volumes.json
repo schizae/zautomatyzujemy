@@ -1,0 +1,130 @@
+[
+  {
+    "fraza": "n8n",
+    "miesiecy": 25,
+    "sredniaMiesieczna": 218,
+    "ostatnieTrzy": [
+      159,
+      133,
+      193
+    ]
+  },
+  {
+    "fraza": "chatbot ai",
+    "miesiecy": 25,
+    "sredniaMiesieczna": 21,
+    "ostatnieTrzy": [
+      19,
+      13,
+      19
+    ]
+  },
+  {
+    "fraza": "chatbot ai character",
+    "miesiecy": 1,
+    "sredniaMiesieczna": 9,
+    "ostatnieTrzy": [
+      9
+    ]
+  },
+  {
+    "fraza": "n8n download",
+    "miesiecy": 24,
+    "sredniaMiesieczna": 6,
+    "ostatnieTrzy": [
+      1,
+      4,
+      8
+    ]
+  },
+  {
+    "fraza": "n8n docker",
+    "miesiecy": 24,
+    "sredniaMiesieczna": 5,
+    "ostatnieTrzy": [
+      2,
+      2,
+      3
+    ]
+  },
+  {
+    "fraza": "n8n cloud",
+    "miesiecy": 24,
+    "sredniaMiesieczna": 4,
+    "ostatnieTrzy": [
+      1,
+      6,
+      4
+    ]
+  },
+  {
+    "fraza": "voicebot",
+    "miesiecy": 24,
+    "sredniaMiesieczna": 4,
+    "ostatnieTrzy": [
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "fraza": "n8n github",
+    "miesiecy": 17,
+    "sredniaMiesieczna": 3,
+    "ostatnieTrzy": [
+      1,
+      7,
+      1
+    ]
+  },
+  {
+    "fraza": "n8n ai",
+    "miesiecy": 25,
+    "sredniaMiesieczna": 2,
+    "ostatnieTrzy": [
+      2,
+      1,
+      2
+    ]
+  },
+  {
+    "fraza": "n8n pricing",
+    "miesiecy": 17,
+    "sredniaMiesieczna": 2,
+    "ostatnieTrzy": [
+      2,
+      2,
+      3
+    ]
+  },
+  {
+    "fraza": "n8n self hosted",
+    "miesiecy": 12,
+    "sredniaMiesieczna": 2,
+    "ostatnieTrzy": [
+      2,
+      1,
+      1
+    ]
+  },
+  {
+    "fraza": "n8n workflows",
+    "miesiecy": 18,
+    "sredniaMiesieczna": 2,
+    "ostatnieTrzy": [
+      3,
+      1,
+      1
+    ]
+  },
+  {
+    "fraza": "chatbot ai free",
+    "miesiecy": 8,
+    "sredniaMiesieczna": 1,
+    "ostatnieTrzy": [
+      1,
+      1,
+      2
+    ]
+  }
+]
