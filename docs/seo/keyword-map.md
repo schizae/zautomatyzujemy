@@ -138,7 +138,7 @@ kto już rozważa wdrożenie i szuka argumentu dla siebie albo dla przełożoneg
 Odpowiedź wymaga wiedzy, której nie ma w materiałach producenta, i naturalnie prowadzi
 do rozmowy o wdrożeniu na własnej infrastrukturze.
 
-**Chatboty i asystenci** — strona `/uslugi/chatboty-i-asystenci-ai`
+**Chatboty i asystenci** — strona `/uslugi/agenci-ai-i-chatboty`
 - chatbot dla firmy
 - agent ai dla firmy
 - asystent ai dla firmy
@@ -408,7 +408,7 @@ poza nimi.
 | Klaster | Strona docelowa | Priorytet | Werdykt |
 |---|---|---|---|
 | Automatyzacja procesów i n8n | `/uslugi/automatyzacja-procesow-biznesowych` | 1 | realne |
-| Chatboty i asystenci AI | `/uslugi/chatboty-i-asystenci-ai` | 2 | realne poradnikowo, cenowo nie |
+| Chatboty i asystenci AI | `/uslugi/agenci-ai-i-chatboty` | 2 | realne poradnikowo, cenowo nie |
 | Automatyzacja faktur i dokumentów | `/uslugi/automatyzacja-dokumentow-i-faktur` | 3 | realne wąskim wejściem |
 | Szkolenia | `/uslugi/szkolenia-z-ai-dla-zespolow` | 4 | realne, dwie konkretne frazy |
 | Zgodność z AI Act | `/uslugi/zgodnosc-z-ai-act` oraz istniejąca `/ai-act-checklist` | 5 | jedna podpowiedź na 110, popyt niski, ale mamy gotowe aktywa |
@@ -431,7 +431,7 @@ na blogu zmieniają się tak:
 |---|---|---|---|
 | `/uslugi/automatyzacja-procesow-biznesowych` | automatyzacja procesów w firmie (140) | automatyzacja procesów biznesowych (590) | cztery razy większy popyt |
 | nowa, do rozważenia | — | automatyzacja procesów produkcyjnych (390 + 390) | osobny rynek, zbieżny z lokalnym przemysłem |
-| `/uslugi/chatboty-i-asystenci-ai` | chatbot dla firmy | agent ai (5400) jako filar, chatbot dla firmy jako wsparcie | klaster agentów jest wielokrotnie większy |
+| `/uslugi/agenci-ai-i-chatboty` | chatbot dla firmy | agent ai (5400) jako filar, chatbot dla firmy jako wsparcie | klaster agentów jest wielokrotnie większy |
 | `/uslugi/zgodnosc-z-ai-act` | zgodność z ai act | ai act (3600) | mamy gotowe aktywa i realny popyt |
 
 Kolejność tematów dla automatu blogowego, od najmocniejszego:
