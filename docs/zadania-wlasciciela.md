@@ -5,7 +5,12 @@ która należy do Ciebie. Stan na 10 września 2026.
 
 ---
 
-## 1. Zastosować migrację w Supabase (pilne, blokuje działanie na produkcji)
+## 1. Zastosować migrację w Supabase — ZROBIONE 11 września 2026
+
+Sprawdzone: cztery kolumny i indeks `leads_source_kind_idx` są w bazie produkcyjnej.
+Pull request 18 można scalać.
+
+<details><summary>Treść zadania, dla historii</summary>
 
 Bez tego zapis leada z nowymi kolumnami zwróci błąd, więc formularz kontaktowy przestanie
 przyjmować zgłoszenia po wdrożeniu gałęzi `feat/atrybucja-leadow`.
@@ -39,9 +44,15 @@ ORDER BY column_name;
 Dlaczego nie zrobiłem tego sam: serwer Supabase jest podpięty w trybie tylko do odczytu
 i odmawia wykonania polecenia zmieniającego strukturę bazy.
 
+</details>
+
 ---
 
-## 2. Przekierowanie domeny na trwałe (Vercel)
+## 2. Przekierowanie domeny na trwałe — ZROBIONE 11 września 2026
+
+Sprawdzone: `https://zautomatyzujemy.pl` zwraca `308 Permanent Redirect` na wersję z www.
+
+<details><summary>Treść zadania, dla historii</summary>
 
 Dziś `zautomatyzujemy.pl` przekierowuje na wersję z www kodem 307, czyli tymczasowym.
 Dla wyszukiwarki tymczasowe przekierowanie nie przenosi sygnałów rankingowych na docelowy adres.
@@ -56,6 +67,8 @@ curl -sI https://zautomatyzujemy.pl | head -3
 ```
 
 Oczekiwane: `308 Permanent Redirect` zamiast obecnego `307`.
+
+</details>
 
 ---
 
