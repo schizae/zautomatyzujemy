@@ -5,12 +5,20 @@
  * Przepływ: /api/blog/existing-topics → Gemini (temat + artykuł) → Gemini (obraz) → ImgBB → /api/blog/publish
  */
 
+import { readFileSync } from 'node:fs'
+import { sprawdzArtykul } from '../../scripts/seo/quality-gate.mjs'
+
 const { GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL } = process.env
 
 // Nazwy modeli w jednym miejscu, bo rozjeżdżały się między wywołaniem a polem
 // ai_model w ładunku publikacji, a to pole trafia do rejestru systemów AI.
 const MODEL_TEKSTU = 'gemini-3.8-flash'
 const MODEL_OBRAZU = 'gemini-3.1-flash-image'
+
+// Plan treści i standard pisarski leżą w repozytorium, bo czyta je też bramka jakości
+// i człowiek. Workflow robi checkout, więc oba pliki są na dysku.
+const PLAN_TRESCI = readFileSync('docs/seo/plan-tresci.md', 'utf8')
+const STANDARD = readFileSync('docs/seo/editorial-standard.md', 'utf8')
 
 if (!GOOGLE_API_KEY || !IMGBB_API_KEY || !WEBHOOK_SECRET || !SITE_URL) {
   console.error('❌ Brak wymaganych zmiennych środowiskowych: GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL')
@@ -103,55 +111,97 @@ async function getExistingTopics() {
   }
 
   const data = await res.json()
-  return data.topics ?? []
+  return { topics: data.topics ?? [], services: data.services ?? [] }
+}
+
+// ─── Wybór tematu z planu treści ─────────────────────────────────────────────
+
+/**
+ * Tematy siedzą w tabelach Markdown w docs/seo/plan-tresci.md.
+ * Kolumny: numer, temat, fraza główna, wolumen, intencja.
+ * Parsujemy plik, a nie osobną tabelę w bazie, bo dwanaście pozycji na kwartał
+ * nie potrzebuje schematu ani edytora.
+ */
+function tematyZPlanu(markdown) {
+  const tematy = []
+
+  for (const linia of markdown.split('\n')) {
+    if (!linia.startsWith('|')) continue
+
+    const kolumny = linia.split('|').map(k => k.trim())
+    const [, numer, temat, fraza, wolumen, intencja] = kolumny
+    if (!/^\d+[a-z]?$/.test(numer ?? '')) continue
+
+    tematy.push({ numer, temat, fraza, wolumen: Number(wolumen) || 0, intencja })
+  }
+
+  return tematy
+}
+
+function pierwszyWolnyTemat(tematy, istniejace) {
+  const uzyte = new Set(
+    istniejace.map(a => (a.targetKeyword ?? '').toLowerCase().trim()).filter(Boolean)
+  )
+  return tematy.find(t => !uzyte.has(t.fraza.toLowerCase().trim())) ?? null
 }
 
 // ─── Krok 2: Generowanie artykułu (Gemini) ───────────────────────────────────
 
-async function generateArticle(existingTopics) {
+async function generateArticle(temat, existingTopics, serviceSlugs) {
   const today = new Date()
   const isoDate = today.toISOString().split('T')[0]
   const dateStr = today.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
 
-  const existingList = existingTopics
+  const istniejaceArtykuly = existingTopics
     .slice(0, 40)
-    .map(t => `- ${t.title}${t.tags.length ? ` [${t.tags.join(', ')}]` : ''}`)
+    .map(t => `- /blog/${t.slug} — ${t.title}`)
     .join('\n')
 
-  const prompt = `Jestes autorem bloga "Zautomatyzujemy.pl" — specjalistycznego portalu o AI i automatyzacji dla polskich MSP (firmy 5-100 pracownikow).
+  const dostepneUslugi = serviceSlugs.map(s => `- /uslugi/${s}`).join('\n')
+
+  const prompt = `Jestes autorem bloga "Zautomatyzujemy.pl" — portalu o AI i automatyzacji dla polskich firm (5-100 pracownikow). Autorem jest Norbert Chojnacki, inzynier informatyki, ktory te wdrozenia robi osobiscie.
 
 Aktualna data: ${dateStr}
 
-ISTNIEJACE ARTYKULY (unikaj powielania tematyki):
-${existingList || '(brak dotychczasowych artykulow — wybierz dowolny temat)'}
+TEMAT JEST JUZ WYBRANY. Nie zmieniaj go i nie proponuj innego.
+- Temat: ${temat.temat}
+- Fraza docelowa: ${temat.fraza}
+- Intencja czytelnika: ${temat.intencja}
 
-ZADANIE: Wygeneruj kompletny, unikalny artykul blogowy o AI lub automatyzacji procesow biznesowych.
+STANDARD PISARSKI — obowiazuje w calosci, to nie sa sugestie:
 
-WYMAGANIA TEMATYCZNE:
-- Praktyczny i konkretny — wlasciciel firmy moze wdrozyc to samodzielnie lub zlecic
-- Moze dotyczyc: automatyzacja obslugi klienta, AI w sprzedazy/marketingu, chatboty, integracje API/n8n, oszczednosci kosztow dzieki AI, RAG i bazy wiedzy, automatyzacja dokumentow i faktur, AI w rekrutacji, konkretne narzedzia (Make, Zapier, n8n, ChatGPT API)
-- UNIKALNY — nie powtarzaj tematow z listy powyzej
+${STANDARD}
 
-WYMAGANIA DOTYCZACE ARTYKULU:
-1. Dlugosc: 900-1300 slow
-2. Struktura: wstep z hakiem (problem lub statystyka), 3-5 sekcji merytorycznych, zakonczenie z CTA
-3. Format: Markdown z naglowkami ##, pogrubieniami **tekst**, listami punktowymi i numerowanymi
-4. Jezyk: polski, ekspercki ale przystepny, zero zbednego zargonu
-5. Zawrzyj przynajmniej 1 konkretny przyklad lub case study (moze byc hipotetyczny)
-6. Zakonczenie: CTA zachecajace do bezplatnej konsultacji na zautomatyzujemy.pl
+ISTNIEJACE ARTYKULY (linkuj wylacznie do tych adresow):
+${istniejaceArtykuly || '(brak)'}
+
+DOSTEPNE STRONY USLUGOWE (linkuj wylacznie do tych adresow):
+${dostepneUslugi || '(brak)'}
+
+WYMAGANIA TWARDE, ktorych naruszenie odrzuca artykul automatycznie:
+1. Fraza "${temat.fraza}" musi wystapic doslownie w tytule oraz w pierwszym akapicie tresci.
+2. Pierwszy akapit odpowiada na pytanie zawarte we frazie w dwoch zdaniach, przed jakimkolwiek wstepem.
+3. Co najmniej dwa odnosniki do zrodel zewnetrznych w formacie Markdown, do stron, ktore naprawde istnieja.
+4. Co najmniej jeden odnosnik do istniejacego artykulu z listy powyzej.
+5. Co najmniej dwa odnosniki do stron uslugowych z listy powyzej, o ile pasuja do tematu.
+6. W drugiej polowie tekstu, po sekcji merytorycznej, wstaw dokladnie ten znacznik w osobnej linii:
+<!-- WSTAWKA -->
+   To miejsce na akapit wlasnego doswiadczenia, ktory dopisze autor. Nie wymyslaj tego akapitu.
+7. Zadnego zwrotu z czarnej listy ze standardu pisarskiego.
+8. Zadnej statystyki bez odnosnika do zrodla.
 
 WYMAGANIA DOTYCZACE SLUGA:
-- Tylko male litery a-z (bez polskich znakow!), cyfry 0-9, myslniki
-- Przyklad poprawnego: "automatyzacja-obslugi-klienta-ai", "chatbot-dla-sklepu-online"
+- Tylko male litery a-z (bez polskich znakow), cyfry 0-9, myslniki
+- Slug ma zawierac fraze docelowa w formie bez polskich znakow
 
 Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
 {
-  "title": "[tytul artykulu po polsku — chwytliwy, SEO-friendly, 50-70 znakow]",
-  "slug": "[slug: tylko a-z, 0-9, myslniki, bez polskich znakow]",
-  "excerpt": "[2-3 zdania: co czytelnik sie dowie i jaka ma korzysc — dla Google i social media]",
-  "content": "[pelny artykul w Markdown, min 900 slow]",
+  "title": "[tytul po polsku zawierajacy fraze docelowa, 50-70 znakow]",
+  "slug": "[slug: tylko a-z, 0-9, myslniki]",
+  "excerpt": "[2-3 zdania: co czytelnik sie dowie i jaka ma korzysc]",
+  "content": "[pelny artykul w Markdown]",
   "tags": ["[tag1]", "[tag2]", "[tag3]", "[tag4]"],
-  "image_prompt": "[prompt do okladki po angielsku: konkretna, profesjonalna ilustracja bez tekstu, styl editorial magazine, nawiazuje do tematu artykulu, nowoczesny minimalizm]"
+  "image_prompt": "[prompt do okladki po angielsku: konkretna ilustracja bez tekstu, styl editorial magazine, nowoczesny minimalizm]"
 }`
 
   const res = await fetch(
@@ -248,24 +298,57 @@ async function publishPost(post) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-console.log('📚 Krok 1/5: Pobieranie istniejących tematów...')
-const existingTopics = await getExistingTopics()
-console.log(`✅ Znaleziono ${existingTopics.length} istniejących artykułów\n`)
+console.log('📚 Krok 1/6: Pobieranie istniejących artykułów i usług...')
+const { topics: existingTopics, services: serviceSlugs } = await getExistingTopics()
+console.log(`✅ Artykułów: ${existingTopics.length}, usług: ${serviceSlugs.length}\n`)
 
-console.log('🤖 Krok 2/5: Generowanie artykułu (Gemini)...')
-const article = await generateArticle(existingTopics)
+console.log('📋 Krok 2/6: Wybór tematu z planu treści...')
+const temat = pierwszyWolnyTemat(tematyZPlanu(PLAN_TRESCI), existingTopics)
+
+if (temat === null) {
+  // Świadomie nie wymyślamy tematu. Wyczerpanie listy to sygnał dla właściciela,
+  // że pora dopisać kolejne, a nie powód do improwizacji.
+  console.log('📋 Wszystkie tematy z planu treści są wykorzystane.')
+  console.log('   Dopisz kolejne w docs/seo/plan-tresci.md i uruchom ponownie.')
+  process.exit(0)
+}
+
+console.log(`✅ Temat ${temat.numer}: ${temat.temat}`)
+console.log(`   Fraza: "${temat.fraza}" (${temat.wolumen}/mies., intencja: ${temat.intencja})\n`)
+
+console.log('🤖 Krok 3/6: Generowanie artykułu (Gemini)...')
+const article = await generateArticle(temat, existingTopics, serviceSlugs)
 console.log(`✅ Artykuł: "${article.title}"`)
 console.log(`   Slug: ${article.slug}\n`)
 
-console.log('🎨 Krok 3/5: Generowanie okładki (Gemini)...')
+console.log('🔍 Krok 4/6: Bramka jakości...')
+const wynikBramki = sprawdzArtykul(
+  {
+    title: article.title,
+    slug: article.slug,
+    targetKeyword: temat.fraza,
+    content: article.content,
+  },
+  { istniejace: existingTopics, uslugi: serviceSlugs }
+)
+
+if (wynikBramki.przechodzi) {
+  console.log('✅ Bramka przeszła')
+} else {
+  console.log(`⚠ Bramka odrzuciła artykuł (${wynikBramki.braki.length}):`)
+  wynikBramki.braki.forEach(brak => console.log(`   - ${brak}`))
+}
+wynikBramki.uwagi.forEach(uwaga => console.log(`   ℹ ${uwaga}`))
+console.log('')
+
+console.log('🎨 Krok 5/6: Generowanie okładki (Gemini)...')
 const base64Image = await generateCoverImage(article.image_prompt)
 console.log('✅ Okładka wygenerowana\n')
 
-console.log('📤 Krok 4/5: Upload okładki do ImgBB...')
 const coverUrl = await uploadToImgBB(base64Image)
 console.log(`✅ Okładka: ${coverUrl}\n`)
 
-console.log('🚀 Krok 5/5: Publikacja na blogu...')
+console.log('🚀 Krok 6/6: Wysyłka do publikacji...')
 const result = await publishPost({
   slug: article.slug,
   title: article.title,
@@ -276,6 +359,9 @@ const result = await publishPost({
   author: 'Zautomatyzujemy.pl',
   ai_generated: true,
   ai_model: MODEL_TEKSTU,
+  target_keyword: temat.fraza,
+  quality_gate_passed: wynikBramki.przechodzi,
+  quality_gate_issues: wynikBramki.braki,
 })
 console.log(
   result.published
