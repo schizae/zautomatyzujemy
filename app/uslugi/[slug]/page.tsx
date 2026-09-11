@@ -1,15 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { createServiceClient } from '@/lib/supabase/server'
 import { safeMdxComponents } from '@/lib/mdx-components'
 import { JsonLd } from '@/components/seo/json-ld'
+import { BrandLogo } from '@/components/brand-logo'
+import { ServiceCta } from '@/components/marketing/service-cta'
 import type { Service } from '@/types'
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -27,14 +29,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!data) return { title: 'Usługa nie znaleziona' }
 
+  const title = (data.seo_title as string | null) ?? (data.title as string)
+  const description = (data.seo_description as string | null) ?? (data.description as string)
+
   return {
-    title: data.seo_title ?? data.title,
-    description: data.seo_description ?? data.description,
+    title,
+    description,
     alternates: { canonical: `/uslugi/${slug}` },
     openGraph: {
       type: 'website',
-      title: data.seo_title ?? data.title,
-      description: data.seo_description ?? data.description,
+      title,
+      description,
       url: `/uslugi/${slug}`,
     },
   }
@@ -54,7 +59,10 @@ export default async function ServicePage({ params }: PageProps) {
   const service = data as Service
 
   return (
-    <main className="min-h-screen bg-white">
+    <main
+      id="main"
+      className="marketing-theme font-body min-h-screen bg-[#f5f2ed] text-[#151719] [color-scheme:light]"
+    >
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -67,7 +75,10 @@ export default async function ServicePage({ params }: PageProps) {
             name: 'Zautomatyzujemy.pl',
             url: SITE_URL,
           },
-          areaServed: { '@type': 'Country', name: 'Polska' },
+          areaServed: [
+            { '@type': 'Country', name: 'Polska' },
+            { '@type': 'AdministrativeArea', name: 'województwo pomorskie' },
+          ],
           url: `${SITE_URL}/uslugi/${service.slug}`,
         }}
       />
@@ -88,46 +99,37 @@ export default async function ServicePage({ params }: PageProps) {
         }}
       />
 
-      <div className="bg-slate-950 pt-20 pb-16 px-6">
-        <div className="max-w-3xl mx-auto">
+      <div className="bg-[#151719] px-6 pb-16 pt-8 md:pb-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-10">
+            <BrandLogo inverse />
+          </div>
           <Link
             href="/uslugi"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-8"
+            className="mb-10 inline-flex items-center gap-2 rounded text-sm text-[#dedbd5] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffb49f]"
           >
             <ArrowLeft size={16} />
             Wszystkie usługi
           </Link>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+          <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">Usługa</p>
+          <h1 className="font-editorial text-4xl font-normal leading-[1.08] tracking-tight text-[#f5f2ed] md:text-6xl">
             {service.title}
           </h1>
           {service.subtitle && (
-            <p className="text-slate-300 text-lg leading-relaxed">{service.subtitle}</p>
+            <p className="mt-8 text-base leading-relaxed text-[#dedbd5] md:text-lg">
+              {service.subtitle}
+            </p>
           )}
         </div>
       </div>
 
       {service.content && (
-        <article className="max-w-3xl mx-auto px-6 py-16 text-slate-800 leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_p]:mb-5 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1.5 [&_li]:text-slate-700 [&_strong]:font-bold [&_em]:italic [&_a]:text-primary [&_a]:underline [&_a]:hover:opacity-80">
+        <article className="mx-auto max-w-3xl px-6 py-16 leading-relaxed text-[#30322f] [&_a]:text-primary [&_a]:underline [&_a]:hover:opacity-80 [&_blockquote]:mb-5 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[#62625d] [&_code]:rounded [&_code]:bg-[#eae5dc] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_h2]:mb-4 [&_h2]:mt-10 [&_h2]:font-editorial [&_h2]:text-3xl [&_h2]:font-normal [&_h2]:text-[#151719] [&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[#151719] [&_hr]:my-8 [&_hr]:border-[#d8d4cc] [&_li]:text-[#454640] [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:pl-6 [&_p]:mb-5 [&_p]:leading-relaxed [&_pre]:mb-5 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-[#151719] [&_pre]:p-4 [&_pre]:text-[#f5f2ed] [&_strong]:font-bold [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-6">
           <MDXRemote source={service.content} components={safeMdxComponents} />
         </article>
       )}
 
-      <section className="bg-slate-50 border-t border-slate-200 px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-3">Porozmawiajmy o Twoim procesie</h2>
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Zakres i wycenę ustalam indywidualnie, po obejrzeniu tego, jak pracujecie dzisiaj.
-            Pierwsza rozmowa jest bezpłatna i do niczego nie zobowiązuje.
-          </p>
-          <Link
-            href="/#kontakt"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-bold hover:brightness-110 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-          >
-            Umów bezpłatną konsultację
-            <ArrowRight size={18} />
-          </Link>
-        </div>
-      </section>
+      <ServiceCta serviceName={service.title} serviceSlug={service.slug} />
     </main>
   )
 }

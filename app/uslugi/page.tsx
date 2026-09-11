@@ -2,17 +2,25 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, MoveRight } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
+import { BrandLogo } from '@/components/brand-logo'
 import { JsonLd } from '@/components/seo/json-ld'
 import type { Service } from '@/types'
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://zautomatyzujemy.pl'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 export const metadata: Metadata = {
-  title: 'Usługi — automatyzacja i AI dla firm',
+  title: 'Automatyzacja procesów i wdrożenia AI dla firm',
   description:
-    'Automatyzacja procesów, chatboty AI, odczyt faktur, audyt, szkolenia, oprogramowanie na zamówienie i zgodność z AI Act. Bezpłatna konsultacja.',
+    'Automatyzacja procesów biznesowych, agenci i asystenci AI, obieg dokumentów, szkolenia i zgodność z AI Act. Wdrażam samodzielnie, rozmawiasz bezpośrednio ze mną.',
   alternates: { canonical: '/uslugi' },
+  openGraph: {
+    type: 'website',
+    title: 'Automatyzacja procesów i wdrożenia AI dla firm',
+    description:
+      'Automatyzacja procesów biznesowych, agenci i asystenci AI, obieg dokumentów, szkolenia i zgodność z AI Act.',
+    url: '/uslugi',
+  },
 }
 
 export default async function ServicesPage() {
@@ -26,7 +34,10 @@ export default async function ServicesPage() {
   const services = (data ?? []) as Service[]
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main
+      id="main"
+      className="marketing-theme font-body min-h-screen bg-[#f5f2ed] text-[#151719] [color-scheme:light]"
+    >
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -41,39 +52,53 @@ export default async function ServicesPage() {
         }}
       />
 
-      <div className="bg-slate-950 pt-20 pb-16 px-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="bg-[#151719] px-6 pb-16 pt-8 md:pb-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10">
+            <BrandLogo inverse />
+          </div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-8"
+            className="mb-10 inline-flex items-center gap-2 rounded text-sm text-[#dedbd5] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffb49f]"
           >
             <ArrowLeft size={16} />
             Wróć na stronę główną
           </Link>
-          <h1 className="text-5xl font-extrabold text-white tracking-tight">Usługi</h1>
-          <p className="text-slate-400 mt-4 text-lg max-w-2xl">
-            Każde wdrożenie zaczyna się od konkretnego problemu, który kosztuje czas albo
-            pieniądze. Poniżej obszary, w których pomagam.
+          <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">
+            Zakres współpracy
+          </p>
+          <h1 className="font-editorial text-6xl font-normal leading-none tracking-tight text-[#f5f2ed] md:text-8xl">
+            Usługi
+          </h1>
+          <p className="mt-8 max-w-2xl text-base leading-relaxed text-[#dedbd5] md:text-lg">
+            Każde wdrożenie zaczyna się od konkretnego procesu, który kosztuje czas albo pieniądze.
+            Poniżej obszary, w których pomagam, i to, jak wygląda praca w każdym z nich.
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="mx-auto max-w-7xl px-6 py-16">
         {services.length === 0 ? (
-          <p className="text-center text-slate-400 py-16">Brak dostępnych usług.</p>
+          <p className="py-16 text-center text-[#62625d]">Brak dostępnych usług.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {services.map(service => (
-              <Link key={service.slug} href={`/uslugi/${service.slug}`}>
-                <article className="group bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                  <h2 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                    {service.title}
-                  </h2>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-1">
+              <Link
+                key={service.slug}
+                href={`/uslugi/${service.slug}`}
+                className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820] focus-visible:ring-offset-4"
+              >
+                <article className="flex h-full flex-col rounded-lg border border-[#d8d4cc] bg-[#faf8f4] p-8 transition-colors duration-300 hover:border-[#c93820]">
+                  <h2 className="mb-3 text-xl font-semibold tracking-tight">{service.title}</h2>
+                  <p className="mb-6 flex-1 text-sm leading-relaxed text-[#62625d]">
                     {service.subtitle ?? service.description}
                   </p>
-                  <span className="text-primary font-bold text-sm inline-flex items-center gap-1">
-                    Zobacz szczegóły <MoveRight size={14} />
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#c93820]">
+                    Zobacz szczegóły
+                    <MoveRight
+                      size={14}
+                      className="transition-transform duration-300 motion-safe:group-hover:translate-x-1"
+                    />
                   </span>
                 </article>
               </Link>
