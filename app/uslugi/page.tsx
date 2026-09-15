@@ -10,6 +10,9 @@ import type { Service } from '@/types'
 const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
+// Read current service slugs instead of retaining build-time Supabase responses.
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Automatyzacja procesów i wdrożenia AI dla firm',
   description:

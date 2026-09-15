@@ -1,0 +1,27 @@
+async page => {
+  const assert = (condition, message) => { if (!condition) throw new Error(message) }
+  await page.goto('http://localhost:3001/uslugi')
+  const cards = page.locator('main a[href^="/uslugi/"]')
+  const routes = await cards.evaluateAll(links => links.map(link => link.getAttribute('href')))
+  assert(routes.every(route => route && !route.includes('undefined') && !route.includes('null')), 'Service cards must have real slugs, including in the production build')
+  assert(routes.length === 7 && new Set(routes).size === 7, 'All seven services must have unique links')
+  const visited = []
+  for (const route of routes) {
+    await page.goto('http://localhost:3001/uslugi')
+    const consent = page.getByRole('button', {name:'Rozumiem',exact:true})
+    if (await consent.isVisible()) await consent.click()
+    const card = page.locator(`main a[href="${route}"]`)
+    const title = await card.locator('h2').innerText()
+    await card.click()
+    await page.waitForURL(`**${route}`)
+    await page.locator('main figure').waitFor()
+    assert(await page.locator('h1').innerText() === title, `Wrong service after clicking ${route}`)
+    assert(await page.locator('main figure').count() === 1, `Missing illustration for ${route}`)
+    for (const picture of await page.locator('main figure img').all()) {
+      await picture.evaluate(img => img.decode())
+      assert(await picture.evaluate(img => img.naturalWidth > 0), `Broken image for ${route}`)
+    }
+    visited.push(route)
+  }
+  return {status:'PASS', clickedServices:visited}
+}
