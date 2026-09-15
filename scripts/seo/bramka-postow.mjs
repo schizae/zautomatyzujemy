@@ -14,6 +14,16 @@ export const FORMATY = ['tekst', 'karuzela', 'krótkie wideo']
 
 const HASHTAG = /#[\p{L}\p{N}_]+/gu
 const EMOJI = /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3/u
+const LICZBA = /\d+(?:[.,]\d+)?/g
+
+// ponytail: por\u00F3wnujemy z opisem z RSS obci\u0119tym do 500 znak\u00F3w (pobierzArtykulyRss), wi\u0119c liczba
+// spoza tego skr\u00F3tu, ale obecna w pe\u0142nym artykule, te\u017C zostanie oznaczona. Oznaczenie kosztuje
+// tylko etykiet\u0119 \u201Ewymaga uwagi\u201D w mailu \u2014 nic nie blokuje.
+/** Liczby z tekstu posta, kt\u00F3rych nie ma w tytule ani opisie \u017Ar\u00F3d\u0142a. */
+function liczbySpozaZrodla(tekst, zrodlo) {
+  const wZrodle = new Set(`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? [])
+  return [...new Set(tekst.match(LICZBA) ?? [])].filter(liczba => !wZrodle.has(liczba))
+}
 
 /** Klucz porównania adresów: bez protokołu, www, parametrów, kotwicy i ukośnika na końcu. */
 export function normalizujAdres(url) {
@@ -61,6 +71,16 @@ export function sprawdzPost(post, { zrodla, wykorzystane }) {
 
   sprawdzWersje('LinkedIn', post.linkedin, LIMIT_LINKEDIN, braki)
   sprawdzWersje('Facebooka', post.facebook, LIMIT_FACEBOOK, braki)
+
+  if (zrodlo) {
+    for (const [nazwa, tekst] of [['LinkedIn', post.linkedin], ['Facebooka', post.facebook]]) {
+      if (!tekst?.trim()) continue
+      const liczby = liczbySpozaZrodla(tekst, zrodlo)
+      if (liczby.length > 0) {
+        braki.push(`Liczby spoza źródła w wersji na ${nazwa}: ${liczby.join(', ')} — potwierdź albo usuń`)
+      }
+    }
+  }
 
   if (post.linkedin?.trim() && !post.linkedin.replace(HASHTAG, '').trimEnd().endsWith('?')) {
     braki.push('Wersja na LinkedIn nie kończy się pytaniem')

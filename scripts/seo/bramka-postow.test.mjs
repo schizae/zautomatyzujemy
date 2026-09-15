@@ -123,3 +123,57 @@ test('pusty klucz w wykorzystane nie daje fałszywego trafienia dla błędnego a
   const post = { ...dobryPost(), zrodlo_url: 'to nie adres' }
   assert.ok(!sprawdzPost(post, ctx).braki.includes('To samo źródło co w innej propozycji'))
 })
+
+test('liczby obecne w opisie źródła nie dają braku liczb spoza źródła', () => {
+  const zrodloZOpisem = {
+    ...zrodla[0],
+    description: 'Badanie: 89 procent pilotaży kończy się porażką w 2025 roku.',
+  }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Badanie pokazuje: 89 procent pilotaży kończy się porażką w 2025 roku. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('liczby spoza źródła w wersji na LinkedIn dają brak z listą liczb', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Oszczędzasz od 15 do 30 minut na każdej rozmowie. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 15, 30 — potwierdź albo usuń')
+  )
+})
+
+test('ta sama liczba powtórzona w poście pojawia się w komunikacie raz', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Zaoszczędzisz 15 minut, może nawet więcej niż 15 minut. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 15 — potwierdź albo usuń')
+  )
+})
+
+test('liczba z tytułu źródła (nie z opisu) nie daje braku', () => {
+  const zrodloZLiczbaWTytule = { ...zrodla[0], title: 'Model radzi sobie z 128 tysiącami tokenów' }
+  const ctx = { zrodla: [zrodloZLiczbaWTytule, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Nowy model obsługuje 128 tysięcy tokenów w jednym zapytaniu. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('post bez znalezionego źródła nie dostaje braku liczb, tylko braku źródła', () => {
+  const post = {
+    ...dobryPost(),
+    zrodlo_url: 'https://inna.pl/wymyslone',
+    linkedin: 'Zaoszczędzisz 99 procent czasu. Sprawdzaliście już to u siebie?',
+  }
+  const { braki } = sprawdzPost(post, kontekst())
+  assert.ok(braki.includes('Źródło spoza zebranych materiałów'))
+  assert.ok(!braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
