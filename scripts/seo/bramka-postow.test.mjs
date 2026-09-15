@@ -112,7 +112,7 @@ test('cyfry w ramce i flagi liczą się jako emoji, polskie cudzysłowy i myśln
 
 test('czarna lista łapie zwrot rozdzielony twardą spacją', () => {
   const post = dobryPost()
-  const zTwardaSpacja = { ...post, linkedin: `${post.linkedin} To jest w erze cyfrowej.` }
+  const zTwardaSpacja = { ...post, linkedin: `${post.linkedin} To jest w\u00A0erze cyfrowej.` }
   assert.ok(
     sprawdzPost(zTwardaSpacja, kontekst()).braki.some(b => b.startsWith('Zwrot z czarnej listy w wersji na LinkedIn'))
   )
