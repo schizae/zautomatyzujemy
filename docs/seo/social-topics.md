@@ -2,8 +2,13 @@
 
 Czyta ten plik automat `.github/scripts/social-posts.mjs` i czyta go człowiek przed redakcją.
 Zmiana tematów nie wymaga ruszania kodu. Limity znaków i hashtagów pilnuje bramka
-`scripts/seo/bramka-postow.mjs`. Standard pisarski bloga (`docs/seo/editorial-standard.md`)
-obowiązuje także w postach.
+`scripts/seo/bramka-postow.mjs`.
+
+Ze standardu pisarskiego bloga (`docs/seo/editorial-standard.md`) w postach obowiązują:
+czarna lista zwrotów, konkret zamiast ogólnika, zakaz statystyk bez źródła, sekcja „Czego nie robimy”
+i język (krótkie zdania, strona czynna, bez wykrzykników). Nie obowiązują zasady dotyczące
+artykułów: struktura, fraza docelowa, linkowanie, wstawka autorska i druga osoba.
+Przy sprzeczności wygrywa ten plik.
 
 ## Tematy
 
@@ -36,11 +41,11 @@ na przykład: „Ile czasu to oszczędza, zależy od procesu. [TWOJA OBSERWACJA]
 ## Format
 
 **LinkedIn.** Pierwszy akapit jest hakiem, który zatrzymuje przewijanie. Potem konkret:
-narzędzie, liczba, krok. Ostatni akapit kończy się pytaniem do czytelników.
+narzędzie, krok, liczba wyłącznie ze źródła. Ostatni akapit kończy się pytaniem do czytelników.
 
 **Facebook.** Krótsza wersja tej samej myśli, bardziej bezpośrednia.
 
-**Obie wersje.** Bez emoji jako ozdobników. Hashtagi na końcu, nie w środku zdań.
+**Obie wersje.** Bez emoji. Hashtagi na końcu, nie w środku zdań.
 Bez adresu źródła w treści: LinkedIn obcina zasięg postom z linkiem, więc adres idzie
 w pierwszym komentarzu.
 

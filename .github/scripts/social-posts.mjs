@@ -52,7 +52,7 @@ TEMATY, GLOS I FORMAT — obowiazuja w calosci:
 
 ${TEMATY}
 
-STANDARD PISARSKI BLOGA — obowiazuje tez w postach:
+STANDARD PISARSKI BLOGA — obowiazuje tylko w zakresie wskazanym w pliku tematow powyzej:
 
 ${STANDARD}
 
@@ -99,7 +99,8 @@ function sekcjaPropozycji(propozycja, indeks) {
   return [
     `## ${indeks + 1}. ${propozycja.temat} — ${status}`,
     `**Źródło do pierwszego komentarza:** ${opisZrodla}`,
-    `**Co mówi źródło (streszczenie materiału, nie opinia):** ${propozycja.streszczenie_zrodla}`,
+    ...(zrodlo ? [`**Opis z RSS (tekst źródła):** ${zrodlo.description || 'brak opisu w kanale'}`] : []),
+    `**Streszczenie według modelu — sprawdź ze źródłem:** ${propozycja.streszczenie_zrodla ?? 'brak'}`,
     `**Sugerowany format:** ${propozycja.format}`,
     ...(braki.length > 0 ? [`**Do poprawy:** ${braki.join('; ')}`] : []),
     '### LinkedIn',
@@ -116,12 +117,16 @@ console.log(`✅ Materiałów z adresem i datą: ${kandydaci.length}\n`)
 
 console.log('🤖 Krok 2/4: Propozycje postów (Gemini)...')
 const liczba = Math.min(LICZBA_PROPOZYCJI, kandydaci.length)
-const { propozycje = [] } = await zapytajGemini({
+const { propozycje } = await zapytajGemini({
   prompt: zbudujPrompt(kandydaci, liczba),
   model: MODEL_TEKSTU,
   klucz: GOOGLE_API_KEY,
   limitMs: 90000,
 })
+// Pusty mail „0 z 0” przy zielonym workflow ukryłby awarię — lepiej, żeby bieg padł.
+if (!Array.isArray(propozycje) || propozycje.length === 0) {
+  throw new Error('Model nie zwrócił propozycji — przerywam.')
+}
 console.log(`✅ Propozycji: ${propozycje.length}\n`)
 
 console.log('🔍 Krok 3/4: Bramka...')
