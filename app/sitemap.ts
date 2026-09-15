@@ -20,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from('case_studies')
       .select('slug, updated_at')
       .eq('is_active', true)
+      // Scenariusze poglądowe mają noindex w metadanych — bez sprzecznego sygnału w mapie.
+      .eq('is_example', false)
       .order('sort_order'),
     supabase
       .from('services')
