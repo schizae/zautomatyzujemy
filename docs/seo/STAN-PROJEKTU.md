@@ -27,7 +27,7 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
 | 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
-| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n zrobiony, trzy do zrobienia |
+| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n zrobiony, trzy migracje czekają |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
 ### Plan trzeci — co zostało
@@ -123,7 +123,8 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Zgłosić w Search Console ponowną indeksację artykułu o n8n (odświeżony 15 września).
+1. Uruchomić migracje `024`, `025`, `026`, potem zgłosić w Search Console ponowną indeksację
+   czterech odświeżonych artykułów.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
@@ -140,13 +141,18 @@ gdy w bazie stoi wersja z chwili składania.
 | Artykuł | Fraza | Stan |
 |---|---|---|
 | ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | **zrobione 15 września**, migracja `023`, bez wstawki z decyzji właściciela |
-| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai | do zrobienia |
-| automatyzacja-dokumentow-faktur-ai-msp | automatyzacja obiegu dokumentów | do zrobienia |
-| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta | do zrobienia |
+| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai (wolumen niezmierzony, fraza z podpowiedzi Google) | migracja `024` gotowa |
+| automatyzacja-dokumentow-faktur-ai-msp | ocr faktury (70), zamiast frazy strony usługowej | migracja `025` gotowa |
+| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta (110) | migracja `026` gotowa |
 
 **Fraza „automatyzacja ai n8n” z przeglądu była błędem.** Nie ma jej w danych z Senuto,
 pochodziła z podpowiedzi Google i w mapie fraz jest przypisana stronie usługowej.
 Przed odświeżeniem kolejnych artykułów sprawdź ich frazę w `data/seo/wolumeny.csv`.
+`automatyzacja obiegu dokumentów` też była błędnym przydziałem: to fraza główna strony usługowej.
+
+**Fakty z 15 września użyte w tekstach.** KSeF: odbiór dla wszystkich od 1 lutego 2026, wystawianie
+od 1 kwietnia 2026, zwolnienie do 10 000 zł miesięcznie do końca 2026, faktury zagraniczne poza KSeF.
+AI Act: art. 50 od 2 sierpnia 2026, terminy wysokiego ryzyka z załącznika III przesunięte na grudzień 2027.
 
 **Znacznik wstawki psuje kompilację MDX.** Artykuł z `<!-- WSTAWKA -->` w bazie wysypie stronę,
 więc znacznik nie może trafić do migracji w żadnym trybie.
@@ -161,7 +167,7 @@ więc znacznik nie może trafić do migracji w żadnym trybie.
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `023` włącznie. Następna wolna to `024`.
+- **Numeracja migracji.** Zajęte do `026` włącznie. Następna wolna to `027`.
 - **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
   fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
   się zmienić od chwili, gdy ją czytałeś.
