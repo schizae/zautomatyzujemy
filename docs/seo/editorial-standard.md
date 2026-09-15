@@ -22,6 +22,12 @@ i osobno w głowie, rozjechałyby się w trzy miesiące.
 Długość wynika z tematu, nie z normy. Nie ma dolnego progu liczby słów i nie ma powodu
 rozciągać tekstu, żeby wyglądał poważnie.
 
+Tytuł piszemy po polsku: wielka litera tylko na początku, w nazwach własnych i w skrótowcach
+(AI, MSP, KSeF). „Jak małe firmy podejmują lepsze decyzje”, nie „Jak Małe Firmy Podejmują Lepsze Decyzje”.
+
+Tagi: dwa lub trzy, zwykłymi słowami po polsku, z polskimi znakami, dokładnie tak,
+jak mają się wyświetlić na stronie. „Obsługa klienta”, nie „obsluga-klienta”.
+
 ## Fraza docelowa
 
 Pada w tytule, w nagłówku pierwszego poziomu, w adresie i w pierwszym akapicie.
