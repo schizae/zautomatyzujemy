@@ -100,7 +100,7 @@ test('emoji, adres w treści, nadmiar hashtagów, czarna lista i nieznany format
 test('cyfry w ramce i flagi liczą się jako emoji, polskie cudzysłowy i myślnik nie', () => {
   const post = dobryPost()
 
-  const cyfraWRamce = { ...post, linkedin: `${post.linkedin} 1️⃣` }
+  const cyfraWRamce = { ...post, linkedin: `${post.linkedin} 1\uFE0F\u20E3` }
   assert.ok(sprawdzPost(cyfraWRamce, kontekst()).braki.includes('Emoji w wersji na LinkedIn'))
 
   const flaga = { ...post, linkedin: `${post.linkedin} 🇵🇱` }

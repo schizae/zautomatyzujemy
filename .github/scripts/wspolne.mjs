@@ -100,8 +100,9 @@ export async function pobierzArtykulyRss(oknoDni) {
           .trim()
           .slice(0, 500)
 
-        const hrefMatch = item.match(/href="([^"]+)"/)
-        const link = hrefMatch ? hrefMatch[1] : extractField(item, 'link')
+        // href tylko z elementu <link> (Atom). Pierwszy href w całym wpisie bywa linkiem z treści,
+        // np. w MIT Tech Review prowadził do formularza newslettera zamiast do artykułu.
+        const link = item.match(/<link\b[^>]*\bhref="([^"]+)"/)?.[1] ?? extractField(item, 'link')
 
         articles.push({
           title,
