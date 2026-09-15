@@ -124,7 +124,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Zgłosić w Search Console ponowną indeksację czterech odświeżonych artykułów.
+1. ~~Zgłosić w Search Console ponowną indeksację czterech odświeżonych artykułów~~ — ZROBIONE 15 września.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
