@@ -35,6 +35,10 @@ const eslintConfig = [
       // Dwie sciezki, bo impeccable instaluje sie raz w .claude/, raz w .agents/
       '.claude/**',
       '.agents/**',
+      // Kopie robocze Codeksa i pliki tymczasowe — w .gitignore, ale lint lokalny je widzi
+      '.worktrees/**',
+      'tmp/**',
+      'output/**',
       'public/**',
       'next-env.d.ts',
       '*.config.js',
