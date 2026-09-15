@@ -4,6 +4,7 @@ import { ArrowLeft, MoveRight } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
 import { BrandLogo } from '@/components/brand-logo'
 import { JsonLd } from '@/components/seo/json-ld'
+import { ServiceSymbol } from '@/components/marketing/service-artwork'
 import type { Service } from '@/types'
 
 const SITE_URL =
@@ -86,9 +87,13 @@ export default async function ServicesPage() {
               <Link
                 key={service.slug}
                 href={`/uslugi/${service.slug}`}
-                className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820] focus-visible:ring-offset-4"
+                className="group relative rounded-xl transition-transform duration-300 ease-out hover:z-10 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f5f2ed] motion-safe:hover:-translate-y-1 motion-safe:hover:scale-[1.02] motion-safe:focus-visible:-translate-y-1 motion-safe:active:scale-[0.99] motion-reduce:transition-none"
               >
-                <article className="flex h-full flex-col rounded-lg border border-[#d8d4cc] bg-[#faf8f4] p-8 transition-colors duration-300 hover:border-[#c93820]">
+                <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#d8d4cc] bg-[#faf8f4] p-7 transition-[background-color,border-color,box-shadow] duration-300 group-hover:border-[#c93820]/50 group-hover:bg-[#fffaf5] group-hover:shadow-xl group-hover:shadow-[#583729]/10 group-focus-visible:border-[#c93820]/50 group-focus-visible:bg-[#fffaf5] motion-reduce:transition-none sm:p-8">
+                  <div className="mb-8 flex items-center justify-between" aria-hidden="true">
+                    <span className="flex size-12 items-center justify-center rounded-lg border border-[#d8d4cc] bg-[#f0ebe3] text-[#c93820] transition-colors duration-300 group-hover:border-[#c93820] group-hover:bg-[#c93820] group-hover:text-white group-focus-visible:bg-[#c93820] group-focus-visible:text-white motion-reduce:transition-none"><ServiceSymbol slug={service.slug} /></span>
+                    <MoveRight size={20} className="text-[#8b877f] transition-[color,transform] duration-300 group-hover:text-[#c93820] motion-safe:group-hover:-rotate-45 motion-safe:group-focus-visible:-rotate-45 motion-reduce:transition-none" />
+                  </div>
                   <h2 className="mb-3 text-xl font-semibold tracking-tight">{service.title}</h2>
                   <p className="mb-6 flex-1 text-sm leading-relaxed text-[#62625d]">
                     {service.subtitle ?? service.description}

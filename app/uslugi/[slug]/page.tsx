@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/json-ld'
 import { BrandLogo } from '@/components/brand-logo'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { ServiceCta } from '@/components/marketing/service-cta'
+import { ServiceArtwork } from '@/components/marketing/service-artwork'
 import type { Service } from '@/types'
 
 const SITE_URL =
@@ -99,7 +100,7 @@ export default async function ServicePage({ params }: PageProps) {
       />
 
       <div className="bg-[#151719] px-6 pb-16 pt-8 md:pb-20">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-7xl">
           <div className="mb-10">
             <BrandLogo inverse />
           </div>
@@ -113,15 +114,20 @@ export default async function ServicePage({ params }: PageProps) {
               ]}
             />
           </div>
-          <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">Usługa</p>
-          <h1 className="font-editorial text-4xl font-normal leading-[1.08] tracking-tight text-[#f5f2ed] md:text-6xl">
-            {service.title}
-          </h1>
-          {service.subtitle && (
-            <p className="mt-8 text-base leading-relaxed text-[#dedbd5] md:text-lg">
-              {service.subtitle}
-            </p>
-          )}
+          <div className="grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
+            <div>
+              <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">Usługa</p>
+              <h1 className="font-editorial text-4xl font-normal leading-[1.08] tracking-tight text-[#f5f2ed] md:text-6xl">
+                {service.title}
+              </h1>
+              {service.subtitle && (
+                <p className="mt-8 text-base leading-relaxed text-[#dedbd5] md:text-lg">
+                  {service.subtitle}
+                </p>
+              )}
+            </div>
+            <ServiceArtwork slug={service.slug} />
+          </div>
         </div>
       </div>
 
