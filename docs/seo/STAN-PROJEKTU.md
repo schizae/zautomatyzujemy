@@ -175,7 +175,7 @@ więc znacznik nie może trafić do migracji w żadnym trybie.
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `029` włącznie. Następna wolna to `030`.
+- **Numeracja migracji.** Zajęte do `030` włącznie. Następna wolna to `031`.
 - **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
   fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
   się zmienić od chwili, gdy ją czytałeś.
