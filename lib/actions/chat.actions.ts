@@ -84,7 +84,7 @@ async function extractLeadDetails(messages: ChatMessage[]): Promise<LeadDetails>
 
   try {
     const { text } = await generateText({
-      model: google('gemini-2.5-flash'),
+      model: google('gemini-3.8-flash'),
       prompt: `Na podstawie poniższej rozmowy wykonaj PIĘĆ zadań i zwróć wynik dokładnie w formacie:
 IMIĘ: [imię klienta lub BRAK]
 TELEFON: [numer telefonu lub BRAK]
