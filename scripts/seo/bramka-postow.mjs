@@ -15,8 +15,9 @@ export const FORMATY = ['tekst', 'karuzela', 'krótkie wideo']
 const HASHTAG = /#[\p{L}\p{N}_]+/gu
 const EMOJI = /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3/u
 // Samodzielna liczba: grupy tysięcy rozdzielone spacją, twardą spacją, kropką albo przecinkiem,
-// albo liczba z częścią dziesiętną. Cyfry w słowach (n8n, gpt4, 8B) nie są liczbą.
-const LICZBA = /(?<![\p{L}\p{N}])(?:\d{1,3}(?:[ \u00A0.,]\d{3})+|\d+(?:[.,]\d+)?)(?![\p{L}\p{N}])/gu
+// albo liczba z częścią dziesiętną. Cyfry po literze (n8n, gpt4) nie są liczbą, ale liczba
+// z jednostką za nią (4h, 10x, 128K, 8B) już tak — to też fakt do potwierdzenia.
+const LICZBA = /(?<![\p{L}\p{N}])(?:\d{1,3}(?:[ \u00A0.,]\d{3})+|\d+(?:[.,]\d+)?)(?!\p{N})/gu
 
 /** Postać do porównania: same cyfry, więc „400 000” i „400,000” to ta sama liczba. */
 const kanoniczna = liczba => liczba.replace(/\D/g, '')
@@ -24,8 +25,9 @@ const kanoniczna = liczba => liczba.replace(/\D/g, '')
 // ponytail: porównujemy z opisem z RSS obciętym do 500 znaków (pobierzArtykulyRss), więc liczba
 // spoza tego skrótu, ale obecna w pełnym artykule, też zostanie oznaczona. Liczby zapisane
 // słownie („milion”, „kilkanaście”) nie są sprawdzane w ogóle. Postać kanoniczna to same cyfry,
-// więc „1,5” i „15” wypadają identycznie — nie odróżniamy ich. Oznaczenie kosztuje tylko etykietę
-// „wymaga uwagi” w mailu — nic nie blokuje.
+// więc „1,5” i „15” wypadają identycznie — nie rozróżniamy ich. Numerowane listy („1. Krok”)
+// i liczebniki („3 kroki”) też zostaną oznaczone, jeśli źródło ich nie ma. Oznaczenie kosztuje
+// tylko etykietę „wymaga uwagi” w mailu — nic nie blokuje.
 /** Liczby z tekstu posta, których nie ma w tytule ani opisie źródła. */
 function liczbySpozaZrodla(tekst, zrodlo) {
   const wZrodle = new Set((`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? []).map(kanoniczna))
@@ -67,6 +69,8 @@ function sprawdzWersje(nazwa, tekst, limit, braki) {
 
 export function sprawdzPost(post, { zrodla, wykorzystane }) {
   const braki = []
+
+  if (!post.temat?.trim()) braki.push('Brak tematu')
 
   const zrodlo = znajdzZrodlo(post.zrodlo_url, zrodla)
   if (!zrodlo) braki.push('Źródło spoza zebranych materiałów')

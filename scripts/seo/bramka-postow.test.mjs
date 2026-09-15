@@ -178,12 +178,94 @@ test('post bez znalezionego źródła nie dostaje braku liczb, tylko braku źró
   assert.ok(!braki.some(b => b.startsWith('Liczby spoza źródła')))
 })
 
-test('cyfry wewnątrz słów (n8n, model 8B) nie liczą się jako liczby', () => {
+test('cyfry wewnątrz słów (n8n, gpt4) nie liczą się jako liczby', () => {
   const post = {
     ...dobryPost(),
-    linkedin: 'Prosty przepływ w n8n obsłuży to lepiej niż model 8B. Sprawdzaliście już to u siebie?',
+    linkedin: 'Prosty przepływ w n8n obsłuży to lepiej niż gpt4 w tym zadaniu. Sprawdzaliście już to u siebie?',
   }
   assert.ok(!sprawdzPost(post, kontekst()).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('"model 8B": liczba po literze jest liczbą — brak gdy źródło jej nie ma', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Ten model 8B poradzi sobie z tym zadaniem lepiej. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 8 — potwierdź albo usuń')
+  )
+})
+
+test('"model 8B": brak znika, gdy źródło ma ten sam rozmiar modelu', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'Model dostępny w wariancie 8B parameters.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Ten model 8B poradzi sobie z tym zadaniem lepiej. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('skróty z jednostką po liczbie ("4h", "15min") dają brak, gdy źródło ich nie ma', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Proces skrócił się z 4h do 15min dzięki automatyzacji. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 4, 15 — potwierdź albo usuń')
+  )
+})
+
+test('skrót z jednostką ("128K") w źródle pokrywa zwykły zapis liczby w poście', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'Nowy model obsługuje kontekst 128K tokens.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Nowy model obsługuje 128 tysięcy tokenów naraz. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('procent zapisany znakiem ("89%") pokrywa procent zapisany słownie w źródle', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'Badanie pokazuje, że 89 percent firm testuje agentów.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Aż 89% firm testuje dziś agentów AI. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('procent zapisany znakiem ("89%") daje brak, gdy źródło go nie ma', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Aż 89% firm testuje dziś agentów AI. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 89 — potwierdź albo usuń')
+  )
+})
+
+test('zakres z półpauzą ("15–30 minut") daje brak z obiema liczbami', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Oszczędzasz 15–30 minut na każdej rozmowie. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 15, 30 — potwierdź albo usuń')
+  )
+})
+
+test('liczba spoza źródła tylko w wersji na Facebooka daje brak tylko dla tej wersji', () => {
+  const post = { ...dobryPost(), facebook: 'Nowy model czyta dłuższe dokumenty. Zaoszczędzisz 45 minut na pracy.' }
+  const { braki } = sprawdzPost(post, kontekst())
+  assert.ok(braki.includes('Liczby spoza źródła w wersji na Facebooka: 45 — potwierdź albo usuń'))
+  assert.ok(!braki.some(b => b.startsWith('Liczby spoza źródła w wersji na LinkedIn')))
+})
+
+test('pusty temat daje brak', () => {
+  const post = { ...dobryPost(), temat: '   ' }
+  assert.ok(sprawdzPost(post, kontekst()).braki.includes('Brak tematu'))
 })
 
 test('separatory tysięcy: zwykła spacja, twarda spacja i przecinek to ta sama liczba', () => {
