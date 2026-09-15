@@ -37,6 +37,18 @@ function extractField(xml, tag) {
   return val
 }
 
+/** Kanały RSS podają encje HTML w tekście (&#8217;, &amp;), a mail escapuje je drugi raz. */
+function dekodujEncje(tekst) {
+  return tekst
+    .replace(/&#(\d+);/g, (_, kod) => String.fromCodePoint(Number(kod)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, kod) => String.fromCodePoint(parseInt(kod, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+}
+
 function parseJsonFromGemini(text) {
   try {
     return JSON.parse(text)
@@ -72,15 +84,15 @@ export async function pobierzArtykulyRss(oknoDni) {
         const pubDate = pubDateStr ? Date.parse(pubDateStr) : NaN
         if (pubDate < odKiedy) continue
 
-        const title = extractField(item, 'title')
+        const title = dekodujEncje(extractField(item, 'title'))
         if (!title) continue
 
         const rawDesc =
           extractField(item, 'description') ||
           extractField(item, 'summary') ||
           extractField(item, 'content')
-        const desc = rawDesc
-          .replace(/<[^>]+>/g, '')
+        // Najpierw znaczniki, potem encje — inaczej &lt;b&gt; z tekstu zniknąłby jak znacznik.
+        const desc = dekodujEncje(rawDesc.replace(/<[^>]+>/g, ''))
           .replace(/\s+/g, ' ')
           .trim()
           .slice(0, 500)

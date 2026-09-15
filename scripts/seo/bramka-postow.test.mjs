@@ -294,3 +294,22 @@ test('liczba z częścią dziesiętną spoza źródła daje brak', () => {
     sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 2,5 — potwierdź albo usuń')
   )
 })
+
+test('liczba ze słownym mnożnikiem ("400 tysięcy") pokrywa zapis cyframi w źródle ("400,000")', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'The app has over 400,000 monthly active users.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Z aplikacji korzysta ponad 400 tysięcy osób miesięcznie. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('dopisane zera spoza pełnych tysięcy nie pokrywają liczby ("4" przy źródle "40")', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'Around 40 companies joined the pilot.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+  const post = { ...dobryPost(), linkedin: 'Pilotaż trwał 4 tygodnie w każdej firmie. Sprawdzaliście już to u siebie?' }
+  assert.ok(
+    sprawdzPost(post, ctx).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 4 — potwierdź albo usuń')
+  )
+})

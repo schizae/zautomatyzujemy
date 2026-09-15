@@ -30,8 +30,13 @@ const kanoniczna = liczba => liczba.replace(/\D/g, '')
 // tylko etykietę „wymaga uwagi” w mailu — nic nie blokuje.
 /** Liczby z tekstu posta, których nie ma w tytule ani opisie źródła. */
 function liczbySpozaZrodla(tekst, zrodlo) {
-  const wZrodle = new Set((`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? []).map(kanoniczna))
-  return [...new Set(tekst.match(LICZBA) ?? [])].filter(liczba => !wZrodle.has(kanoniczna(liczba)))
+  const wZrodle = (`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? []).map(kanoniczna)
+  // „400 tysięcy” w poście to „400,000” w źródle: ta sama liczba bez pełnych trójek zer.
+  const pokryta = liczba => {
+    const k = kanoniczna(liczba)
+    return wZrodle.some(z => z === k || (z.startsWith(k) && /^(000)+$/.test(z.slice(k.length))))
+  }
+  return [...new Set(tekst.match(LICZBA) ?? [])].filter(liczba => !pokryta(liczba))
 }
 
 /** Klucz porównania adresów: bez protokołu, www, parametrów, kotwicy i ukośnika na końcu. */
