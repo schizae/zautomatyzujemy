@@ -13,7 +13,7 @@
  * Zasady, które ta bramka egzekwuje, opisuje docs/seo/editorial-standard.md.
  */
 
-const CZARNA_LISTA = [
+export const CZARNA_LISTA = [
   'w dzisiejszym dynamicznym świecie',
   'w erze cyfrowej',
   'w dobie sztucznej inteligencji',

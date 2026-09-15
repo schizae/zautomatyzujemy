@@ -1,0 +1,52 @@
+# Tematy i format postów na LinkedIn i Facebooka
+
+Czyta ten plik automat `.github/scripts/social-posts.mjs` i czyta go człowiek przed redakcją.
+Zmiana tematów nie wymaga ruszania kodu. Limity znaków i hashtagów pilnuje bramka
+`scripts/seo/bramka-postow.mjs`.
+
+Ze standardu pisarskiego bloga (`docs/seo/editorial-standard.md`) w postach obowiązują:
+czarna lista zwrotów, konkret zamiast ogólnika, zakaz statystyk bez źródła, sekcja „Czego nie robimy” bez punktu o planie treści
+i język (krótkie zdania, strona czynna, bez wykrzykników). Nie obowiązują zasady dotyczące
+artykułów: struktura, fraza docelowa, linkowanie, wstawka autorska i druga osoba.
+Przy sprzeczności wygrywa ten plik.
+
+## Tematy
+
+Zakres wskazany przez właściciela. Każdy post dotyczy jednego z nich.
+
+1. **Nowości w AI** — premiery i zmiany, które coś zmieniają dla małej firmy, nie dla inwestora.
+2. **Automatyzacje w MŚP** — procesy, które da się przejąć przepływem, z nazwą narzędzia.
+3. **Modele językowe** — co potrafią, gdzie się mylą, ile kosztują w realnym użyciu.
+4. **Praktyczne rozwiązania** — jeden problem i jeden sposób na niego.
+5. **Chatboty** — obsługa klienta, bazy wiedzy, przekazanie do człowieka.
+6. **Voiceboty** — rozmowy telefoniczne i głosowe, ich granice.
+7. **Ciekawostki dla MŚP** — rzeczy, o których właściciel małej firmy chętnie opowie dalej.
+
+## Czego nie bierzemy
+
+Wyceny spółek, zmiany personalne, spory między korporacjami, plotki o premierach bez materiału.
+Post ma coś dać czytelnikowi, który prowadzi firmę, a nie informować o giełdzie.
+
+## Głos
+
+Pierwsza osoba, autor to Norbert Chojnacki, inżynier informatyki wdrażający AI i automatyzacje
+w polskich MŚP. Bez wymyślonych wdrożeń, klientów i doświadczeń. Gdzie post potrzebuje osobistej
+obserwacji, zostaje znacznik `[TWOJA OBSERWACJA]` do uzupełnienia przy redakcji.
+
+**Liczby wyłącznie ze źródła.** Każda liczba w poście — czas, oszczędność, procent, kwota — musi
+stać w materiale źródłowym. Liczba wymyślona albo „typowa dla branży” brzmi jak wynik wdrożenia,
+którego nie było. Zamiast niej napisz zdanie bez liczby albo wstaw `[TWOJA OBSERWACJA]`,
+na przykład: „Ile czasu to oszczędza, zależy od procesu. [TWOJA OBSERWACJA]”.
+
+## Format
+
+**LinkedIn.** Pierwszy akapit jest hakiem, który zatrzymuje przewijanie. Potem konkret:
+narzędzie, krok, liczba wyłącznie ze źródła. Ostatni akapit kończy się pytaniem do czytelników.
+
+**Facebook.** Krótsza wersja tej samej myśli, bardziej bezpośrednia.
+
+**Obie wersje.** Bez emoji. Hashtagi na końcu, nie w środku zdań.
+Bez adresu źródła w treści: LinkedIn obcina zasięg postom z linkiem, więc adres idzie
+w pierwszym komentarzu.
+
+**Sugerowany format:** tekst, karuzela albo krótkie wideo.

@@ -1,0 +1,29 @@
+name: Propozycje postów — mailem
+
+on:
+  schedule:
+    - cron: '30 6 * * 1' # Poniedziałek, ~08:30 czasu polskiego latem
+  workflow_dispatch: # Możliwość ręcznego uruchomienia z GitHub UI
+
+jobs:
+  social-posts:
+    name: Zbierz materiały i wyślij propozycje postów
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Skrypt nie ma zależności, więc bez npm ci. Nic nie publikuje, tylko wysyła maila.
+      - name: Przygotuj propozycje i wyślij mailem
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          BRIEF_RECIPIENT_EMAIL: ${{ secrets.BRIEF_RECIPIENT_EMAIL }}
+        run: node .github/scripts/social-posts.mjs
