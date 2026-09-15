@@ -24,6 +24,8 @@ export default async function BlogPage() {
     .from('posts')
     .select('id, slug, title, excerpt, cover_image, published_at, is_published, author, tags, created_at, updated_at')
     .eq('is_published', true)
+    // Wpisy wyłączone z indeksu zostają pod adresem, ale nie wypełniają listy bloga.
+    .eq('noindex', false)
     .order('published_at', { ascending: false })
 
   const posts = (data ?? []) as PostPreview[]
