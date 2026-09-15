@@ -39,7 +39,6 @@ Praca na gałęzi `feat/wydajnosc-strony` od aktualnego `main`, w osobnym katalo
 6. **Kontrast:** etykiety „02 /” (`components/marketing/roi-calculator.tsx`) i „03 /”
    (`components/marketing/lead-magnet-section.tsx`) w kolorze `#f34c30` na tle `#f5f2ed`.
 7. **Kolejność nagłówków:** tytuły kafelków w `components/marketing/blog-preview.tsx` są `h4` bez `h3` nad nimi.
-8. **CSP:** `script-src` zawiera `'unsafe-eval'` od pierwszej wersji strony, bez uzasadnienia w komentarzu.
 
 ## Zmiany
 
@@ -90,7 +89,27 @@ Raporty błędów działają dalej. Konfiguracja serwerowa Sentry bez zmian.
 - `components/marketing/hero-section.tsx`: `sizes="(min-width: 1024px) 50vw, calc(100vw - 3rem)"`.
 - Etykiety „02 /” i „03 /”: `text-[#f34c30]` → `text-[#c93820]` (kolor akcentu używany już na stronie, kontrast ok. 4,9:1 na `#f5f2ed`).
 - `components/marketing/blog-preview.tsx`: `h4` → `h3`, klasy bez zmian.
-- `next.config.ts`, CSP: `'unsafe-eval'` → `'wasm-unsafe-eval'` (filtr szumów Krisp w rozmowie głosowej używa WebAssembly).
+- `next.config.ts`, CSP: `'unsafe-eval'` **zostaje**. Dochodzi tylko komentarz nad `script-src`:
+  „`'unsafe-eval'` wymagane przez @daily-co/daily-js (protobuf generuje kod przez new Function) — bez tego
+  rozmowa głosowa Klary nie łączy się; sprawdzone 2026-09-06, ADR-27 w glos-voicebot”.
+
+## CSP — dlaczego `'unsafe-eval'` zostaje
+
+Pierwsza wersja tego specu zakładała zamianę na `'wasm-unsafe-eval'`. Założenie było błędne.
+6 września 2026 w projekcie GŁOS, na produkcji, strona rozmowy demo z CSP bez `'unsafe-eval'` wydawała token (HTTP 200),
+miała zgodę na mikrofon, a rozmowa się nie łączyła. `@vapi-ai/web` ciągnie `@daily-co/daily-js`, który do protokołu mediów
+używa protobufu generującego kod przez `new Function`. To wymaga pełnego `'unsafe-eval'` — `'wasm-unsafe-eval'` dopuszcza
+tylko kompilację WebAssembly. Biblioteka przerywa pracę przed WebRTC bez czytelnego błędu. Decyzja: ADR-27
+(`docs/adr/ADR-27-unsafe-eval-na-stronie-demo.md` w repo glos-voicebot).
+
+Wyjątek da się usunąć dopiero, gdy Vapi albo Daily wypuści build bez generowania kodu w czasie działania.
+Przed każdą próbą zaostrzenia CSP: na stronie z nowym CSP wkleić w konsoli przeglądarki nasłuch, potem kliknąć rozmowę głosową —
+każda blokada wypisze się wprost:
+
+```js
+document.addEventListener('securitypolicyviolation', e =>
+  console.warn('CSP:', e.violatedDirective, e.blockedURI, e.sourceFile, e.lineNumber))
+```
 
 ## Poza zakresem
 
@@ -98,6 +117,8 @@ Raporty błędów działają dalej. Konfiguracja serwerowa Sentry bez zmian.
 - Trzy rodziny fontów — wybór projektowy.
 - Polyfille (13 KB) i nieużywany CSS (10 KB) — mały zysk.
 - Nonce w CSP — wymusiłyby renderowanie każdej strony na żądanie.
+- Zaostrzanie CSP: `'unsafe-eval'` zostaje (patrz sekcja wyżej); nie zawężamy domen `api.vapi.ai`, `*.daily.co`
+  i `glos-voicebot.vercel.app` w `connect-src` i `frame-src`.
 - Żądanie do `salsify.com` w raporcie — nie pochodzi z kodu strony (brak w repo).
 - `force-dynamic` na `/blog`.
 - Pozostałe po PR 34 zgłoszenia `npm audit`: `postcss` wewnątrz `next` (tylko build, poprawka w Next 16), `brace-expansion` (narzędzia deweloperskie).
@@ -115,7 +136,7 @@ Przed PR:
 
 Właściciel na podglądzie Vercela (za logowaniem):
 
-- rozmowa głosowa z Klarą z nowym CSP. Jeśli nie działa — przywrócić `'unsafe-eval'` z komentarzem, do czego jest potrzebne.
+- rozmowa głosowa z Klarą łączy się (regresja po zmianach w `KlaraProvider` i czacie; CSP bez zmian).
 
 Po wdrożeniu:
 
