@@ -20,7 +20,7 @@ export interface AiSystemEntry {
 export const AI_SYSTEMS: readonly AiSystemEntry[] = [
   {
     name: 'Klara — czat tekstowy',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.8-flash',
     purpose: 'Odpowiedzi na pytania odwiedzających i zbieranie zgłoszeń kontaktowych',
     inputs: 'Wiadomości użytkownika, baza wiedzy o ofercie',
     role: 'podmiot stosujący',

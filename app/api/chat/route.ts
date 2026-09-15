@@ -206,7 +206,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const result = streamText({
-      model: google('gemini-2.5-flash'),
+      model: google('gemini-3.8-flash'),
       messages: buildCoreMessages(messages),
       system: systemPrompt,
       maxRetries: 0,
