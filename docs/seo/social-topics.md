@@ -5,7 +5,7 @@ Zmiana tematów nie wymaga ruszania kodu. Limity znaków i hashtagów pilnuje br
 `scripts/seo/bramka-postow.mjs`.
 
 Ze standardu pisarskiego bloga (`docs/seo/editorial-standard.md`) w postach obowiązują:
-czarna lista zwrotów, konkret zamiast ogólnika, zakaz statystyk bez źródła, sekcja „Czego nie robimy”
+czarna lista zwrotów, konkret zamiast ogólnika, zakaz statystyk bez źródła, sekcja „Czego nie robimy” bez punktu o planie treści
 i język (krótkie zdania, strona czynna, bez wykrzykników). Nie obowiązują zasady dotyczące
 artykułów: struktura, fraza docelowa, linkowanie, wstawka autorska i druga osoba.
 Przy sprzeczności wygrywa ten plik.

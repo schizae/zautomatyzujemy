@@ -46,6 +46,7 @@ function dekodujEncje(tekst) {
     .replace(/&apos;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
 }
 
@@ -91,8 +92,10 @@ export async function pobierzArtykulyRss(oknoDni) {
           extractField(item, 'description') ||
           extractField(item, 'summary') ||
           extractField(item, 'content')
-        // Najpierw znaczniki, potem encje — inaczej &lt;b&gt; z tekstu zniknąłby jak znacznik.
+        // Znaczniki usuwamy przed i po dekodowaniu: część kanałów (Google AI) podaje HTML
+        // zakodowany encjami, który staje się znacznikami dopiero po dekodowaniu.
         const desc = dekodujEncje(rawDesc.replace(/<[^>]+>/g, ''))
+          .replace(/<[^>]+>/g, '')
           .replace(/\s+/g, ' ')
           .trim()
           .slice(0, 500)

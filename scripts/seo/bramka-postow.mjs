@@ -26,7 +26,10 @@ const kanoniczna = liczba => liczba.replace(/\D/g, '')
 // spoza tego skrótu, ale obecna w pełnym artykule, też zostanie oznaczona. Liczby zapisane
 // słownie („milion”, „kilkanaście”) nie są sprawdzane w ogóle. Postać kanoniczna to same cyfry,
 // więc „1,5” i „15” wypadają identycznie — nie rozróżniamy ich. Numerowane listy („1. Krok”)
-// i liczebniki („3 kroki”) też zostaną oznaczone, jeśli źródło ich nie ma. Oznaczenie kosztuje
+// i liczebniki („3 kroki”) też zostaną oznaczone, jeśli źródło ich nie ma. Uzupełnianie trójkami
+// zer działa w jedną stronę i jest luźne: „4,000” w źródle pokrywa też wymyślone „4”, a „128K”
+// nie pokrywa „128 000” w poście. Precyzyjniej byłoby patrzeć na mnożnik po liczbie (tys, mln, K).
+// Oznaczenie kosztuje
 // tylko etykietę „wymaga uwagi” w mailu — nic nie blokuje.
 /** Liczby z tekstu posta, których nie ma w tytule ani opisie źródła. */
 function liczbySpozaZrodla(tekst, zrodlo) {
