@@ -43,6 +43,8 @@ export async function BlogPreview() {
       'id, slug, title, excerpt, cover_image, published_at, is_published, author, tags, created_at, updated_at'
     )
     .eq('is_published', true)
+    // Wpisy wyłączone z indeksu zostają pod adresem, ale nie trafiają na stronę główną.
+    .eq('noindex', false)
     .order('published_at', { ascending: false })
     .limit(3)
 
