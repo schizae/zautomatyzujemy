@@ -1,4 +1,4 @@
-# Stan projektu widoczności — punkt kontrolny 11 września 2026
+# Stan projektu widoczności — punkt kontrolny 15 września 2026
 
 Dokument do wznowienia pracy bez historii rozmowy. Opisuje, co zrobione, co czeka
 i czego nie podważać, bo zostało rozstrzygnięte na danych.
@@ -26,10 +26,16 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 |---|---|---|
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
-| 3. Silnik treści bloga | PR 22, dziesięć zadań z dziesięciu, zostało domknięcie | **w toku** |
+| 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
+| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **zrobione 15 września**, na produkcji |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
-### Co zostało w planie trzecim
+### Plan trzeci — co zostało
+
+Kryterium domknięcia: trzy kolejne szkice generatora przechodzą bramkę bez ręcznych poprawek.
+Sprawdza się w piątkowych biegach `blog-auto.yml`. Do tego czasu tryb redakcyjny.
+
+### Plan trzeci — historia zadań 9 i 10
 
 **Zadanie 9 — zastosowanie decyzji o artykułach.** Zrobione. Migracja `020_blog_przeglad.sql`
 uruchomiona i sprawdzona na produkcji: dziesięć artykułów w indeksie, dwadzieścia jeden wyłączonych,
@@ -117,14 +123,44 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Scalić PR 22 przed 21 września, inaczej stary workflow opublikuje kolejny przegląd nowości.
+1. Zgłosić w Search Console ponowną indeksację czterech odświeżonych artykułów.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
 4. Zdobyć trzy realne wdrożenia z prawem do opisu albo uruchomić wariant zapasowy
    z publicznym repozytorium przepływu n8n.
 
+## Odświeżanie artykułów
+
+Szkic leży w `docs/seo/odswiezenia/`, z metadanymi w nagłówku. Migrację składa
+`node --env-file=.env.local scripts/seo/migracja-odswiezenia.mjs <szkic> <migracja>`:
+przepuszcza tekst przez bramkę, odmawia przy znaczniku wstawki i podmienia treść tylko wtedy,
+gdy w bazie stoi wersja z chwili składania.
+
+| Artykuł | Fraza | Stan |
+|---|---|---|
+| ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | **zrobione 15 września**, migracja `023`, bez wstawki z decyzji właściciela |
+| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai (wolumen niezmierzony, fraza z podpowiedzi Google) | **zrobione 15 września**, migracja `024` |
+| automatyzacja-dokumentow-faktur-ai-msp | ocr faktury (70), zamiast frazy strony usługowej | **zrobione 15 września**, migracja `025` |
+| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta (110) | **zrobione 15 września**, migracja `026` |
+
+**Fraza „automatyzacja ai n8n” z przeglądu była błędem.** Nie ma jej w danych z Senuto,
+pochodziła z podpowiedzi Google i w mapie fraz jest przypisana stronie usługowej.
+Przed odświeżeniem kolejnych artykułów sprawdź ich frazę w `data/seo/wolumeny.csv`.
+`automatyzacja obiegu dokumentów` też była błędnym przydziałem: to fraza główna strony usługowej.
+
+**Fakty z 15 września użyte w tekstach.** KSeF: odbiór dla wszystkich od 1 lutego 2026, wystawianie
+od 1 kwietnia 2026, zwolnienie do 10 000 zł miesięcznie do końca 2026, faktury zagraniczne poza KSeF.
+AI Act: art. 50 od 2 sierpnia 2026, terminy wysokiego ryzyka z załącznika III przesunięte na grudzień 2027.
+
+**Znacznik wstawki psuje kompilację MDX.** Artykuł z `<!-- WSTAWKA -->` w bazie wysypie stronę,
+więc znacznik nie może trafić do migracji w żadnym trybie.
+
 ## Pułapki techniczne
+
+- **Pliki migracji tracą treść po uruchomieniu.** 022 i 026 zostały na dysku ucięte albo wyczyszczone
+  w chwili, gdy właściciel wklejał je do Supabase. Przed commitem sprawdź `git status` i przywróć
+  plik poleceniem `git restore`, zamiast commitować pusty.
 
 - **Serwer MCP Supabase jest tylko do odczytu.** Każdą migrację pisz jako plik i wpisuj
   jej uruchomienie do zadań właściciela wraz z zapytaniem weryfikującym.
@@ -134,7 +170,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `022` włącznie. Następna wolna to `023`.
+- **Numeracja migracji.** Zajęte do `026` włącznie. Następna wolna to `027`.
 - **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
   fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
   się zmienić od chwili, gdy ją czytałeś.
