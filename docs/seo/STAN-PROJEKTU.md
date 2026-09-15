@@ -27,7 +27,7 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
 | 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
-| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n zrobiony, trzy migracje czekają |
+| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **zrobione 15 września**, na produkcji |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
 ### Plan trzeci — co zostało
@@ -123,8 +123,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Uruchomić migracje `024`, `025`, `026`, potem zgłosić w Search Console ponowną indeksację
-   czterech odświeżonych artykułów.
+1. Zgłosić w Search Console ponowną indeksację czterech odświeżonych artykułów.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
@@ -141,9 +140,9 @@ gdy w bazie stoi wersja z chwili składania.
 | Artykuł | Fraza | Stan |
 |---|---|---|
 | ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | **zrobione 15 września**, migracja `023`, bez wstawki z decyzji właściciela |
-| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai (wolumen niezmierzony, fraza z podpowiedzi Google) | migracja `024` gotowa |
-| automatyzacja-dokumentow-faktur-ai-msp | ocr faktury (70), zamiast frazy strony usługowej | migracja `025` gotowa |
-| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta (110) | migracja `026` gotowa |
+| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai (wolumen niezmierzony, fraza z podpowiedzi Google) | **zrobione 15 września**, migracja `024` |
+| automatyzacja-dokumentow-faktur-ai-msp | ocr faktury (70), zamiast frazy strony usługowej | **zrobione 15 września**, migracja `025` |
+| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta (110) | **zrobione 15 września**, migracja `026` |
 
 **Fraza „automatyzacja ai n8n” z przeglądu była błędem.** Nie ma jej w danych z Senuto,
 pochodziła z podpowiedzi Google i w mapie fraz jest przypisana stronie usługowej.
@@ -158,6 +157,10 @@ AI Act: art. 50 od 2 sierpnia 2026, terminy wysokiego ryzyka z załącznika III 
 więc znacznik nie może trafić do migracji w żadnym trybie.
 
 ## Pułapki techniczne
+
+- **Pliki migracji tracą treść po uruchomieniu.** 022 i 026 zostały na dysku ucięte albo wyczyszczone
+  w chwili, gdy właściciel wklejał je do Supabase. Przed commitem sprawdź `git status` i przywróć
+  plik poleceniem `git restore`, zamiast commitować pusty.
 
 - **Serwer MCP Supabase jest tylko do odczytu.** Każdą migrację pisz jako plik i wpisuj
   jej uruchomienie do zadań właściciela wraz z zapytaniem weryfikującym.
