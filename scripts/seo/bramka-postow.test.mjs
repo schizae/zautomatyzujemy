@@ -177,3 +177,38 @@ test('post bez znalezionego źródła nie dostaje braku liczb, tylko braku źró
   assert.ok(braki.includes('Źródło spoza zebranych materiałów'))
   assert.ok(!braki.some(b => b.startsWith('Liczby spoza źródła')))
 })
+
+test('cyfry wewnątrz słów (n8n, model 8B) nie liczą się jako liczby', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Prosty przepływ w n8n obsłuży to lepiej niż model 8B. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(post, kontekst()).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('separatory tysięcy: zwykła spacja, twarda spacja i przecinek to ta sama liczba', () => {
+  const zrodloZOpisem = { ...zrodla[0], description: 'Aplikacja ma 400,000 users miesięcznie.' }
+  const ctx = { zrodla: [zrodloZOpisem, zrodla[1]], wykorzystane: new Set() }
+
+  const zwyklaSpacja = {
+    ...dobryPost(),
+    linkedin: 'Aplikacja ma 400 000 użytkowników miesięcznie. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(!sprawdzPost(zwyklaSpacja, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+
+  const twardaSpacja = {
+    ...dobryPost(),
+    linkedin: `Aplikacja ma 400\u00A0000 użytkowników miesięcznie. Sprawdzaliście już to u siebie?`,
+  }
+  assert.ok(!sprawdzPost(twardaSpacja, ctx).braki.some(b => b.startsWith('Liczby spoza źródła')))
+})
+
+test('liczba z częścią dziesiętną spoza źródła daje brak', () => {
+  const post = {
+    ...dobryPost(),
+    linkedin: 'Proces trwa 2,5 godziny zamiast całego dnia. Sprawdzaliście już to u siebie?',
+  }
+  assert.ok(
+    sprawdzPost(post, kontekst()).braki.includes('Liczby spoza źródła w wersji na LinkedIn: 2,5 — potwierdź albo usuń')
+  )
+})

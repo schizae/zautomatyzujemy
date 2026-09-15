@@ -14,15 +14,22 @@ export const FORMATY = ['tekst', 'karuzela', 'krótkie wideo']
 
 const HASHTAG = /#[\p{L}\p{N}_]+/gu
 const EMOJI = /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3/u
-const LICZBA = /\d+(?:[.,]\d+)?/g
+// Samodzielna liczba: grupy tysięcy rozdzielone spacją, twardą spacją, kropką albo przecinkiem,
+// albo liczba z częścią dziesiętną. Cyfry w słowach (n8n, gpt4, 8B) nie są liczbą.
+const LICZBA = /(?<![\p{L}\p{N}])(?:\d{1,3}(?:[ \u00A0.,]\d{3})+|\d+(?:[.,]\d+)?)(?![\p{L}\p{N}])/gu
 
-// ponytail: por\u00F3wnujemy z opisem z RSS obci\u0119tym do 500 znak\u00F3w (pobierzArtykulyRss), wi\u0119c liczba
-// spoza tego skr\u00F3tu, ale obecna w pe\u0142nym artykule, te\u017C zostanie oznaczona. Oznaczenie kosztuje
-// tylko etykiet\u0119 \u201Ewymaga uwagi\u201D w mailu \u2014 nic nie blokuje.
-/** Liczby z tekstu posta, kt\u00F3rych nie ma w tytule ani opisie \u017Ar\u00F3d\u0142a. */
+/** Postać do porównania: same cyfry, więc „400 000” i „400,000” to ta sama liczba. */
+const kanoniczna = liczba => liczba.replace(/\D/g, '')
+
+// ponytail: porównujemy z opisem z RSS obciętym do 500 znaków (pobierzArtykulyRss), więc liczba
+// spoza tego skrótu, ale obecna w pełnym artykule, też zostanie oznaczona. Liczby zapisane
+// słownie („milion”, „kilkanaście”) nie są sprawdzane w ogóle. Postać kanoniczna to same cyfry,
+// więc „1,5” i „15” wypadają identycznie — nie odróżniamy ich. Oznaczenie kosztuje tylko etykietę
+// „wymaga uwagi” w mailu — nic nie blokuje.
+/** Liczby z tekstu posta, których nie ma w tytule ani opisie źródła. */
 function liczbySpozaZrodla(tekst, zrodlo) {
-  const wZrodle = new Set(`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? [])
-  return [...new Set(tekst.match(LICZBA) ?? [])].filter(liczba => !wZrodle.has(liczba))
+  const wZrodle = new Set((`${zrodlo.title} ${zrodlo.description ?? ''}`.match(LICZBA) ?? []).map(kanoniczna))
+  return [...new Set(tekst.match(LICZBA) ?? [])].filter(liczba => !wZrodle.has(kanoniczna(liczba)))
 }
 
 /** Klucz porównania adresów: bez protokołu, www, parametrów, kotwicy i ukośnika na końcu. */
