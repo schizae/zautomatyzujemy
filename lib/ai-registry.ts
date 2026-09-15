@@ -48,6 +48,14 @@ export const AI_SYSTEMS: readonly AiSystemEntry[] = [
     role: 'podmiot stosujący',
   },
   {
+    name: 'social-posts',
+    model: 'gemini-3.8-flash',
+    purpose:
+      'Cotygodniowe propozycje postów na LinkedIn i Facebooka wysyłane mailem do właściciela — publikuje człowiek, po redakcji',
+    inputs: 'Kanały RSS producentów modeli i mediów branżowych',
+    role: 'podmiot stosujący',
+  },
+  {
     name: 'Baza wiedzy — embeddingi',
     model: 'gemini-embedding-001',
     purpose: 'Wyszukiwanie fragmentów dokumentów do odpowiedzi czatu',
