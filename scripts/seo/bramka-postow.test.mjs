@@ -53,7 +53,7 @@ test('to samo źródło w dwóch propozycjach', () => {
 
 test('limit znaków, pytanie na końcu i krótsza wersja na Facebooka', () => {
   const dlugi = { ...dobryPost(), linkedin: `${'a'.repeat(LIMIT_LINKEDIN)}?` }
-  assert.ok(sprawdzPost(dlugi, kontekst()).braki.some(b => b.startsWith('Wersja na LinkedIn ma')))
+  assert.ok(sprawdzPost(dlugi, kontekst()).braki.includes('Wersja na LinkedIn ma 1301 znaków, limit 1300'))
 
   const bezPytania = { ...dobryPost(), linkedin: 'Producent wydał model.\n\nTo tyle.' }
   assert.ok(sprawdzPost(bezPytania, kontekst()).braki.includes('Wersja na LinkedIn nie kończy się pytaniem'))
@@ -63,6 +63,22 @@ test('limit znaków, pytanie na końcu i krótsza wersja na Facebooka', () => {
   assert.ok(
     sprawdzPost(dluzszyFb, kontekst()).braki.includes('Wersja na Facebooka nie jest krótsza od wersji na LinkedIn')
   )
+})
+
+test('pytanie zakończone hashtagami w tej samej lub następnej linii przechodzi', () => {
+  const jednaLinia = { ...dobryPost(), linkedin: 'Sprawdzaliście już odczyt faktur z AI u siebie? #AI' }
+  assert.ok(!sprawdzPost(jednaLinia, kontekst()).braki.includes('Wersja na LinkedIn nie kończy się pytaniem'))
+
+  const nastepnaLinia = { ...dobryPost(), linkedin: 'Sprawdzaliście już odczyt faktur z AI u siebie?\n#AI #faktury' }
+  assert.ok(!sprawdzPost(nastepnaLinia, kontekst()).braki.includes('Wersja na LinkedIn nie kończy się pytaniem'))
+})
+
+test('limit hashtagów: dokładnie 3 przechodzi, 4 daje brak', () => {
+  const trzy = { ...dobryPost(), linkedin: 'Pytanie testowe, prawda?\n\n#a #b #c' }
+  assert.ok(!sprawdzPost(trzy, kontekst()).braki.includes('Wersja na LinkedIn ma więcej niż 3 hashtagi'))
+
+  const cztery = { ...dobryPost(), linkedin: 'Pytanie testowe, prawda?\n\n#a #b #c #d' }
+  assert.ok(sprawdzPost(cztery, kontekst()).braki.includes('Wersja na LinkedIn ma więcej niż 3 hashtagi'))
 })
 
 test('emoji, adres w treści, nadmiar hashtagów, czarna lista i nieznany format', () => {
@@ -79,4 +95,31 @@ test('emoji, adres w treści, nadmiar hashtagów, czarna lista i nieznany format
   assert.ok(braki.includes('Adres URL w treści wersji na Facebooka'))
   assert.ok(braki.some(b => b.startsWith('Zwrot z czarnej listy w wersji na Facebooka')))
   assert.ok(braki.includes('Nieznany format: podcast'))
+})
+
+test('cyfry w ramce i flagi liczą się jako emoji, polskie cudzysłowy i myślnik nie', () => {
+  const post = dobryPost()
+
+  const cyfraWRamce = { ...post, linkedin: `${post.linkedin} 1️⃣` }
+  assert.ok(sprawdzPost(cyfraWRamce, kontekst()).braki.includes('Emoji w wersji na LinkedIn'))
+
+  const flaga = { ...post, linkedin: `${post.linkedin} 🇵🇱` }
+  assert.ok(sprawdzPost(flaga, kontekst()).braki.includes('Emoji w wersji na LinkedIn'))
+
+  const cudzyslowyIMyslnik = { ...post, linkedin: `${post.linkedin} „ważne” — naprawdę?` }
+  assert.ok(!sprawdzPost(cudzyslowyIMyslnik, kontekst()).braki.includes('Emoji w wersji na LinkedIn'))
+})
+
+test('czarna lista łapie zwrot rozdzielony twardą spacją', () => {
+  const post = dobryPost()
+  const zTwardaSpacja = { ...post, linkedin: `${post.linkedin} To jest w erze cyfrowej.` }
+  assert.ok(
+    sprawdzPost(zTwardaSpacja, kontekst()).braki.some(b => b.startsWith('Zwrot z czarnej listy w wersji na LinkedIn'))
+  )
+})
+
+test('pusty klucz w wykorzystane nie daje fałszywego trafienia dla błędnego adresu', () => {
+  const ctx = { zrodla, wykorzystane: new Set(['']) }
+  const post = { ...dobryPost(), zrodlo_url: 'to nie adres' }
+  assert.ok(!sprawdzPost(post, ctx).braki.includes('To samo źródło co w innej propozycji'))
 })
