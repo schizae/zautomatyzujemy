@@ -26,23 +26,41 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 |---|---|---|
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
-| 3. Silnik treści bloga | PR 22, osiem zadań z dziesięciu | **w toku** |
+| 3. Silnik treści bloga | PR 22, dziewięć zadań z dziesięciu, dziesiąte czeka na migrację 021 | **w toku** |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
 ### Co zostało w planie trzecim
 
-**Zadanie 9 — zastosowanie decyzji o artykułach.** Migracja `020_blog_przeglad.sql` jest gotowa
-i czeka na uruchomienie przez właściciela. Wyłącza z indeksu osiemnaście przeglądów nowości
-i trzy artykuły spoza oferty, przypisuje frazy docelowe pięciu artykułom.
+**Zadanie 9 — zastosowanie decyzji o artykułach.** Zrobione. Migracja `020_blog_przeglad.sql`
+uruchomiona i sprawdzona na produkcji: dziesięć artykułów w indeksie, dwadzieścia jeden wyłączonych,
+pięć z frazą docelową.
 
-**Zadanie 10 — doszycie odnośników wewnętrznych.** Nie zaczęte. Dziesięć artykułów zostających
-w indeksie nie ma ani jednego odnośnika do stron usługowych, więc ruch z nich nie ma dokąd
-prowadzić. Do wykonania po uruchomieniu migracji 020.
+**Zadanie 10 — doszycie odnośników wewnętrznych.** Migracja `021_blog_odnosniki.sql` gotowa,
+czeka na uruchomienie przez właściciela. 33 zmiany w dziesięciu artykułach: od jednej do trzech
+stron usługowych i od jednego do dwóch artykułów na tekst. Każda zmiana obejmuje odnośnikiem
+fragment, który już stoi w treści, więc tekst nie jest przepisywany. Wszystkie fragmenty
+sprawdzone na produkcyjnej treści: każdy występuje dokładnie raz. Po uruchomieniu trzeba ręcznie
+puścić workflow `kb-refresh.yml`, bo treść artykułów zasila bazę wiedzy chatbota.
 
-Uwaga wykonawcza do zadania 10: standard pisarski zabrania wrzucania odnośników w blok na końcu
-tekstu. Mają stać tam, gdzie są merytorycznie uzasadnione. Przy czterech artykułach do odświeżenia
-odnośniki wchodzą razem z odświeżeniem, przy pozostałych sześciu trzeba przeczytać tekst
-i wstawić je w sensownym miejscu.
+Odnośniki weszły też do czterech artykułów do odświeżenia. Odświeżenie ich nie usuwa,
+o ile nie przepisuje zdań z odnośnikami.
+
+### Co wyszło przy czytaniu artykułów do zadania 10
+
+Do decyzji właściciela, nie ruszone:
+
+1. **Sześć z dziesięciu artykułów podaje wymyślone wdrożenia jako prawdziwe.** Firmy z nazwami,
+   procenty wyników, w artykule o rekrutacji nawet cytat właściciela „Szybkiej Paki Logistics".
+   Bez oznaczenia, że to scenariusz. Dotyczy artykułów o n8n, sprzedaży, ofertach, analizie danych,
+   zarządzaniu projektami i rekrutacji. Standard pisarski tego zabrania. Pozostałe cztery oznaczają
+   przykłady jako hipotetyczne.
+2. **Artykuł o rekrutacji twierdzi, że AI jest wolna od uprzedzeń**, i poleca przesiewanie CV
+   bez słowa o tym, że AI Act zalicza takie systemy do wysokiego ryzyka (załącznik III, punkt 4).
+   Na stronie, która sprzedaje zgodność z AI Act.
+3. **Zwroty z czarnej listy i zdublowany nagłówek.** „W dzisiejszym dynamicznym świecie",
+   „w erze cyfrowej", „rewolucja" w kilku tekstach. Sześć artykułów powtarza tytuł jako nagłówek
+   pierwszego poziomu w treści, więc strona ma dwa. W artykule o obsłudze klienta marka jest
+   zapisana jako „Zautomatyzuj.pl".
 
 ---
 
@@ -97,7 +115,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Uruchomić migrację `020_blog_przeglad.sql`.
+1. Uruchomić migrację `021_blog_odnosniki.sql`, a po niej workflow `kb-refresh.yml`.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
@@ -114,4 +132,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `020` włącznie. Następna wolna to `021`.
+- **Numeracja migracji.** Zajęte do `021` włącznie. Następna wolna to `022`.
+- **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
+  fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
+  się zmienić od chwili, gdy ją czytałeś.

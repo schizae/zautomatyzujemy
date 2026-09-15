@@ -834,14 +834,14 @@ git commit -m "feat(blog): wylaczanie artykulu z indeksu"
 
 Zadanie wspólne: agent przygotowuje zestawienie, decyzje podejmuje właściciel.
 
-- [ ] **Krok 1: Przygotuj zestawienie**
+- [x] **Krok 1: Przygotuj zestawienie**
 
 Dla każdego z trzydziestu artykułów zbierz: slug, tytuł, datę publikacji, liczbę wyświetleń
 z eksportu Search Console w `data/seo/gsc-strony-2026-09-11.csv` oraz informację,
 czy tytuł pasuje do którejkolwiek frazy z `data/seo/wolumeny.csv` z wolumenem co najmniej 50.
 Zapisz jako `docs/seo/przeglad-artykulow.md`.
 
-- [ ] **Krok 2: Zaproponuj decyzję dla każdego**
+- [x] **Krok 2: Zaproponuj decyzję dla każdego**
 
 Cztery możliwe: zostawić bez zmian, odświeżyć pod frazę, połączyć z innym, wyłączyć z indeksu.
 Domyślna propozycja dla osiemnastu przeglądów `nowosci-ai-*` to wyłączenie z indeksu,
@@ -849,11 +849,11 @@ bo powtarzają newsy sprzed miesięcy i nie mają przypisanej frazy.
 **To propozycja, nie reguła.** Brak wyświetleń nie dowodzi braku wartości,
 a decyzję podejmuje właściciel po przejrzeniu listy.
 
-- [ ] **Krok 3: Zastosuj decyzje**
+- [x] **Krok 3: Zastosuj decyzje**
 
 Po akceptacji ustaw `noindex` i `target_keyword` w bazie zgodnie z listą.
 
-- [ ] **Krok 4: Commit zestawienia**
+- [x] **Krok 4: Commit zestawienia**
 
 ```bash
 git add docs/seo/przeglad-artykulow.md
@@ -869,13 +869,13 @@ git commit -m "docs(blog): przeglad trzydziestu istniejacych artykulow"
 Artykuły zostawione w indeksie to jedyne strony, które dziś mogą dostać wyświetlenie.
 Żaden z nich nie prowadzi do oferty.
 
-- [ ] **Krok 1: Dla każdego artykułu zostawionego w indeksie dodaj dwa odnośniki**
+- [x] **Krok 1: Dla każdego artykułu zostawionego w indeksie dodaj dwa odnośniki**
 
 Jeden do strony usługowej najbliższej tematowi, jeden do innego artykułu.
 Tekst odnośnika ma opisywać cel, nigdy „tutaj".
 Odnośnik wstaw w miejscu, gdzie jest merytorycznie uzasadniony, nie na końcu tekstu.
 
-- [ ] **Krok 2: Sprawdź, że wszystkie adresy istnieją**
+- [x] **Krok 2: Sprawdź, że wszystkie adresy istnieją**
 
 ```bash
 npm run dev
