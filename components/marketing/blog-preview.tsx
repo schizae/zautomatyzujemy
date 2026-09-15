@@ -29,7 +29,7 @@ function toDisplayPosts(posts: PostPreview[]): DisplayPost[] {
   return posts.map((p) => ({
     slug: p.slug,
     title: p.title,
-    category: (p.tags?.[0] ?? 'Blog').replace(/-/g, ' '),
+    category: p.tags?.[0] ?? 'Blog',
     date: formatDate(p.published_at ?? p.created_at),
     cover_image: getBlogCover(p.slug, p.cover_image),
   }))

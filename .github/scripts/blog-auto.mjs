@@ -169,7 +169,7 @@ Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
   "slug": "[slug: tylko a-z, 0-9, myslniki]",
   "excerpt": "[2-3 zdania: co czytelnik sie dowie i jaka ma korzysc]",
   "content": "[pelny artykul w Markdown]",
-  "tags": ["[tag1]", "[tag2]", "[tag3]", "[tag4]"],
+  "tags": ["[tag po polsku z polskimi znakami, np. Obsługa klienta]", "[drugi tag, np. Chatboty]"],
   "image_prompt": "[prompt do okladki po angielsku: konkretna ilustracja bez tekstu, styl editorial magazine, nowoczesny minimalizm]"
 }`
 

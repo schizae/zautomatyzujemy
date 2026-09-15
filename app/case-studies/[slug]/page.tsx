@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = createServiceClient()
   const { data } = await supabase
     .from('case_studies')
-    .select('title, description, cover_image')
+    .select('title, description, cover_image, is_example')
     .eq('slug', slug)
     .eq('is_active', true)
     .single()
@@ -36,6 +36,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: data.title,
     description,
+    // Scenariusz poglądowy ma za mało treści do indeksu. Realne wdrożenie
+    // (is_example = false) wejdzie do indeksu bez zmian w kodzie.
+    ...(data.is_example === true && { robots: { index: false, follow: true } }),
     alternates: {
       canonical: `/case-studies/${slug}`,
     },

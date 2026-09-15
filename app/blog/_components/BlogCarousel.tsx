@@ -43,7 +43,7 @@ export function BlogGrid({ posts }: { posts: PostPreview[] }) {
                           key={tag}
                           className="text-xs font-medium text-[#9c301b]"
                         >
-                          {tag.replace(/-/g, ' ')}
+                          {tag}
                         </span>
                       ))}
                     </div>
