@@ -67,7 +67,8 @@ export async function pobierzArtykulyRss(oknoDni) {
           extractField(item, 'pubDate') ||
           extractField(item, 'published') ||
           extractField(item, 'updated')
-        // Materiał bez daty zostaje, ale bez udawanej daty. NaN < liczba daje false, więc nie odpada.
+        // Materiał bez daty albo z datą nie do odczytania zostaje, ale bez udawanej daty.
+        // NaN < liczba daje false, więc nie odpada. Dawniej nieczytelna data wywracała cały kanał.
         const pubDate = pubDateStr ? Date.parse(pubDateStr) : NaN
         if (pubDate < odKiedy) continue
 
