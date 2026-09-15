@@ -103,7 +103,4 @@ WHERE slug LIKE 'nowosci-ai-%' AND noindex = FALSE;
 --
 -- Drugie: zero wierszy, czyli nigdzie w indeksie nie zostało „Case Study” ani cytatu.
 --
---   SELECT slug FROM posts
---   WHERE is_published AND noindex = false
---     AND (content LIKE '%Case Study%' OR content LIKE '%Pan Adam podkreśla%'
---          OR content LIKE '%AI jest wolna od takich uprzedzeń%');
+--   

@@ -46,8 +46,8 @@ o ile nie przepisuje zdań z odnośnikami.
 
 ### Co wyszło przy czytaniu artykułów do zadania 10
 
-Punkty 1 i 2 załatwia migracja `022_blog_scenariusze.sql`, gotowa i czekająca na uruchomienie.
-Ta sama migracja wyłącza z indeksu przegląd nowości z 14 września: stary workflow przeglądu
+Punkty 1 i 2 załatwiła migracja `022_blog_scenariusze.sql`, uruchomiona i sprawdzona 15 września.
+Ta sama migracja wyłączyła z indeksu przegląd nowości z 14 września: stary workflow przeglądu
 działa na main do scalenia pull requesta 22 i w każdy poniedziałek dołoży następny.
 Punkt 3 zostaje na odświeżenie artykułów.
 
@@ -117,7 +117,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Uruchomić migrację `022_blog_scenariusze.sql`, po niej workflow `kb-refresh.yml`.
+1. Scalić PR 22 przed 21 września, inaczej stary workflow opublikuje kolejny przegląd nowości.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
