@@ -174,6 +174,12 @@ export interface BlogPublishPayload {
   /** Ustawiane przez generatory z `.github/scripts/` */
   ai_generated?: boolean
   ai_model?: string
+  /** Fraza z docs/seo/plan-tresci.md, pod którą artykuł powstał */
+  target_keyword?: string | null
+  /** Wynik bramki jakości. Brak pola oznacza, że nadawca jej nie uruchomił,
+   *  co traktujemy jak przejście — inaczej zablokowalibyśmy publikacje z panelu. */
+  quality_gate_passed?: boolean
+  quality_gate_issues?: string[]
 }
 
 /** Payload wysyłany przez chatbota do n8n po zebraniu e-maila */

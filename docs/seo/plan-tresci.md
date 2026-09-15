@@ -40,6 +40,12 @@ Wchodzimy w jego otoczkę. Wszystkie artykuły linkują do
 | 6 | Agenci AI w n8n: jak zbudować pierwszego | n8n ai agent | 320 | poradnikowa |
 | 7 | Jak zacząć z n8n bez programowania | n8n kurs | 110 | poradnikowa |
 | 8 | Gdzie n8n przechowuje dane i co to znaczy dla RODO | n8n self hosted | 20 | techniczno-decyzyjna |
+| 8b | Czym jest workflow i po co firmie diagram procesu | workflow | 3 600 | informacyjna, wczesny etap |
+
+Temat 8b doszedł po analizie konkurencji z 11 września. `workflow` ma 3 600 wyszukiwań,
+a u sagiton.pl artykuł „co to jest workflow" ciąga 143 wejścia miesięcznie z pozycji szóstej.
+To fraza o krok wcześniejsza niż reszta listy: trafia do kogoś, kto dopiero zaczyna
+się rozglądać, i naturalnie prowadzi do automatyzacji procesów.
 
 Artykuł ósmy ma najmniejszy wolumen i największą wartość dla sprzedaży.
 Pytanie o dane wrażliwe zadaje osoba, która musi przekonać przełożonego albo dział prawny.

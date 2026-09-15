@@ -78,3 +78,12 @@ Zgoda zastępuje historyczny zakaz publikacji. Wynik wdrożenia jest zapisany w 
 Przed dalszą pracą pobierz aktualny `main` i pracuj na osobnym branchu; zachowaj
 nowe tokeny kolorów, integracje i niezwiązane zmiany. Zakres oraz ograniczenia QA
 opisuje notatka przekazania.
+
+## Treści na blog i strony usługowe (2026-09-11)
+
+Przed pisaniem lub przeglądem jakiejkolwiek treści na blog przeczytaj
+`docs/seo/editorial-standard.md`. Ten sam plik czyta generator artykułów i bramka jakości,
+więc jest jedynym źródłem zasad — nie powielaj ich w promptach ani w skillach.
+
+Tematy pochodzą wyłącznie z `docs/seo/plan-tresci.md`, a frazy i wolumeny z
+`docs/seo/keyword-map.md` oraz `data/seo/wolumeny.csv`. Nie wymyślaj tematów spoza tej listy.

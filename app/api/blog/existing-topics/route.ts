@@ -29,23 +29,32 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const supabase = createServiceClient()
 
-  const { data, error } = await supabase
-    .from('posts')
-    .select('title, tags, slug')
-    .eq('is_published', true)
-    .order('published_at', { ascending: false })
-    .limit(50)
+  // Generator potrzebuje obu list naraz: artykułów, żeby wiedzieć, które tematy
+  // z planu treści są wykorzystane, i slugów usług, żeby bramka jakości mogła
+  // sprawdzić, czy odnośniki wewnętrzne prowadzą do istniejących stron.
+  const [postsResult, servicesResult] = await Promise.all([
+    supabase
+      .from('posts')
+      .select('title, tags, slug, target_keyword')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false })
+      .limit(100),
+    supabase.from('services').select('slug').eq('is_active', true),
+  ])
 
-  if (error) {
-    console.error('[/api/blog/existing-topics] Błąd Supabase:', error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (postsResult.error) {
+    console.error('[/api/blog/existing-topics] Błąd Supabase:', postsResult.error.message)
+    return NextResponse.json({ error: postsResult.error.message }, { status: 500 })
   }
 
-  const topics = (data ?? []).map((post) => ({
+  const topics = (postsResult.data ?? []).map((post) => ({
     title: post.title as string,
     slug: post.slug as string,
     tags: (post.tags as string[]) ?? [],
+    targetKeyword: (post.target_keyword as string | null) ?? null,
   }))
 
-  return NextResponse.json({ topics })
+  const services = (servicesResult.data ?? []).map((service) => service.slug as string)
+
+  return NextResponse.json({ topics, services })
 }

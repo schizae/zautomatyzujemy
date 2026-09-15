@@ -43,7 +43,7 @@ Poza zakresem: automat propozycji postów do sieci społecznościowych, to plan 
 | `lib/email/resend.ts` to moduł TypeScript Next.js, skrypt Actions go nie zaimportuje | odczyt pliku |
 | Nadawca maili: `powiadomienia@zautomatyzujemy.pl` | `lib/email/resend.ts:12` |
 
-Numeracja migracji: `016` i `017` zajmuje plan drugi, więc ten plan używa `018`.
+Numeracja migracji: `016`, `017` i `018` zajmuje plan drugi, więc ten plan używa `019`.
 
 ---
 
@@ -51,7 +51,7 @@ Numeracja migracji: `016` i `017` zajmuje plan drugi, więc ten plan używa `018
 
 | Plik | Odpowiedzialność |
 |---|---|
-| `supabase/migrations/018_blog_seo.sql` | Dwie kolumny w `posts`: fraza docelowa i wyłączenie z indeksu. |
+| `supabase/migrations/019_blog_seo.sql` | Dwie kolumny w `posts`: fraza docelowa i wyłączenie z indeksu. |
 | `docs/seo/editorial-standard.md` | Zasady pisania, czytane przez generator i przez człowieka. |
 | `scripts/seo/quality-gate.mjs` | Trzy bramki techniczne, czysta logika, bez sieci. |
 | `scripts/seo/quality-gate.test.mjs` | Testy bramek. |
@@ -133,12 +133,12 @@ git commit -m "feat(blog): podniesienie modelu na gemini-3.8-flash"
 ## Zadanie 2: Migracja bazy
 
 **Pliki:**
-- Utwórz: `supabase/migrations/018_blog_seo.sql`
+- Utwórz: `supabase/migrations/019_blog_seo.sql`
 
 - [ ] **Krok 1: Napisz migrację**
 
 ```sql
--- 018_blog_seo.sql
+-- 019_blog_seo.sql
 -- Dwie kolumny, obie z konsumentem od pierwszego dnia.
 -- target_keyword: fraza, pod którą artykuł powstał, potrzebna przy przeglądzie i przy raportach.
 -- noindex: wyłączenie archiwalnych przeglądów z indeksu bez usuwania ich ze strony.
@@ -170,7 +170,7 @@ Oczekiwane: dwa wiersze, `noindex` z `is_nullable = NO`.
 - [ ] **Krok 3: Commit**
 
 ```bash
-git add supabase/migrations/018_blog_seo.sql
+git add supabase/migrations/019_blog_seo.sql
 git commit -m "feat(blog): kolumny frazy docelowej i wylaczenia z indeksu"
 ```
 
@@ -834,14 +834,14 @@ git commit -m "feat(blog): wylaczanie artykulu z indeksu"
 
 Zadanie wspólne: agent przygotowuje zestawienie, decyzje podejmuje właściciel.
 
-- [ ] **Krok 1: Przygotuj zestawienie**
+- [x] **Krok 1: Przygotuj zestawienie**
 
 Dla każdego z trzydziestu artykułów zbierz: slug, tytuł, datę publikacji, liczbę wyświetleń
 z eksportu Search Console w `data/seo/gsc-strony-2026-09-11.csv` oraz informację,
 czy tytuł pasuje do którejkolwiek frazy z `data/seo/wolumeny.csv` z wolumenem co najmniej 50.
 Zapisz jako `docs/seo/przeglad-artykulow.md`.
 
-- [ ] **Krok 2: Zaproponuj decyzję dla każdego**
+- [x] **Krok 2: Zaproponuj decyzję dla każdego**
 
 Cztery możliwe: zostawić bez zmian, odświeżyć pod frazę, połączyć z innym, wyłączyć z indeksu.
 Domyślna propozycja dla osiemnastu przeglądów `nowosci-ai-*` to wyłączenie z indeksu,
@@ -849,11 +849,11 @@ bo powtarzają newsy sprzed miesięcy i nie mają przypisanej frazy.
 **To propozycja, nie reguła.** Brak wyświetleń nie dowodzi braku wartości,
 a decyzję podejmuje właściciel po przejrzeniu listy.
 
-- [ ] **Krok 3: Zastosuj decyzje**
+- [x] **Krok 3: Zastosuj decyzje**
 
 Po akceptacji ustaw `noindex` i `target_keyword` w bazie zgodnie z listą.
 
-- [ ] **Krok 4: Commit zestawienia**
+- [x] **Krok 4: Commit zestawienia**
 
 ```bash
 git add docs/seo/przeglad-artykulow.md
@@ -869,13 +869,13 @@ git commit -m "docs(blog): przeglad trzydziestu istniejacych artykulow"
 Artykuły zostawione w indeksie to jedyne strony, które dziś mogą dostać wyświetlenie.
 Żaden z nich nie prowadzi do oferty.
 
-- [ ] **Krok 1: Dla każdego artykułu zostawionego w indeksie dodaj dwa odnośniki**
+- [x] **Krok 1: Dla każdego artykułu zostawionego w indeksie dodaj dwa odnośniki**
 
 Jeden do strony usługowej najbliższej tematowi, jeden do innego artykułu.
 Tekst odnośnika ma opisywać cel, nigdy „tutaj".
 Odnośnik wstaw w miejscu, gdzie jest merytorycznie uzasadniony, nie na końcu tekstu.
 
-- [ ] **Krok 2: Sprawdź, że wszystkie adresy istnieją**
+- [x] **Krok 2: Sprawdź, że wszystkie adresy istnieją**
 
 ```bash
 npm run dev
@@ -885,7 +885,7 @@ Następnie dla każdego zmodyfikowanego artykułu otwórz stronę i kliknij doda
 Alternatywnie sprawdź skryptem, czy każdy adres `/uslugi/...` z treści artykułów
 odpowiada slugowi w tabeli `services`.
 
-- [ ] **Krok 3: Odśwież bazę wiedzy chatbota**
+- [x] **Krok 3: Odśwież bazę wiedzy chatbota**
 
 Uruchom ręcznie workflow `kb-refresh.yml`, bo treść artykułów zasila embeddingi.
 
