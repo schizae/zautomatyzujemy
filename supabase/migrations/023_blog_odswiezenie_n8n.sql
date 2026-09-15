@@ -1,11 +1,36 @@
----
-slug: ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n
-title: "Automatyzacje n8n z AI w małej firmie: trzy przepływy krok po kroku"
-target_keyword: automatyzacje n8n
-excerpt: "Trzy automatyzacje n8n z AI dla małej firmy rozpisane na węzły: rozdzielanie wiadomości z formularza, odczyt faktur z maila i szkice odpowiedzi zatwierdzane przez człowieka."
----
+-- Odświeżenie artykułu ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n
+-- Źródło: docs/seo/odswiezenia/automatyzacje-n8n.md, złożone skryptem scripts/seo/migracja-odswiezenia.mjs.
+--
+-- Treść jest podmieniana tylko wtedy, gdy w bazie stoi dokładnie ta wersja, z której składano
+-- migrację (skrót md5 a4473eb249e1415a79a1f724a6a24efc). Ponowne uruchomienie po udanym nic nie robi.
 
-Automatyzacje n8n z AI to przepływy, w których n8n przenosi dane między systemami, a model językowy wykonuje jeden krok wymagający zrozumienia treści: klasyfikuje wiadomość, wyciąga dane z dokumentu albo szkicuje odpowiedź. Poniżej znajdziesz trzy takie przepływy dla małej firmy, rozpisane na konkretne węzły, razem z tym, co zrobić, gdy coś się zepsuje.
+DO $$
+DECLARE
+  obecny_skrot TEXT;
+BEGIN
+  SELECT md5(content) INTO obecny_skrot FROM posts WHERE slug = 'ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n';
+
+  IF obecny_skrot IS NULL THEN
+    RAISE EXCEPTION 'Brak artykułu ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n';
+  END IF;
+
+  IF obecny_skrot = '7a9041118c82ead9779cb0083a3d446a' THEN
+    RAISE NOTICE 'Artykuł jest już odświeżony';
+    RETURN;
+  END IF;
+
+  IF obecny_skrot <> 'a4473eb249e1415a79a1f724a6a24efc' THEN
+    RAISE EXCEPTION 'Treść artykułu zmieniła się od złożenia migracji, złóż ją ponownie';
+  END IF;
+
+  UPDATE posts SET
+    title = $tresc$Automatyzacje n8n z AI w małej firmie: trzy przepływy krok po kroku$tresc$,
+    excerpt = $tresc$Trzy automatyzacje n8n z AI dla małej firmy rozpisane na węzły: rozdzielanie wiadomości z formularza, odczyt faktur z maila i szkice odpowiedzi zatwierdzane przez człowieka.$tresc$,
+    target_keyword = $tresc$automatyzacje n8n$tresc$,
+    ai_model = 'claude-opus-5',
+    reviewed_at = now(),
+    -- Git na Windowsie potrafi zamienić końce linii w pliku migracji, a skrót liczymy z LF.
+    content = replace($tresc$Automatyzacje n8n z AI to przepływy, w których n8n przenosi dane między systemami, a model językowy wykonuje jeden krok wymagający zrozumienia treści: klasyfikuje wiadomość, wyciąga dane z dokumentu albo szkicuje odpowiedź. Poniżej znajdziesz trzy takie przepływy dla małej firmy, rozpisane na konkretne węzły, razem z tym, co zrobić, gdy coś się zepsuje.
 
 ## Zasada, na której stoją wszystkie trzy przepływy
 
@@ -90,3 +115,10 @@ Oba narzędzia budują przepływy w edytorze wizualnym. Make działa wyłącznie
 Od jednego procesu, który ktoś wykonuje ręcznie co tydzień, i policzenia, ile zajmuje. Najlepszy kandydat ma jasne wejście, na przykład mail albo formularz, i jasny wynik, na przykład wiersz w arkuszu. Jeśli nie wiesz, który proces wybrać, pomoże [audyt procesów pod kątem AI](/uslugi/audyt-i-doradztwo-ai).
 
 Każdy z tych przepływów zaczyna się od tej samej pracy: rozpisania procesu na wejście, jeden krok modelu, sprawdzenie i wynik. Od tego zaczyna się też [wdrożenie automatyzacji procesów](/uslugi/automatyzacja-procesow-biznesowych), zanim powstanie pierwszy węzeł.
+$tresc$, E'\r\n', E'\n')
+  WHERE slug = 'ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n';
+END $$;
+
+-- Weryfikacja: tytuł nowy i skrót równy 7a9041118c82ead9779cb0083a3d446a.
+--
+--   SELECT title, target_keyword, md5(content) FROM posts WHERE slug = 'ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n';

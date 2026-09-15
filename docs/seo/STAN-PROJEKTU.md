@@ -27,7 +27,7 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
 | 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
-| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n czeka na wstawkę |
+| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n czeka na migrację 023 |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
 ### Plan trzeci — co zostało
@@ -123,7 +123,7 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Dopisać akapit wstawki do `docs/seo/odswiezenia/automatyzacje-n8n.md` i zatwierdzić tekst.
+1. Uruchomić migrację `023_blog_odswiezenie_n8n.sql`, po niej workflow `kb-refresh.yml`.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
@@ -139,7 +139,7 @@ gdy w bazie stoi wersja z chwili składania.
 
 | Artykuł | Fraza | Stan |
 |---|---|---|
-| ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | szkic gotowy, czeka na wstawkę |
+| ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | migracja `023` gotowa, bez wstawki z decyzji właściciela |
 | ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai | do zrobienia |
 | automatyzacja-dokumentow-faktur-ai-msp | automatyzacja obiegu dokumentów | do zrobienia |
 | automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta | do zrobienia |
@@ -161,7 +161,7 @@ więc znacznik nie może trafić do migracji w żadnym trybie.
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `022` włącznie. Następna wolna to `023`.
+- **Numeracja migracji.** Zajęte do `023` włącznie. Następna wolna to `024`.
 - **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
   fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
   się zmienić od chwili, gdy ją czytałeś.
