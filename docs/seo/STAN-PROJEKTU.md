@@ -125,6 +125,8 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 ## Zadania właściciela, stan otwarty
 
 1. ~~Zgłosić w Search Console ponowną indeksację czterech odświeżonych artykułów~~ — ZROBIONE 15 września.
+1a. Uruchomić migracje `028` (artykuł o sprzedaży) i `029` (porządki w czterech artykułach:
+   podwójny tytuł, „zrewolucjonizować”), po nich `kb-refresh.yml` i zgłoszenie artykułu o sprzedaży w GSC.
 2. Uruchomić migrację `027_uslugi_cena_automatyzacji.sql`, po niej workflow `kb-refresh.yml`.
    Decyzja z 15 września: widełek nie ma, wycena indywidualna. Jedyna kwota: proste automatyzacje
    od 500 zł (strona automatyzacji procesów). Szkolenia: od 2000 zł netto. Agenci AI i obieg dokumentów bez kwoty.
@@ -145,6 +147,7 @@ gdy w bazie stoi wersja z chwili składania.
 | ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai (wolumen niezmierzony, fraza z podpowiedzi Google) | **zrobione 15 września**, migracja `024` |
 | automatyzacja-dokumentow-faktur-ai-msp | ocr faktury (70), zamiast frazy strony usługowej | **zrobione 15 września**, migracja `025` |
 | automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta (110) | **zrobione 15 września**, migracja `026` |
+| ai-w-sprzedazy-i-marketingu-msp-przewaga-konkurencyjna | automatyzacja sprzedaży (110) | migracja `028` gotowa |
 
 **Fraza „automatyzacja ai n8n” z przeglądu była błędem.** Nie ma jej w danych z Senuto,
 pochodziła z podpowiedzi Google i w mapie fraz jest przypisana stronie usługowej.
@@ -172,7 +175,7 @@ więc znacznik nie może trafić do migracji w żadnym trybie.
   wpadły do commita.
 - **Heredoc z Pythonem zjada ukośniki.** Przy plikach z wyrażeniami regularnymi używaj
   narzędzia do zapisu plików, nie skryptu w powłoce.
-- **Numeracja migracji.** Zajęte do `027` włącznie. Następna wolna to `028`.
+- **Numeracja migracji.** Zajęte do `030` włącznie. Następna wolna to `031`.
 - **Zmiany treści artykułów rób zamianą fragmentu, nie nadpisaniem.** Wzorzec w `021`:
   fragment musi wystąpić dokładnie raz, inaczej migracja się przerywa. Treść w bazie mogła
   się zmienić od chwili, gdy ją czytałeś.
