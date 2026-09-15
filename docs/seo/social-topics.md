@@ -28,6 +28,11 @@ Pierwsza osoba, autor to Norbert Chojnacki, inżynier informatyki wdrażający A
 w polskich MŚP. Bez wymyślonych wdrożeń, klientów i doświadczeń. Gdzie post potrzebuje osobistej
 obserwacji, zostaje znacznik `[TWOJA OBSERWACJA]` do uzupełnienia przy redakcji.
 
+**Liczby wyłącznie ze źródła.** Każda liczba w poście — czas, oszczędność, procent, kwota — musi
+stać w materiale źródłowym. Liczba wymyślona albo „typowa dla branży” brzmi jak wynik wdrożenia,
+którego nie było. Zamiast niej napisz zdanie bez liczby albo wstaw `[TWOJA OBSERWACJA]`,
+na przykład: „Ile czasu to oszczędza, zależy od procesu. [TWOJA OBSERWACJA]”.
+
 ## Format
 
 **LinkedIn.** Pierwszy akapit jest hakiem, który zatrzymuje przewijanie. Potem konkret:
