@@ -42,6 +42,10 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Redaktor AI w panelu czyta standard pisarski z dysku w czasie działania.
+  outputFileTracingIncludes: {
+    '/admin/**': ['./docs/seo/editorial-standard.md'],
+  },
   images: {
     remotePatterns: [
       {

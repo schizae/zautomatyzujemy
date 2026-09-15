@@ -1,5 +1,7 @@
 'use server'
 
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -12,6 +14,8 @@ import { createRateLimiter } from '@/lib/rate-limit'
 import { setBlogPublishMode } from '@/lib/app-settings'
 import type { BlogPublishMode } from '@/lib/ai-disclosure'
 import type { ActionResult, Post, PageContent, Service, FaqItem, CaseStudy } from '@/types'
+import { sprawdzArtykul, ZNACZNIK_WSTAWKI } from '@/scripts/seo/quality-gate.mjs'
+import { promptArtykulu } from '@/scripts/seo/prompt-artykulu.mjs'
 
 const UNAUTHORIZED: ActionResult = { success: false, error: 'Brak uprawnień.' }
 
@@ -69,7 +73,11 @@ const PostSchema = z.object({
   is_published: z.boolean().optional(),
   ai_generated: z.boolean(),
   ai_model: z.string().max(100).optional(),
+  target_keyword: z.string().max(200).optional(),
 })
+
+// Znacznik to komentarz HTML, którego MDX nie kompiluje — opublikowany wysypałby stronę artykułu.
+const BLAD_WSTAWKI = 'Treść zawiera znacznik wstawki autorskiej. Dopisz akapit w jego miejsce albo usuń znacznik, zanim opublikujesz.'
 
 function parseTags(raw: string | undefined): string[] {
   if (!raw) return []
@@ -91,6 +99,7 @@ function parsePostFormData(formData: FormData) {
     is_published: formData.get('is_published') === 'true',
     ai_generated: formData.get('ai_generated') === 'true',
     ai_model: formData.get('ai_model') || undefined,
+    target_keyword: formData.get('target_keyword') || undefined,
   })
 }
 
@@ -115,7 +124,11 @@ export async function createPostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ai_model, ...rest } = parsed.data
+  if (parsed.data.is_published && parsed.data.content.includes(ZNACZNIK_WSTAWKI)) {
+    return { success: false, error: BLAD_WSTAWKI }
+  }
+
+  const { tags, cover_image, ai_model, target_keyword, ...rest } = parsed.data
   const supabase = createServiceClient()
   const now = new Date().toISOString()
 
@@ -124,6 +137,7 @@ export async function createPostAction(
     tags: parseTags(tags),
     cover_image: cover_image || null,
     ai_model: ai_model || null,
+    target_keyword: target_keyword || null,
     published_at: rest.is_published ? now : null,
     reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
   })
@@ -148,7 +162,11 @@ export async function updatePostAction(
     return { success: false, error: parsed.error.errors[0]?.message ?? 'Błąd walidacji.' }
   }
 
-  const { tags, cover_image, ai_model, ...rest } = parsed.data
+  if (parsed.data.is_published && parsed.data.content.includes(ZNACZNIK_WSTAWKI)) {
+    return { success: false, error: BLAD_WSTAWKI }
+  }
+
+  const { tags, cover_image, ai_model, target_keyword, ...rest } = parsed.data
   const supabase = createServiceClient()
   const now = new Date().toISOString()
 
@@ -159,6 +177,7 @@ export async function updatePostAction(
       tags: parseTags(tags),
       cover_image: cover_image || null,
       ai_model: ai_model || null,
+      target_keyword: target_keyword || null,
       published_at: rest.is_published ? now : null,
       reviewed_at: resolveReviewedAt(rest.ai_generated, rest.is_published ?? false, now),
     })
@@ -198,6 +217,11 @@ export async function approvePostAction(id: string): Promise<ActionResult> {
   if (!(await isAdminAuthenticated())) return UNAUTHORIZED
   const supabase = createServiceClient()
   const now = new Date().toISOString()
+
+  const { data: szkic } = await supabase.from('posts').select('content').eq('id', id).single()
+  if (szkic?.content.includes(ZNACZNIK_WSTAWKI)) {
+    return { success: false, error: BLAD_WSTAWKI }
+  }
 
   const { data, error } = await supabase
     .from('posts')
@@ -246,7 +270,7 @@ const GeneratedPostSchema = z.object({
 })
 
 /** Model redaktora AI w panelu — ta sama wartość ląduje w kolumnie `ai_model`. */
-const EDITOR_MODEL = 'gemini-2.5-flash'
+const EDITOR_MODEL = 'gemini-3.8-flash'
 
 /** Pola, które generator wypełnia w formularzu — celowo nie cały `Post`. */
 interface GeneratedPostDraft {
@@ -258,33 +282,47 @@ interface GeneratedPostDraft {
   author: string
   /** Formularz zapisuje to w `ai_model`, zamiast powtarzać nazwę modelu u siebie. */
   model: string
+  /** Wynik bramki jakości dla wygenerowanego szkicu, do pokazania redaktorowi. */
+  braki: string[]
+  uwagi: string[]
 }
 
 export async function generatePostAction(
-  topic: string
+  topic: string,
+  targetKeyword: string
 ): Promise<ActionResult<GeneratedPostDraft>> {
   if (!(await isAdminAuthenticated())) return { success: false, error: 'Brak uprawnień.' }
-  if (!topic.trim()) {
-    return { success: false, error: 'Podaj temat artykułu.' }
+  if (!topic.trim() || !targetKeyword.trim()) {
+    return { success: false, error: 'Podaj temat i frazę docelową artykułu.' }
   }
 
   try {
+    const supabase = createServiceClient()
+    const [{ data: posty }, { data: uslugi }] = await Promise.all([
+      supabase.from('posts').select('slug, title').order('published_at', { ascending: false }),
+      supabase.from('services').select('slug').eq('is_active', true),
+    ])
+    const istniejace = posty ?? []
+    const slugiUslug = (uslugi ?? []).map(usluga => usluga.slug)
+
     const { object } = await generateObject({
       model: google(EDITOR_MODEL),
       schema: GeneratedPostSchema,
-      prompt: `Napisz artykuł blogowy po polsku dla Zautomatyzujemy.pl (automatyzacja procesów z AI i n8n).
-
-Temat: ${topic}
-
-Wymagania:
-- title: chwytliwy tytuł artykułu (max 100 znaków)
-- slug: slug URL z myślnikami, tylko małe litery i cyfry (np. "automatyzacja-faktur-ai")
-- excerpt: opis do SEO i listingów (max 200 znaków)
-- content: pełna treść artykułu w formacie Markdown, min. 600 słów, z nagłówkami ## i ###, listami i podsumowaniem
-- tags: 3-5 tagów po polsku (np. ["automatyzacja", "n8n", "AI"])
-
-Styl: profesjonalny, praktyczny, przydatny dla właścicieli firm MŚP.`,
+      prompt: promptArtykulu({
+        temat: topic,
+        fraza: targetKeyword,
+        intencja: 'nieokreślona, wynika z tematu',
+        standard: readFileSync(join(process.cwd(), 'docs/seo/editorial-standard.md'), 'utf8'),
+        istniejace,
+        uslugi: slugiUslug,
+        data: new Date().toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }),
+      }),
     })
+
+    const bramka: { braki: string[]; uwagi: string[] } = sprawdzArtykul(
+      { title: object.title, slug: object.slug, targetKeyword, content: object.content },
+      { istniejace, uslugi: slugiUslug }
+    )
 
     return {
       success: true,
@@ -296,6 +334,8 @@ Styl: profesjonalny, praktyczny, przydatny dla właścicieli firm MŚP.`,
         tags: object.tags,
         author: 'Zautomatyzujemy',
         model: EDITOR_MODEL,
+        braki: bramka.braki,
+        uwagi: bramka.uwagi,
       },
     }
   } catch (err) {

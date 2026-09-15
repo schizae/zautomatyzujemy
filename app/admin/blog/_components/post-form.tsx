@@ -27,8 +27,10 @@ export function PostForm({ post }: PostFormProps) {
   const [content, setContent] = useState(post?.content ?? '')
   const [tags, setTags] = useState(post?.tags.join(', ') ?? '')
   const [topic, setTopic] = useState('')
+  const [targetKeyword, setTargetKeyword] = useState(post?.target_keyword ?? '')
   const [isGenerating, startGenerating] = useTransition()
   const [generateError, setGenerateError] = useState('')
+  const [gate, setGate] = useState<{ braki: string[]; uwagi: string[] } | null>(null)
   // Raz oznaczony wpis zostaje oznaczony: redaktor może przepisać każde zdanie,
   // ale tekst i tak powstał maszynowo, a to jest deklaracja o pochodzeniu.
   const [aiGenerated, setAiGenerated] = useState(post?.ai_generated ?? false)
@@ -50,10 +52,11 @@ export function PostForm({ post }: PostFormProps) {
   }
 
   function handleGenerate() {
-    if (!topic.trim()) return
+    if (!topic.trim() || !targetKeyword.trim()) return
     setGenerateError('')
+    setGate(null)
     startGenerating(async () => {
-      const result = await generatePostAction(topic)
+      const result = await generatePostAction(topic, targetKeyword)
       if (!result.success) {
         setGenerateError(result.error)
         return
@@ -66,6 +69,7 @@ export function PostForm({ post }: PostFormProps) {
         setTags(result.data.tags.join(', '))
         setAiGenerated(true)
         setAiModel(result.data.model)
+        setGate({ braki: result.data.braki, uwagi: result.data.uwagi })
       }
     })
   }
@@ -77,18 +81,27 @@ export function PostForm({ post }: PostFormProps) {
         <h2 className="mb-3 font-headline text-sm font-bold text-primary">
           Generuj artykuł przez AI
         </h2>
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Input
             value={topic}
             onChange={e => setTopic(e.target.value)}
-            placeholder="Temat artykułu, np. Automatyzacja faktur z AI"
+            placeholder="Temat z docs/seo/plan-tresci.md"
+            aria-label="Temat artykułu"
             className="flex-1 bg-surface-container"
+            onKeyDown={e => e.key === 'Enter' && handleGenerate()}
+          />
+          <Input
+            value={targetKeyword}
+            onChange={e => setTargetKeyword(e.target.value)}
+            placeholder="Fraza docelowa, np. ocr faktury"
+            aria-label="Fraza docelowa"
+            className="bg-surface-container sm:w-64"
             onKeyDown={e => e.key === 'Enter' && handleGenerate()}
           />
           <Button
             type="button"
             onClick={handleGenerate}
-            disabled={isGenerating || !topic.trim()}
+            disabled={isGenerating || !topic.trim() || !targetKeyword.trim()}
             className="gap-2 shrink-0"
           >
             {isGenerating ? (
@@ -102,8 +115,28 @@ export function PostForm({ post }: PostFormProps) {
         {generateError && (
           <p className="mt-2 text-sm text-red-400">{generateError}</p>
         )}
+        {gate && (
+          <div className="mt-3 space-y-1 text-sm">
+            {gate.braki.length === 0 ? (
+              <p className="text-green-400">Bramka jakości przepuściła szkic.</p>
+            ) : (
+              <>
+                <p className="font-bold text-red-400">Bramka jakości — do poprawienia przed publikacją:</p>
+                <ul className="list-disc pl-5 text-red-400">
+                  {gate.braki.map(brak => <li key={brak}>{brak}</li>)}
+                </ul>
+              </>
+            )}
+            {gate.uwagi.length > 0 && (
+              <ul className="list-disc pl-5 text-primary/70">
+                {gate.uwagi.map(uwaga => <li key={uwaga}>{uwaga}</li>)}
+              </ul>
+            )}
+          </div>
+        )}
         <p className="mt-2 text-xs text-primary/70">
-          AI wypełni pola poniżej — możesz je potem edytować przed zapisem.
+          AI pisze według docs/seo/editorial-standard.md i wypełni pola poniżej. Wynik bramki
+          dotyczy szkicu w chwili wygenerowania, nie Twoich późniejszych poprawek.
         </p>
       </div>
 
@@ -116,6 +149,7 @@ export function PostForm({ post }: PostFormProps) {
         <input type="hidden" name="content" value={content} />
         <input type="hidden" name="tags" value={tags} />
         <input type="hidden" name="ai_model" value={aiModel} />
+        <input type="hidden" name="target_keyword" value={targetKeyword} />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-2">
