@@ -7,6 +7,7 @@
 
 import { readFileSync } from 'node:fs'
 import { sprawdzArtykul } from '../../scripts/seo/quality-gate.mjs'
+import { promptArtykulu } from '../../scripts/seo/prompt-artykulu.mjs'
 
 const { GOOGLE_API_KEY, IMGBB_API_KEY, WEBHOOK_SECRET, SITE_URL } = process.env
 
@@ -152,47 +153,15 @@ async function generateArticle(temat, existingTopics, serviceSlugs) {
   const isoDate = today.toISOString().split('T')[0]
   const dateStr = today.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
 
-  const istniejaceArtykuly = existingTopics
-    .slice(0, 40)
-    .map(t => `- /blog/${t.slug} — ${t.title}`)
-    .join('\n')
-
-  const dostepneUslugi = serviceSlugs.map(s => `- /uslugi/${s}`).join('\n')
-
-  const prompt = `Jestes autorem bloga "Zautomatyzujemy.pl" — portalu o AI i automatyzacji dla polskich firm (5-100 pracownikow). Autorem jest Norbert Chojnacki, inzynier informatyki, ktory te wdrozenia robi osobiscie.
-
-Aktualna data: ${dateStr}
-
-TEMAT JEST JUZ WYBRANY. Nie zmieniaj go i nie proponuj innego.
-- Temat: ${temat.temat}
-- Fraza docelowa: ${temat.fraza}
-- Intencja czytelnika: ${temat.intencja}
-
-STANDARD PISARSKI — obowiazuje w calosci, to nie sa sugestie:
-
-${STANDARD}
-
-ISTNIEJACE ARTYKULY (linkuj wylacznie do tych adresow):
-${istniejaceArtykuly || '(brak)'}
-
-DOSTEPNE STRONY USLUGOWE (linkuj wylacznie do tych adresow):
-${dostepneUslugi || '(brak)'}
-
-WYMAGANIA TWARDE, ktorych naruszenie odrzuca artykul automatycznie:
-1. Fraza "${temat.fraza}" musi wystapic doslownie w tytule oraz w pierwszym akapicie tresci.
-2. Pierwszy akapit odpowiada na pytanie zawarte we frazie w dwoch zdaniach, przed jakimkolwiek wstepem.
-3. Co najmniej dwa odnosniki do zrodel zewnetrznych w formacie Markdown, do stron, ktore naprawde istnieja.
-4. Co najmniej jeden odnosnik do istniejacego artykulu z listy powyzej.
-5. Co najmniej dwa odnosniki do stron uslugowych z listy powyzej, o ile pasuja do tematu.
-6. W drugiej polowie tekstu, po sekcji merytorycznej, wstaw dokladnie ten znacznik w osobnej linii:
-<!-- WSTAWKA -->
-   To miejsce na akapit wlasnego doswiadczenia, ktory dopisze autor. Nie wymyslaj tego akapitu.
-7. Zadnego zwrotu z czarnej listy ze standardu pisarskiego.
-8. Zadnej statystyki bez odnosnika do zrodla.
-
-WYMAGANIA DOTYCZACE SLUGA:
-- Tylko male litery a-z (bez polskich znakow), cyfry 0-9, myslniki
-- Slug ma zawierac fraze docelowa w formie bez polskich znakow
+  const prompt = `${promptArtykulu({
+    temat: temat.temat,
+    fraza: temat.fraza,
+    intencja: temat.intencja,
+    standard: STANDARD,
+    istniejace: existingTopics,
+    uslugi: serviceSlugs,
+    data: dateStr,
+  })}
 
 Odpowiedz WYLACZNIE w formacie JSON (bez markdown code blocks, bez komentarzy):
 {

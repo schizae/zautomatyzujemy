@@ -24,6 +24,8 @@ export interface Post {
   ai_model: string | null
   /** Kiedy zatwierdzono redakcyjnie — dowód kontroli redakcyjnej */
   reviewed_at: string | null
+  /** Fraza z mapy fraz, pod którą artykuł jest pisany (docs/seo/keyword-map.md) */
+  target_keyword: string | null
 }
 
 /** Dane potrzebne do wylistowania artykułów (bez pełnego content) */

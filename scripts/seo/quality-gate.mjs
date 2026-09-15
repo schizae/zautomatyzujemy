@@ -25,7 +25,7 @@ const CZARNA_LISTA = [
   'rewolucj',
 ]
 
-const ZNACZNIK_WSTAWKI = '<!-- WSTAWKA -->'
+export const ZNACZNIK_WSTAWKI = '<!-- WSTAWKA -->'
 const MIN_ZRODEL = 2
 const ZALECANE_LINKI_USLUGOWE = 2
 
