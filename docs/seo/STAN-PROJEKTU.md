@@ -16,6 +16,7 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 | `docs/seo/przeglad-artykulow.md` | decyzje o istniejących artykułach |
 | `docs/seo/baseline.md` | punkt odniesienia sprzed zmian |
 | `docs/zadania-wlasciciela.md` | co należy do właściciela |
+| `docs/seo/social-topics.md` | tematy, głos i format postów, czyta automat postów |
 | `data/seo/wolumeny.csv` | 15 385 fraz z wolumenami, źródło tematów po wyczerpaniu planu |
 
 ---
@@ -28,7 +29,7 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
 | 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
 | 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **zrobione 15 września**, na produkcji |
-| 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
+| 4. Automat propozycji postów na LinkedIn i Facebooka | scalony 15 września, PR 27, workflow `social-posts.yml`, poniedziałki | **zrobiony** |
 
 ### Plan trzeci — co zostało
 
