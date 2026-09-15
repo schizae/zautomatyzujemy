@@ -885,7 +885,7 @@ Następnie dla każdego zmodyfikowanego artykułu otwórz stronę i kliknij doda
 Alternatywnie sprawdź skryptem, czy każdy adres `/uslugi/...` z treści artykułów
 odpowiada slugowi w tabeli `services`.
 
-- [ ] **Krok 3: Odśwież bazę wiedzy chatbota**
+- [x] **Krok 3: Odśwież bazę wiedzy chatbota**
 
 Uruchom ręcznie workflow `kb-refresh.yml`, bo treść artykułów zasila embeddingi.
 
