@@ -1,4 +1,4 @@
-# Stan projektu widoczności — punkt kontrolny 11 września 2026
+# Stan projektu widoczności — punkt kontrolny 15 września 2026
 
 Dokument do wznowienia pracy bez historii rozmowy. Opisuje, co zrobione, co czeka
 i czego nie podważać, bo zostało rozstrzygnięte na danych.
@@ -26,10 +26,16 @@ i czego nie podważać, bo zostało rozstrzygnięte na danych.
 |---|---|---|
 | 1. Atrybucja leadów i kanoniczny host | scalony, na produkcji | **zrobiony** |
 | 2. Strony usługowe, kontakt, o mnie | scalony, PR 21 | **zrobiony** |
-| 3. Silnik treści bloga | PR 22, dziesięć zadań z dziesięciu, zostało domknięcie | **w toku** |
+| 3. Silnik treści bloga | scalony 15 września, PR 22 | **zrobiony**, poza kryterium trzech szkiców |
+| 3a. Odświeżenie czterech artykułów pod frazy | gałąź `feat/odswiezenie-artykulow` | **w toku**, n8n czeka na wstawkę |
 | 4. Automat propozycji postów na LinkedIn i Facebooka | plan nienapisany | **do zrobienia** |
 
-### Co zostało w planie trzecim
+### Plan trzeci — co zostało
+
+Kryterium domknięcia: trzy kolejne szkice generatora przechodzą bramkę bez ręcznych poprawek.
+Sprawdza się w piątkowych biegach `blog-auto.yml`. Do tego czasu tryb redakcyjny.
+
+### Plan trzeci — historia zadań 9 i 10
 
 **Zadanie 9 — zastosowanie decyzji o artykułach.** Zrobione. Migracja `020_blog_przeglad.sql`
 uruchomiona i sprawdzona na produkcji: dziesięć artykułów w indeksie, dwadzieścia jeden wyłączonych,
@@ -117,12 +123,33 @@ Poprzeczka na pierwszy rok: dwadzieścia kilka fraz w pierwszej dziesiątce i ki
 
 ## Zadania właściciela, stan otwarty
 
-1. Scalić PR 22 przed 21 września, inaczej stary workflow opublikuje kolejny przegląd nowości.
+1. Dopisać akapit wstawki do `docs/seo/odswiezenia/automatyzacje-n8n.md` i zatwierdzić tekst.
 2. Podać widełki cenowe dla trzech usług: automatyzacja procesów, agenci AI, obieg dokumentów.
    Szkolenia mają już cenę: od 2000 zł netto.
 3. Po wdrożeniu planu drugiego zgłosić dziesięć nowych adresów do indeksacji w Search Console.
 4. Zdobyć trzy realne wdrożenia z prawem do opisu albo uruchomić wariant zapasowy
    z publicznym repozytorium przepływu n8n.
+
+## Odświeżanie artykułów
+
+Szkic leży w `docs/seo/odswiezenia/`, z metadanymi w nagłówku. Migrację składa
+`node --env-file=.env.local scripts/seo/migracja-odswiezenia.mjs <szkic> <migracja>`:
+przepuszcza tekst przez bramkę, odmawia przy znaczniku wstawki i podmienia treść tylko wtedy,
+gdy w bazie stoi wersja z chwili składania.
+
+| Artykuł | Fraza | Stan |
+|---|---|---|
+| ai-i-integracje-dla-msp-optymalizacja-operacji-z-make-n8n | automatyzacje n8n (40) | szkic gotowy, czeka na wstawkę |
+| ai-jako-drugi-mozg-firmy-zarzadzanie-wiedza-msp | baza wiedzy ai | do zrobienia |
+| automatyzacja-dokumentow-faktur-ai-msp | automatyzacja obiegu dokumentów | do zrobienia |
+| automatyzacja-obslugi-klienta-ai-rag-msp | automatyzacja obsługi klienta | do zrobienia |
+
+**Fraza „automatyzacja ai n8n” z przeglądu była błędem.** Nie ma jej w danych z Senuto,
+pochodziła z podpowiedzi Google i w mapie fraz jest przypisana stronie usługowej.
+Przed odświeżeniem kolejnych artykułów sprawdź ich frazę w `data/seo/wolumeny.csv`.
+
+**Znacznik wstawki psuje kompilację MDX.** Artykuł z `<!-- WSTAWKA -->` w bazie wysypie stronę,
+więc znacznik nie może trafić do migracji w żadnym trybie.
 
 ## Pułapki techniczne
 
