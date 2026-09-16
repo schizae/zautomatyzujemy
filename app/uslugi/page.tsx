@@ -11,7 +11,10 @@ const SITE_URL =
   process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
 
 // Read current service slugs instead of retaining build-time Supabase responses.
-export const dynamic = 'force-dynamic'
+// Revalidation keeps the page static: 'force-dynamic' renders it on every request, and the
+// streamed markup then carries two copies of the list for a moment after load, where clicks
+// land on the copy React is about to discard and navigation never happens.
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Automatyzacja procesów i wdrożenia AI dla firm',
@@ -90,7 +93,7 @@ export default async function ServicesPage() {
               <Link
                 key={service.slug}
                 href={`/uslugi/${service.slug}`}
-                className="group relative rounded-xl transition-transform duration-300 ease-out focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f5f2ed] motion-safe:focus-visible:-translate-y-1 motion-safe:active:scale-[0.99] motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:z-10 [@media(hover:hover)_and_(pointer:fine)]:motion-safe:hover:-translate-y-1 [@media(hover:hover)_and_(pointer:fine)]:motion-safe:hover:scale-[1.02]"
+                className="group relative rounded-xl transition-transform duration-300 ease-out focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c93820] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f5f2ed] motion-safe:focus-visible:-translate-y-1 motion-reduce:transition-none [@media(hover:hover)_and_(pointer:fine)]:hover:z-10 [@media(hover:hover)_and_(pointer:fine)]:motion-safe:hover:-translate-y-1 [@media(hover:hover)_and_(pointer:fine)]:motion-safe:hover:scale-[1.02]"
               >
                 <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#d8d4cc] bg-[#faf8f4] p-7 transition-[background-color,border-color,box-shadow] duration-300 group-hover:border-[#c93820]/50 group-hover:bg-[#fffaf5] group-hover:shadow-xl group-hover:shadow-[#583729]/10 group-focus-visible:border-[#c93820]/50 group-focus-visible:bg-[#fffaf5] motion-reduce:transition-none sm:p-8">
                   <div className="mb-8 flex items-center justify-between" aria-hidden="true">
