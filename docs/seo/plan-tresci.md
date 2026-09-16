@@ -83,6 +83,33 @@ na tej witrynie. To jest dokładnie ta wstawka autorska, której nie napisze ża
 
 ---
 
+## Filar 5: voicebot — mały popyt, ale kupujący
+
+Dopisany 16 września 2026, po decyzji właściciela, że voicebot ma być usługą, nie tylko tematem.
+Strona `/uslugi/voicebot-asystent-glosowy` powstała tego samego dnia i oba artykuły do niej linkują.
+
+Popyt: `voicebot` 720, `voicebot co to` 110, `voicebot cena` 40, `bot głosowy` 70.
+Klaster jest mały i obsadzony przez dostawców platform abonamentowych, więc to nie jest
+studnia ruchu, tylko wsparcie sprzedaży dla nowej usługi.
+
+| # | Temat | Fraza główna | Wolumen | Intencja |
+|---|---|---|---|---|
+| 13 | Voicebot dla firm: co to jest i kiedy ma sens | voicebot co to | 110 | informacyjna |
+| 14 | Ile kosztuje voicebot | voicebot cena | 40 | zakupowa |
+
+**Uwaga o nazewnictwie.** Eksport Senuto z 16 września (47 fraz) pokazał, że klaster
+`asystent głosowy` — 480 wyszukiwań, po nim `asystent głosowy google` 390 i `asystent głosowy
+samsung` 110 — jest konsumencki i serwisowy. Największą podgrupę tworzy „jak wyłączyć
+asystenta głosowego”, a CPC prawie wszędzie wynosi zero, czyli nikt nie licytuje, bo nie ma
+z tego sprzedaży. Wyjątek to `bot głosowy`: 70 wyszukiwań przy CPC 16,74 zł, najwyższym
+w całym zestawie.
+
+Dlatego „asystent głosowy AI” zostaje w nazwie usługi i w treści, bo tak mówi polski odbiorca,
+ale tytuły i frazy główne stoją na `voicebocie`. Pisanie pod `asystent głosowy` ściągnęłoby
+ludzi szukających, jak wyciszyć telewizor.
+
+---
+
 ## Czego świadomie nie ma na liście
 
 **Chatbotów jako tematu głównego.** Fraza `chatbot` ma 9 900 wyszukiwań, ale obok niej stoi
