@@ -1,6 +1,10 @@
 import type { MetadataRoute } from 'next'
 import { createServiceClient } from '@/lib/supabase/server'
 
+// Bez tego mapa strony powstaje raz, w czasie builda. Wpisy i usługi dodane do bazy później
+// nie trafiają do niej aż do kolejnego wdrożenia, więc wyszukiwarki ich nie widzą.
+export const revalidate = 3600
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
     process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://www.zautomatyzujemy.pl'
