@@ -130,7 +130,7 @@ function WebsiteScene() {
 function ComplianceScene() {
   const steps = ['Spis używanych narzędzi AI', 'Ocena sposobu wykorzystania', 'Dokumentacja i odpowiedzialność']
   return <div className="mx-auto max-w-md">
-    <div className="flex items-center gap-4"><span className="flex size-16 shrink-0 items-center justify-center rounded-full border border-[#ffb49f]/30 text-[#ffb49f]"><ShieldCheck className="size-8" strokeWidth={1.25} /></span><div><p className="font-editorial text-3xl">AI pod kontrolą.</p><p className="mt-2 text-xs text-[#c5c4bd]">Od narzędzi do planu działań</p></div></div>
+    <div className="flex items-center gap-4"><span className="flex size-16 shrink-0 items-center justify-center rounded-full border border-[#ffb49f]/30 text-[#ffb49f]"><ShieldCheck className="size-8" strokeWidth={1.25} /></span><div className="min-w-0"><p className="font-editorial text-2xl sm:text-3xl">AI pod kontrolą.</p><p className="mt-2 text-xs text-[#c5c4bd]">Od narzędzi do planu działań</p></div></div>
     <div className="mt-7 rounded-lg bg-[#faf8f4] p-5 text-[#151719] shadow-xl">{steps.map((step, index) => <ServiceMotion key={step} delay={index * 0.8} className="flex items-center gap-3 border-b border-[#d8d4cc] py-4 first:pt-0 last:border-0 last:pb-0"><Check className="size-4 shrink-0 text-[#c93820]" /><span className="text-sm">{step}</span></ServiceMotion>)}</div>
     <p className="mt-5 text-xs leading-relaxed text-[#c5c4bd]">Zakres działań wynika z tego, jak Twoja firma korzysta z AI.</p>
   </div>
