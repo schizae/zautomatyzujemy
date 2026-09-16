@@ -114,8 +114,9 @@ export default async function ServicePage({ params }: PageProps) {
               ]}
             />
           </div>
-          <div className="grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
-            <div>
+          {/* Druga kolumna tylko przy ilustracji: usługa bez sceny zostawiałaby pustą połowę hero. */}
+          <div className="grid items-center gap-10 lg:gap-16 lg:has-[figure]:grid-cols-[1fr_1fr]">
+            <div className="max-w-3xl">
               <p className="mb-5 text-xs font-bold uppercase tracking-widest text-[#ffb49f]">Usługa</p>
               <h1 className="font-editorial text-4xl font-normal leading-[1.08] tracking-tight text-[#f5f2ed] md:text-6xl">
                 {service.title}
