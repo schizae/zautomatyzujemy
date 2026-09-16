@@ -1,0 +1,64 @@
+async page => {
+  const context = await page.context().browser().newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1})
+  const mobile = await context.newPage()
+  // Keep the emulated tab foregrounded so browser background throttling cannot stall navigation.
+  await mobile.bringToFront()
+  const errors = []
+  const checked = []
+  mobile.on('pageerror', error => errors.push(error.message))
+  try {
+    for (const width of [360,390,768]) {
+      await mobile.setViewportSize({width,height:844})
+      await mobile.goto('http://localhost:3001/uslugi')
+      const cards = mobile.locator('main a[href^="/uslugi/"]')
+      await cards.first().waitFor()
+      const routes = await cards.evaluateAll(links => links.map(link => link.getAttribute('href')))
+      if (routes.length !== 7 || routes.some(route => route.includes('undefined'))) throw new Error('Missing service links')
+      if (await mobile.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw new Error('Index overflow')
+      for (const [index,route] of routes.entries()) {
+        await mobile.goto('http://localhost:3001/uslugi')
+        const card = mobile.locator(`main a[href="${route}"]`)
+        await card.waitFor()
+        const consent = mobile.getByRole('button',{name:'Rozumiem',exact:true})
+        if (await consent.isVisible()) await consent.tap()
+        await card.scrollIntoViewIfNeeded()
+        // The site uses smooth scrolling; finish it before synthesizing a touch.
+        await mobile.waitForTimeout(1000)
+        // Roughly one synthesized tap in eight produces no navigation, at the same rate on main,
+        // so it is an artifact of the automation rather than a dead card. This run taps 21 times,
+        // which without retries almost never finishes. Reload the list and tap again, up to three
+        // times; a card that is genuinely dead still fails all three.
+        let arrived = false
+        for (let attempt = 0; attempt < 3 && !arrived; attempt++) {
+          if (attempt > 0) {
+            await mobile.goto('http://localhost:3001/uslugi')
+            await card.waitFor()
+            await card.scrollIntoViewIfNeeded()
+            await mobile.waitForTimeout(1000)
+          }
+          await card.tap()
+          try {
+            await mobile.waitForFunction(route => location.pathname === route, route, {timeout:6000})
+            arrived = true
+          } catch {}
+        }
+        if (!arrived) throw new Error(`No navigation after three taps: ${route}`)
+        await mobile.locator('main figure').waitFor()
+        if (await mobile.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw new Error(`Overflow at ${width}: ${route}`)
+        const clipped = await mobile.locator('figure p').evaluateAll(elements => elements.some(el => el.scrollWidth > el.clientWidth + 1))
+        if (clipped) throw new Error(`Clipped illustration text: ${route}`)
+        for (const img of await mobile.locator('figure img').all()) await img.evaluate(el => el.decode())
+        if (width === 390) await mobile.locator('figure').screenshot({path:`.playwright-cli/mobile-art-${index}.png`})
+        checked.push({width,route})
+      }
+    }
+    await mobile.emulateMedia({reducedMotion:'reduce'})
+    await mobile.goto('http://localhost:3001/uslugi/automatyzacja-procesow-biznesowych')
+    await mobile.locator('figure').scrollIntoViewIfNeeded()
+    await mobile.waitForTimeout(1100)
+    const moving = await mobile.locator('figure [style]').evaluateAll(elements => elements.some(el => !['none','matrix(1, 0, 0, 1, 0, 0)'].includes(getComputedStyle(el).transform)))
+    if (moving) throw new Error('Reduced motion preference ignored')
+    if (errors.length) throw new Error(JSON.stringify(errors))
+    return {status:'PASS',checked,runtimeErrors:errors,reducedMotion:'PASS'}
+  } finally { await context.close() }
+}

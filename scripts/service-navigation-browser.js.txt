@@ -1,0 +1,60 @@
+async page => {
+  const assert = (condition, message) => { if (!condition) throw new Error(message) }
+  // The site scrolls smoothly, so a click synthesized mid-scroll lands next to the card
+  // and the navigation never happens. Wait for the card to stop moving first.
+  const settle = async locator => {
+    let previous = null
+    let stable = 0
+    while (stable < 3) {
+      const box = await locator.boundingBox()
+      stable = previous && Math.abs(box.y - previous.y) < 1 ? stable + 1 : 0
+      previous = box
+      await page.waitForTimeout(100)
+    }
+  }
+  await page.goto('http://localhost:3001/uslugi')
+  const cards = page.locator('main a[href^="/uslugi/"]')
+  // The list renders on demand, so counting before the first card exists reports zero
+  // and an empty list slips past every assertion below.
+  await cards.first().waitFor()
+  const routes = await cards.evaluateAll(links => links.map(link => link.getAttribute('href')))
+  assert(routes.every(route => route && !route.includes('undefined') && !route.includes('null')), 'Service cards must have real slugs, including in the production build')
+  assert(routes.length === 7 && new Set(routes).size === 7, 'All seven services must have unique links')
+  const visited = []
+  for (const route of routes) {
+    await page.goto('http://localhost:3001/uslugi')
+    const consent = page.getByRole('button', {name:'Rozumiem',exact:true})
+    if (await consent.isVisible()) await consent.click()
+    const card = page.locator(`main a[href="${route}"]`)
+    const title = await card.locator('h2').innerText()
+    await card.scrollIntoViewIfNeeded()
+    await settle(card)
+    // Roughly one synthesized click in eight leaves no navigation at all. Measured at 4/30 here
+    // and 4/30 on main, so it is an artifact of the automation, not a broken card. Clicking the
+    // same stale page again does not help; reloading the list and clicking again does.
+    let arrived = false
+    for (let attempt = 0; attempt < 3 && !arrived; attempt++) {
+      if (attempt > 0) {
+        await page.goto('http://localhost:3001/uslugi')
+        await card.waitFor()
+        await card.scrollIntoViewIfNeeded()
+        await settle(card)
+      }
+      await card.click()
+      try {
+        await page.waitForURL(`**${route}`, {timeout: 6000})
+        arrived = true
+      } catch {}
+    }
+    assert(arrived, `No navigation after three clicks on ${route}`)
+    await page.locator('main figure').waitFor()
+    assert(await page.locator('h1').innerText() === title, `Wrong service after clicking ${route}`)
+    assert(await page.locator('main figure').count() === 1, `Missing illustration for ${route}`)
+    for (const picture of await page.locator('main figure img').all()) {
+      await picture.evaluate(img => img.decode())
+      assert(await picture.evaluate(img => img.naturalWidth > 0), `Broken image for ${route}`)
+    }
+    visited.push(route)
+  }
+  return {status:'PASS', clickedServices:visited}
+}
