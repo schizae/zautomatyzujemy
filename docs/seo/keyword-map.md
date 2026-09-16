@@ -60,6 +60,21 @@ Klaster zdominowany przez dostawców platform abonamentowych.
 abonament od 900 do 7 000 zł miesięcznie, wdrożenie od 1 500 zł w górę, czas wdrożenia jeden
 do dwóch tygodni.
 
+**Aktualizacja 16 września 2026.** Właściciel zdecydował, że voicebot jest usługą, a nie tylko
+tematem. Strona `/uslugi/voicebot-asystent-glosowy` już stoi, a tematy weszły do planu treści
+jako filar piąty. Werdykt SEO powyżej zostaje w mocy: usługa powstała z powodów sprzedażowych,
+a nie dlatego, że liczymy na pozycje w tym klastrze.
+
+Eksport Senuto z tego dnia (47 fraz wokół `asystent głosowy`) dokłada ważne rozróżnienie.
+Sam `asystent głosowy` ma 480 wyszukiwań, ale klaster jest konsumencki: `asystent głosowy
+google` 390, `asystent głosowy samsung` 110, a największą podgrupę tworzą warianty „jak
+wyłączyć asystenta głosowego”. CPC prawie wszędzie zero. Jedyna fraza z intencją zakupową to
+`bot głosowy`: 70 wyszukiwań przy CPC 16,74 zł, najwyższym w całym zestawie.
+
+Wniosek: „asystent głosowy AI” używamy w nazwie usługi i w treści, bo to zrozumiałe po polsku,
+ale nie pozycjonujemy pod tę frazę. Tytuły stoją na `voicebocie`, `bot głosowy` wplatamy
+w treść.
+
 ### 1.5 Zgodność z AI Act
 
 Zajmują wyniki: ey.com (dwie strony), kancelarie prawne (lome.legal, ipsolegal.pl),
