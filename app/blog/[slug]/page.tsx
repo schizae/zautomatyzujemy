@@ -162,7 +162,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-2 mb-4">
               {post.tags.map(tag => (
                 <span key={tag} className="text-xs font-medium text-[#ffaf98]">
-                  {tag.replace(/-/g, ' ')}
+                  {tag}
                 </span>
               ))}
             </div>
