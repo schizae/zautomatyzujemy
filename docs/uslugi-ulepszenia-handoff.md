@@ -26,8 +26,14 @@ voicebota, treści wgrywane do bazy od razu.
 
 **Zostało:**
 
-- **Punkty 3 i 4** — demo Klary na stronach agentów i voicebota oraz kalkulator oszczędności.
-  Teksty do napisania, komponenty należą do Codeksa.
+- **Punkty 3 i 4** — teksty gotowe (sekcje 3 i 4 niżej). Komponenty należą do Codeksa:
+  blok demo Klary na stronach agentów i voicebota oraz ponowne użycie istniejącego
+  `RoiCalculator` na stronach audytu i automatyzacji procesów. Nieprawdziwe zdania
+  „Klara działa na tej stronie” poprawione w bazie 16 września.
+- **Przebudowa bazy wiedzy Klary** (`npm run db:generate`) — nie zna usługi voicebota
+  ani FAQ z 16 września. Warunek przed wystawieniem demo.
+- **Decyzja właściciela: 70% w kalkulatorze** — na stronach usług rekomenduję pokazywać
+  koszt czynności dzisiaj zamiast odzyskanej wartości (uzasadnienie w sekcji 4).
 - **Ilustracja dla voicebota** — `service-artwork.tsx` nie ma sceny dla nowego sluga, więc
   strona wyświetla się bez grafiki, a karta z ikoną domyślną. Zadanie Codeksa.
 - **Punkt 1, wersja docelowa** — „dla kogo” jako osobny wiersz karty zamiast drugiego zdania
@@ -221,37 +227,159 @@ pytań, a nie parsowanie treści.
 ## 3. Demo Klary zamiast makiety
 
 Konkurencja pokazuje statyczny zrzut rozmowy z agentem na wymyślonych danych.
-My mamy działającego asystenta na Vapi, z którym można porozmawiać naprawdę.
+My mamy działającego asystenta, z którym można porozmawiać naprawdę.
 
-- **Agenci AI i chatboty** — akapit w `## Jak to robię`: zaproszenie do rozmowy z Klarą
-  jako dowód, że narzędzie działa, plus zdanie, że u klienta zna jego ofertę, a nie moją.
-- **Voicebot i asystent głosowy AI** — to samo w wersji głosowej, mocniejsze, bo Klara
-  jest dokładnie tą usługą.
+### Stan faktyczny, sprawdzony 16 września 2026
 
-Treść piszę ja. Przycisk uruchamiający rozmowę na stronie usługi to zadanie dla Codeksa
-— dziś Klara stoi na stronie głównej.
+- `KlaraProvider` jest globalny (`app/_components/providers.tsx`), więc `useKlara()` działa
+  na każdej stronie: `voice.start()`, `voice.stop()`, `voice.status`, `voiceAvailable`,
+  `openChatDraft(text)`.
+- **`ChatWidget` jest osadzony tylko w `app/page.tsx`.** Przycisk „Rozpocznij rozmowę” żyje
+  w `hero-section.tsx`. Na stronach usług nie ma dziś żadnego sposobu, żeby uruchomić Klarę
+  — sprawdzone na produkcji, w HTML obu stron brak „Otwórz czat” i „Rozpocznij rozmowę”.
+- Treść obu usług twierdziła, że Klara działa „na tej stronie”. **Poprawione tego samego
+  dnia w bazie** na odesłanie do strony głównej. Wersje docelowe są niżej.
 
-**Zależność:** w [docs/stan-prac-handoff.md](stan-prac-handoff.md) wisi otwarte zadanie
-właściciela — sprawdzenie w panelu Vapi, czy Klara przy rozmowie głosowej informuje,
-że jest AI. Czat tekstowy ten obowiązek spełnia. Zanim zaczniemy reklamować voicebota
-jako zgodnego z AI Act, nasz własny musi być zgodny.
+### Gdzie i w jakiej kolejności
+
+Blok między treścią usługi (`<article>`) a `ServiceCta`, tylko na dwóch slugach:
+`agenci-ai-i-chatboty` i `voicebot-asystent-glosowy`. To moment „sprawdź, zanim napiszesz”.
+Wewnątrz MDX się go nie wstawi, bo `safeMdxComponents` nie przepuszcza komponentów.
+
+Na stronie agentów warunkiem jest `ChatWidget` na tej stronie — `openChatDraft` otwiera
+panel, którego tam dziś nie ma.
+
+### Teksty — agenci AI i chatboty (czat)
+
+| Element | Tekst |
+|---|---|
+| Etykieta nad nagłówkiem | Sprawdź, zanim zapytasz |
+| Nagłówek | Napisz do Klary |
+| Opis | Klara to asystent AI tej witryny, zbudowany tak, jak buduję agentów dla firm: odpowiada na podstawie mojej oferty i mówi wprost, gdy czegoś nie wie. Zadaj jej pytanie, na które sam chciałbyś odpowiadać klientom. |
+| Przycisk główny | Otwórz czat z Klarą |
+| Podpowiedzi — każda otwiera czat ze szkicem przez `openChatDraft` | Ile trwa wdrożenie agenta AI? · Czy agent może sprawdzać dane w moim CRM? · Co robisz, gdy nie znasz odpowiedzi? |
+| Mikrotekst pod przyciskiem | Klara to AI, nie człowiek. Gdy czegoś nie wie, zaproponuje kontakt ze mną. |
+
+### Teksty — voicebot i asystent głosowy AI (głos)
+
+| Element | Tekst |
+|---|---|
+| Etykieta nad nagłówkiem | Posłuchaj, zanim zdecydujesz |
+| Nagłówek | Porozmawiaj z Klarą głosem |
+| Opis | Klara to mój własny asystent głosowy. Rozmawiasz z nią przez mikrofon w przeglądarce, nie przez telefon, ale mechanizm jest ten sam: rozpoznanie mowy, odpowiedź i synteza głosu w trakcie rozmowy. |
+| Co warto sprawdzić — lista, nie przyciski | Zapytaj, czym się zajmuję, i przerwij w połowie odpowiedzi. · Zapytaj o coś spoza oferty i posłuchaj, co zrobi. |
+| Przycisk — spoczynek | Rozpocznij rozmowę |
+| Przycisk — łączenie | Łączę z Klarą… |
+| Przycisk — w trakcie | Zakończ rozmowę |
+| Mikrotekst przed startem | Przeglądarka poprosi o dostęp do mikrofonu. Klara to AI, nie człowiek. |
+| Status w trakcie | Klara słucha · Klara mówi · Klara przygotowuje odpowiedź |
+| Brak zgody na mikrofon | Zezwól na mikrofon w ustawieniach przeglądarki albo napisz do Klary. |
+| Błąd połączenia | Nie udało się połączyć. Spróbuj ponownie albo napisz do Klary. |
+| Głos niedostępny (`!voiceAvailable`) | Rozmowa głosowa jest chwilowo niedostępna. |
+| Przycisk zapasowy przy błędzie | Napisz do Klary |
+
+Statusy i komunikaty błędów są celowo te same co w `hero-section.tsx`, żeby Klara nie
+mówiła różnymi głosami w dwóch miejscach witryny. Różnica jest jedna: przy błędzie zamiast
+ogólnego „napisz” wskazuję czat, bo na tej stronie będzie obok.
+
+### Warunki, zanim demo trafi na produkcję
+
+1. **Komunikat o AI w rozmowie głosowej.** Otwarte zadanie właściciela z
+   [stan-prac-handoff.md](stan-prac-handoff.md): sprawdzić w panelu Vapi, czy Klara na
+   początku rozmowy mówi, że jest AI. Strona voicebota obiecuje to klientom, więc nasza
+   Klara musi to robić, zanim wystawimy ją jako dowód.
+2. **Baza wiedzy Klary nie zna jeszcze dzisiejszych treści.** Ostatnia przebudowa
+   (`npm run db:generate`) była 15 września. Nie ma w niej usługi voicebota ani FAQ
+   dopisanych 16 września; o głosie baza ma 3 fragmenty na 506. Przed wystawieniem demo
+   trzeba ją przebudować — skrypt kasuje stare fragmenty dopiero po udanym zapisie nowych.
+3. **Każdą podpowiedź sprawdzić w Klarze dwoma sformułowaniami**, w tym naciskającym.
+   Baza pokrywa czas wdrożenia, CRM i przyznawanie się do niewiedzy, ale jedna udana
+   odpowiedź niczego nie dowodzi — patrz notatka o bocie, który zmyślał wdrożenia.
+
+### Po wdrożeniu demo — podmiana zdań w bazie (zadanie Claude'a)
+
+| Usługa | Dziś, tymczasowo | Docelowo |
+|---|---|---|
+| Agenci AI | Ten sam mechanizm działa w Klarze, asystencie AI tej witryny. Możesz ją sprawdzić na [stronie głównej](/): napisać do niej albo porozmawiać głosem. | Ten sam mechanizm działa w Klarze, asystencie AI tej witryny. Możesz ją sprawdzić niżej na tej stronie. |
+| Voicebot | Mój własny asystent głosowy, Klara, działa na [stronie głównej](/). Możesz z nią porozmawiać przez mikrofon w przeglądarce, zanim zdecydujesz, czy chcesz takiego u siebie. | Mój własny asystent głosowy, Klara, działa niżej na tej stronie. Możesz z nią porozmawiać, zanim zdecydujesz, czy chcesz takiego u siebie. |
 
 ---
 
-## 4. Kalkulator oszczędności
+## 4. Kalkulator na stronach usług
 
-Zamiast tabeli z obietnicą: trzy pola, które wypełnia klient — ile godzin tygodniowo
-zajmuje czynność, ile osób ją wykonuje, jaka jest stawka godzinowa. Wynik miesięczny
-i roczny, plus zdanie, że to koszt czynności dzisiaj, a nie obiecana oszczędność,
-bo automatyzacja zwykle zdejmuje część, nie całość.
+### Stan faktyczny — kalkulator już istnieje
 
-Gdzie: **audyt i doradztwo AI** (naturalne wejście w rozmowę) oraz **automatyzacja
-procesów biznesowych**. Na pozostałych stronach nie — powtórzony w siedmiu miejscach
+`components/marketing/roi-calculator.tsx` stoi na stronie głównej w sekcji „02 / Policz
+potencjał”. Ma dokładnie te pola, które planowałem: czas zadania, częstotliwość
+(dziennie, tygodniowo, miesięcznie), koszt godziny, liczba osób. **Nowy komponent byłby
+duplikatem** — do ponownego użycia jest ten.
+
+Na stronę usługi nie przenosi się jednak bez zmian, bo ma zaszyte elementy strony głównej:
+
+- nagłówek „Ile kosztuje Twoja rutyna?”, numer sekcji „02 /” i ilustrację z domino,
+- przycisk „Omówmy ten proces ↗” prowadzi do `/#kontakt`, czyli wyrzuca ze strony usługi,
+  choć formularz `ServiceCta` stoi kilka ekranów niżej,
+- główny wynik to **„Szacowana wartość odzyskanego czasu” przy założeniu 70% redukcji**.
+
+Jak go sparametryzować, decyduje Codeks. Poniżej teksty dla obu stron.
+
+### Rozbieżność do rozstrzygnięcia przez właściciela
+
+Na stronie audytu 70% kłóci się z obietnicą samej usługi: „uczciwa odpowiedź, co warto
+zautomatyzować, a co lepiej zostawić człowiekowi”. Kalkulator zakładający z góry, że 70%
+pracy zniknie, podważa to zdanie tuż nad nim.
+
+**Rekomendacja:** na stronach usług główny wynik to **koszt czynności dzisiaj** — czas
+i kwota miesięcznie i rocznie, bez odsetka. Ile z tego da się odzyskać, zostaje tematem
+rozmowy. Strona główna zostaje bez zmian. Teksty niżej są pisane pod tę rekomendację.
+
+### Gdzie
+
+Tylko `audyt-i-doradztwo-ai` i `automatyzacja-procesow-biznesowych`, między treścią
+(`<article>`) a `ServiceCta`. Na pozostałych stronach nie — powtórzony w siedmiu miejscach
 przestaje być narzędziem, a staje się ozdobą.
 
-Komponent to zadanie dla Codeksa. Ja przygotuję teksty pól, opis wyniku i zastrzeżenie.
-Bez zapisywania danych i bez bramki na e-mail: formularz kontaktowy stoi niżej na tej
-samej stronie.
+### Teksty wspólne
+
+Etykiety pól zostają **bez zmian** względem strony głównej: „Czas zadania”, „Częstotliwość”
+z przełącznikiem „dziennie / tygodniowo / miesięcznie”, „Koszt godziny”, „Liczba osób”.
+Ten sam komponent nie powinien pytać o to samo innymi słowami.
+
+| Element | Tekst |
+|---|---|
+| Wynik 1 — wartość | `{h}` h / miesiąc |
+| Wynik 1 — podpis | Czas, który ta czynność zajmuje dziś |
+| Wynik 2 — wartość | `{kwota}` zł / miesiąc |
+| Wynik 2 — podpis | Koszt tej pracy dziś |
+| Wynik roczny | Rocznie: `{kwota}` zł |
+| Zastrzeżenie | Wynik orientacyjny: 22 dni robocze lub 4,33 tygodnia w miesiącu. To koszt czynności, nie obiecana oszczędność. Nie zawiera kosztów wdrożenia ani utrzymania. |
+
+Czytnik ekranu: etykiety `AnimatedValue` do podmiany zgodnie z podpisami, np.
+„Czas tej czynności miesięcznie w godzinach”, „Koszt tej pracy miesięcznie w złotych”.
+
+### Teksty — audyt i doradztwo AI
+
+| Element | Tekst |
+|---|---|
+| Etykieta nad nagłówkiem | Zanim porozmawiamy |
+| Nagłówek | Policz, ile ten proces kosztuje dzisiaj |
+| Opis | Wybierz jedno powtarzalne zadanie i podaj, ile zajmuje. Wynik to koszt tej czynności teraz, a nie obietnica oszczędności. Ile z tego da się odzyskać, sprawdzamy w audycie, bo część pracy lepiej zostawić człowiekowi. |
+| Przycisk | Opowiedz mi o tym procesie |
+| Zachowanie przycisku | Przewija do formularza `ServiceCta` na tej stronie. |
+
+### Teksty — automatyzacja procesów biznesowych
+
+| Element | Tekst |
+|---|---|
+| Etykieta nad nagłówkiem | Policz, zanim zaczniemy |
+| Nagłówek | Ile kosztuje przenoszenie danych ręcznie? |
+| Opis | Weź jedno zadanie, w którym ktoś przenosi dane między narzędziami: z maila do CRM, z CRM do arkusza, z arkusza do faktury. Podaj, ile trwa i jak często wraca. Wynik pokazuje, ile ta czynność kosztuje co miesiąc, zanim ktokolwiek ją zautomatyzuje. |
+| Przycisk | Pokaż mi ten proces |
+| Zachowanie przycisku | Przewija do formularza `ServiceCta` na tej stronie. |
+
+Bez zapisywania wyników i bez bramki na e-mail — formularz stoi niżej na tej samej stronie.
+Ceny prostych automatyzacji („od 500 zł”, opis SEO tej usługi) celowo nie wstawiam obok
+wyniku: zgodnie z decyzją właściciela na stronach usług zostaje „wycena po rozmowie”.
 
 ---
 
